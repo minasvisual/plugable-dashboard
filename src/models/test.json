@@ -1,0 +1,24 @@
+{
+  "name": "teste",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "firstName": {
+        "type": "string"
+      }
+    }
+  },
+  "uiSchema": [
+    {
+      "component": "input",
+      "model": "firstName",
+      "fieldOptions": {
+        "class": ["form-control"],
+        "on": ["input"],
+        "attrs": {
+          "placeholder": "Please enter your first name"
+        }
+      }
+    }
+  ]
+}
