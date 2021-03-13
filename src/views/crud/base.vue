@@ -3,7 +3,7 @@
     <CCol col>
       <CCard>
         <CCardHeader>
-          <strong> {{ active.title }}</strong>
+          <strong>{{ currentProject.name }} | {{ active.title }}</strong>
           
           <div class="card-header-actions" >
             <CButton v-if="hasAuth" size="sm" class="card-header-action"  @click="loadModel"> 
@@ -26,7 +26,7 @@
 
             <Table 
               ref="tables" 
-              v-if="logged && active.title"
+              v-if="showCrud"
               :schema="active"
               @actions:create="actions('FORM_CREATE', $event)"
               @actions:edit="actions('FORM_EDIT', $event)"
@@ -91,6 +91,10 @@ export default {
     currentProject(newVal, oldVal){
       if( !has(this.currentProject, 'code') && newVal )
         this.loadModel()
+      else if( has(this.currentProject, 'code') && newVal ){
+        let res = Object.keys(newVal.resources)
+        this.$router.push(`/api/${newVal.code}/${res[0]}`) 
+      }
     }
   },
   async mounted(){
@@ -103,6 +107,9 @@ export default {
     },
     hasAuth(){ 
       return !!this.currentProject.auth 
+    },
+    showCrud(){
+      return (!this.hasAuth || (this.hasAuth && this.logged)) && this.active.title
     },
     formTitle(){ 
       return this.row && this.row.id ? `Update ${this.active.title} | ID: ${this.row.id}`: `New ${this.active.title}`
@@ -136,7 +143,9 @@ export default {
         let url = this.currentProject.resources_path + get(this.currentProject, `resources[${this.$route.params.model}.resource]`)
         this.active = await loadModel( url )
 
-        if(this.active)
+        if( this.active && this.renderComponent === true ) 
+          this.forceRerender()
+        else if(this.active)
           this.renderComponent = true
       }else{
         this.$message('Model '+this.$route.params.model+' doesnt exist')
@@ -154,6 +163,7 @@ export default {
     auth({authRequest}){
         this.active.api = Object.assign(this.active.api, authRequest)
         this.logged = true
+        console.log('chamado auth')
         this.forceRerender()
     },
     errors(data){

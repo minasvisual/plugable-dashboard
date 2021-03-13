@@ -38,7 +38,7 @@ VUE_APP_DATABASE=/models/projects.json			// Projects json file path/url | defaul
 
 VUE_APP_LOGIN=true  | true/false
 // Required if login true
-VUE_APP_LOGIN=https://project.com/auth/login	// Dashboard Login auth url
+VUE_APP_LOGIN_URL=https://project.com/auth/login	// Dashboard Login auth url
 VUE_APP_LOGIN_USER_FIELD=email					// Username field
 VUE_APP_LOGIN_PASS_FIELD=password				// Password field
 VUE_APP_LOGIN_TOKEN_PATH=token					// Response token path in data object

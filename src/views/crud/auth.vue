@@ -1,6 +1,6 @@
 <template >
-    <div >
-      <h3 v-if="!loading" class="text-center">Authenticating...</h3>
+    <div class="col-12 col-md-4 offset-md-4">
+      <h3 v-if="loading" class="text-center">Authenticating...</h3>
       <FormulateForm 
         v-else
         v-model="model"
@@ -10,9 +10,9 @@
 
         <h4 class="text-center">Project Authentication</h4>
         
-        <FormulateInput type="text" name="username" /> 
+        <FormulateInput type="text" name="username" placeholder="Username" /> 
 
-        <FormulateInput type="text" name="secret" /> 
+        <FormulateInput type="text" name="secret"  placeholder="Password" /> 
 
         <FormulateInput type="checkbox" name="remember" label="remember" /> 
 
@@ -156,12 +156,15 @@ export default {
   },
   mounted(){
     try{
+      this.loading = true;
       let token = sessionStorage.getItem(`${this.project.code}_session`)
 
       if( token && has(this.project, 'user') )
         this.$emit('auth:logged', {token, user: get(this.project, 'user'), authRequest: this.authRequest(token) })
       else if( token )
         this.logged(token)
+      else
+        this.loading = false;
     }catch(e){
         this.$emit('auth:failed', e)
     } 

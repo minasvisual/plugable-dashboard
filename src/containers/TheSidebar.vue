@@ -61,7 +61,7 @@ export default {
     loadMenus(){
       let menus = Object.keys(get(this.current, 'resources', {})).map( (resource) => ({
         name: get(this.current, `resources.${resource}.label`),
-        to: '/resource/'+ resource
+        to: `/api/${this.current.code}/${resource}`
       }))
       set(this.nav, '[0]._children[1].items', menus)
     }

@@ -30,7 +30,7 @@ const mutations = {
 const actions = {
   login (ctx, { username, password }) {
       return request( 
-        process.env.VUE_APP_LOGIN , {
+        process.env.VUE_APP_LOGIN_URL , {
           method: 'POST',
           data: { 
             [process.env.VUE_APP_LOGIN_USER_FIELD]: username, 
@@ -55,6 +55,8 @@ const actions = {
               ctx.commit('set', ['auth', { isLogged: false }])
               ctx.dispatch('logout')
           })
+    }else{
+      ctx.commit('set', ['auth', { isLogged: false }])
     }
   },
   logout(ctx){

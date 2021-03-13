@@ -20,6 +20,6 @@ export default  {
     },
     computed:{
         auth(){ return this.$store.state.auth },
-        hasAuth(){ return process.env.VUE_APP_LOGIN === true }
+        hasAuth(){ return process.env.VUE_APP_LOGIN === 'true' }
     }
 }

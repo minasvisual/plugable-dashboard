@@ -69,7 +69,7 @@ function configRoutes () {
           ]
         },
         {
-            path: 'resource',
+            path: 'api',
             name: 'Resource',
             component: {
               render(c) {
@@ -78,7 +78,7 @@ function configRoutes () {
             },
             children: [
               {
-                path: ':model',
+                path: ':project/:model',
                 meta: {
                   label: 'Model Details'
                 },

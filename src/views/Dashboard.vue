@@ -3,7 +3,7 @@
     
     <CRow>
       <CCol md=3>
-        <CWidgetSimple header="Projects" :text="projects.length">
+        <CWidgetSimple header="Projects" :text="projects.length.toString()">
           <CChartLineSimple style="height:40px" border-color="danger"/>
         </CWidgetSimple>
       </CCol>
