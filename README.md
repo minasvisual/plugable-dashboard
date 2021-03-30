@@ -14,6 +14,7 @@
 		- [X] Select Dynamic remote options | type=dynamicSelect (multiple=true)
 		- [X] List Array (tags) || type=tags
 		- [X] Subgrid array ||  type=grid
+		- [X] Sub object field  || type=object options=[ {chidrean schema} ]
     - [ ] Nested forms
     - [ ] Nested grid
 - Grid
@@ -23,7 +24,9 @@
 		- [X] Switch
 		- [X] Array
 		- [X] Select
-		- [ ] 
+		- [X] HTML 
+		- [ ] Sub object fields
+		- [ ] Interpolate Expression
     - [ ] Grid Card Preview
 	- [ ] Pagination
 	- Mask || vfeMask: "+33 \\02 00 00 00 00 00"

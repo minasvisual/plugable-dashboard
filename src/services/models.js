@@ -7,7 +7,7 @@ axios.interceptors.request.use(
 
     if( !config.headers[( process.env.VUE_APP_LOGIN_TOKEN_HEADER || 'access-token')] ){
       const token = localStorage.getItem('dash_session')
-      if (token) {
+      if (process.env.VUE_APP_LOGIN == 'true' && token) {
         config.headers[( process.env.VUE_APP_LOGIN_TOKEN_HEADER || 'access-token')] = token;
       }
     }
@@ -19,19 +19,16 @@ axios.interceptors.request.use(
   }
 )
 
-export const models = async (path) => {
-  return Promise.resolve({
-    "test": {
-      baseUrl: "http://localhost:3000/schema" 
-    }
-  })
-}
+// export const models = async (path) => {
+//   return Promise.resolve({
+//     "test": {
+//       baseUrl: "http://localhost:3000/schema" 
+//     }
+//   })
+// }
 
 export const request = (query, options={}, wrap=true) => {
-  return axios({
-          url: query,
-          ...options
-        }).then((res) => wrap ? res.data: res )
+  return axios({ url: query,  ...options }).then((res) => wrap ? res.data: res )
 }
 
 export const loadModel = async (url, options) => {
@@ -54,7 +51,8 @@ export const getData = async (model, data={}, config={}) => {
     ...config
   }
   
-  let query = interpolate( queryString(api.params),  api.params)
+  let query = interpolate( queryString(api.params, (api.rootApi.includes('?') ? '&':'?')),  api.params)
+
   if( data[(model.primaryKey || 'id')] )
     url = `${api.rootApi}${api.urlGetById || '/{id}'}${query}`
   else
@@ -65,14 +63,19 @@ export const getData = async (model, data={}, config={}) => {
   
   url = interpolate(url, {...data})
   
+  console.log('get data', url, options)
   return request(url, options)
       .then( data => {  
-        let rows = ( model.api.wrapData ? get(data, model.api.wrapData, []): data)
-        let total = ( model.api.totalData ? get(data, model.api.totalData, rows.length): rows.length )
+        if( data[(model.primaryKey || 'id')] ){
+          return ( model.api.wrapData ? get(data, model.api.wrapData, data): data)
+        }else{
+          let rows = ( model.api.wrapData ? get(data, model.api.wrapData, []): data)
+          let total = ( model.api.totalData ? get(data, model.api.totalData, rows.length): rows.length )
 
-        return {
-          rows,
-          total
+          return {
+            rows,
+            total
+          }
         }
       })
 }
@@ -81,7 +84,7 @@ export const saveData = async (model, data, config={}) => {
   let { api } = model;
   let url = ''
   let method = data[(model.primaryKey || 'id')] ? (api.methodPatch || "PUT") : (api.methodPost || "POST");
-  let query = interpolate( queryString(api.params),  api.params)
+  let query = interpolate( queryString(api.params, (api.rootApi.includes('?') ? '&':'?')),  api.params)
  
   if( data[(model.primaryKey || 'id')] )
     url = `${api.rootApi}${api.urlPatch || '/{id}'}${query}`
@@ -107,7 +110,9 @@ export const deleteData = async (model, data) => {
   if( !data[(model.primaryKey || 'id')] ) return Promise.reject('Id not found')
 
   let method = (api.methodDelete || "DELETE")
-  let query = interpolate( queryString(api.params),  api.params)
+  
+  let query = interpolate( queryString(api.params, (api.rootApi.includes('?') ? '&':'?')),  api.params)
+  
   let url = `${api.rootApi}${api.urlDelete || '/{id}'}${query}`
   
   url = interpolate(url, {...data})

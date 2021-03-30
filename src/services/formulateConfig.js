@@ -11,6 +11,7 @@ import FormulateTags from '../views/crud/formulate/tags'
 import FormulateDynamicSelect from '../views/crud/formulate/dynamic-select'
 import FormulateJson from '../views/crud/formulate/json'
 import FormulateGrid from '../views/crud/formulate/grid'
+import FormulateObject from '../views/crud/formulate/object'
 
 Vue.component('MyFormulateAutocomplete', FormulateAutocomplete)
 Vue.component('FormulateWysiwyg', FormulateWysiwyg)
@@ -21,6 +22,7 @@ Vue.component('FormulateTags', FormulateTags)
 Vue.component('FormulateDynamicSelect', FormulateDynamicSelect)
 Vue.component('FormulateJson', FormulateJson)
 Vue.component('FormulateGrid', FormulateGrid)
+Vue.component('FormulateObject', FormulateObject)
 
 export default {
     library: {
@@ -62,6 +64,10 @@ export default {
       grid: {
         classification: 'array',
         component: 'FormulateGrid'
+      },
+      object: {
+        classification: 'object',
+        component: 'FormulateObject'
       }
     },
     plugins: [

@@ -1,0 +1,14 @@
+[
+    {
+      "code": "example",
+      "name": "Example",
+      "url": "https://placeholder.com",
+      "resources_path": "/examples/",
+      "resources":{
+        "events":{
+          "resource":"crud.json",
+          "label": "CRUD Example"
+        }
+      }
+    }
+]

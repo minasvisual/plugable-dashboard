@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <section class="table-section" v-if="schema.api.rootApi">
     <div style="margin-bottom: 10px">
       <el-row>
         <el-col :span="16">
@@ -37,7 +37,7 @@
         :total="data.total" 
         @query-change="fetchData"
         :table-props="tableProps"
-        :pagination-props="{ pageSizes: [15, 50, 150] }" 
+        :pagination-props="{ pageSizes: [10, 20, 50, 150] }" 
         :action-col="actionCol" 
         :filters="filters" 
         @selection-change="handleSelectionChange"
@@ -74,12 +74,13 @@
       </el-table-column>
 
     </data-tables-server>
-  </div>
+  </section>
 </template>
 <script>
-import { get, sortBy, debounce } from 'lodash';
-import { getData, deleteData } from '../../services/models'
-import { filterParams, schemaColumns } from '../../services/helpers'
+import { has, debounce } from 'lodash'
+import { schemaColumns, filterParams } from '../../services/helpers'
+import { getData } from "../../services/models";
+
 import CellTypes from './table-types/index'
 
 export default {
@@ -98,7 +99,6 @@ export default {
         rows:[],
         total:0
       },
-      titles:[],
       tableProps:{
         defaultSort: { prop: 'id', order: 'descending'} 
       },
@@ -120,20 +120,23 @@ export default {
     }
   },
   props:{
-    schema: Object,
+    schema: {
+      type:Object,
+      default: { }
+    },
   },
-  mounted(){
-   
-    this.titles = schemaColumns([ ...this.schema.properties ])
-
-    //this.fetchData({ type page:1, pageSize:15 })
+  computed:{
+    titles(){
+      return has(this.schema, 'properties') ? schemaColumns([ ...this.schema.properties ]) : []
+    }
   },
   methods:{
     fetchData: debounce(async function(queryInfo){
+      if( !queryInfo ) return false;
+
       this.queryInfo = queryInfo
       this.schema.api = filterParams(this.schema.api, queryInfo) 
 
-      console.log('getdata', this.schema.api)
       if( ['sizeChange','pageChange','init', 'sort', 'filter', 'page'].includes(queryInfo.type) )
          this.data = await getData(this.schema, {})
     }, 1000),
@@ -144,28 +147,15 @@ export default {
       this.$emit('actions:edit', row)
     },
     onDelete(row){
-      if( confirm('Are you sure to delete?') )
-        deleteData(this.schema, row).then(() => {
-          this.$message('Deleted with success') 
-          this.data.rows.splice(this.data.rows.indexOf(row), 1)
+      if( confirm('Are you sure to delete?') ) 
           this.$emit('actions:delete', row)
-        })
     },
     handleSelectionChange(val) {
       this.selectedRow = val
     },
     async bulkDelete() {
       if( confirm(`Are you sure to delete ${this.selectedRow.length} rows?`) ){
-        for(let row of this.selectedRow){
-           await deleteData(this.schema, row)
-              .then(() => {
-                this.$emit('actions:delete', row)
-              })
-              .catch(() => this.$message(e.message, 'danger') )
-        }
-        
-        this.fetchData(this.queryInfo)
-        this.$message('Deleted with success') 
+          this.$emit('actions:deleteBatch', this.selectedRow)
       }
     }
   }

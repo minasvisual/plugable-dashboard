@@ -29,12 +29,14 @@
         <span v-else-if="cell.type == 'date'">
             {{ data.row[cell.prop] | formatDate(cell.action.format || 'MM/DD/YYYY hh:mm', cell.action.from || null) }}
         </span>   
+        <span v-else-if="cell.type == 'object'" v-text="get(data, `row.${cell.action.name}`, data.row[cell.prop].toString())"></span>
         <span v-else-if="cell.type == 'html'" v-html="data.row[cell.prop]"></span>
         <span v-else v-text="data.row[cell.prop]"></span> 
     </span>
 </template>
 
 <script>
+import { get } from 'lodash'
 import ImgCell from './image'
 import Tags from './tags'
 import ActionLink from './actions'
@@ -54,7 +56,9 @@ export default {
             required: true
         },
     },
-
+    methods:{
+        get: get
+    }
 }
 </script>
 

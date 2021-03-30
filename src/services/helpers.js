@@ -1,9 +1,11 @@
 import { has, sortBy, get } from 'lodash'
 import moment from 'moment'
 
-export const formatDate = function(value, format, from) {
+export const formatDate = function(value, format, from, utc=false) {
     if (value) {
-      return moment(String(value), from).format(format)
+      let date = moment(String(value), from)
+      if(utc) date = date.utc()
+      return date.format(format)
     }
 }
 
@@ -11,9 +13,9 @@ export const interpolate = (string, scope) => {
     return string.replace(/\{([^}]*)}/g, (r,k) => get(scope, k) );
 }
 
-export const queryString = (params) => {
+export const queryString = (params, join) => {
     if( params && Object.keys(params).length > 0 )
-        return '?' + new URLSearchParams(params)
+        return join+new URLSearchParams(params)
     else
         return ''
 }

@@ -1,172 +1,145 @@
 <template >
-    <div class="col-12 col-md-4 offset-md-4">
-      <h3 v-if="loading" class="text-center">Authenticating...</h3>
-      <FormulateForm 
-        v-else
-        v-model="model"
-        @submit="authenticate"
-        #default="{ hasErrors }"
-      >
+  <section class="crud-wrapper" >
+    <slot v-if="login" v-bind:schema="schema">
+      vazio
+    </slot>
+    <div  v-else class="col-12 col-md-4 offset-md-4">
+        <h3 v-if="loading" class="text-center">Authenticating...</h3>
+        <FormulateForm 
+          v-else
+          v-model="model"
+          @submit="doAuth"
+          #default="{ hasErrors }"
+        >
 
-        <h4 class="text-center">Project Authentication</h4>
-        
-        <FormulateInput type="text" name="username" placeholder="Username" /> 
+          <h4 class="text-center">Project Authentication</h4>
+          
+          <FormulateInput type="text" name="username" placeholder="Username" /> 
 
-        <FormulateInput type="text" name="secret"  placeholder="Password" /> 
+          <FormulateInput type="text" name="secret"  placeholder="Password" /> 
 
-        <FormulateInput type="checkbox" name="remember" label="remember" /> 
+          <FormulateInput type="checkbox" name="remember" label="remember" /> 
 
-        <div class="action-buttons mt-3">
-          <CButton
-              type="button"
-              color="danger"
-              class="mr-2"
-              @click="$emit('close', { refresh: false })"
-            >
-                Cancel
-          </CButton>
-          <CButton
-              type="submit"
-              color="success"
-              :disabled="hasErrors"
-            >
-                Save
-          </CButton>
-        </div>
-    </FormulateForm>
+          <div class="action-buttons mt-3">
+            <CButton
+                type="button"
+                color="danger"
+                class="mr-2"
+                @click="$emit('close', { refresh: false })"
+              >
+                  Cancel
+            </CButton>
+            <CButton
+                type="submit"
+                color="success"
+                :disabled="hasErrors"
+              >
+                  Save
+            </CButton>
+          </div>
+        </FormulateForm>
     </div>
+
+  </section>
 </template>
 
 <script>
 import { has, get } from 'lodash'
-import { interpolate } from '../../services/helpers'
-import { request } from '../../services/models'
+import SessionMixin from '../../services/session.mixin'
+
 export default {
+  mixins:[SessionMixin],
   props:{
       project:{
+        type: Object,
+        default: {}
+      },
+      schema:{
         type: Object,
         default: {}
       }
   },
   data(){return{
     loading: false,
-    model: {}
+    model: {},
+    login: false
   }},
-  computed:{
-    config(){ return this.project.auth || null },
-  },
   methods:{
-    authenticate({username, secret, remember}){
+    doAuth(form){
       try{
-        if( !has(this.config, 'url_login') ) return false;
-
         this.loading = true;
-        return request(this.config.url_login, {
-          method: get(this.config, 'url_method', 'post'),
-          data: {
-            [get(this.config, 'field_username', 'email')]: username,
-            [get(this.config, 'field_secret', 'password')]: secret,
-            [get(this.config, 'field_remember', 'remember')]: remember,
-          },
-          headers:{
-            [get(this.config, 'request_token', 'access-token')]: ''
-          }
-        }, false)
-        .then(this.success)
-        .catch(this.error)
+        return this.authenticate(form)
+                  .then(this.success)
+                  .catch(this.error)
       }catch(e){
         this.error(e)
         this.loading = false;
       }
     },
-    success({ data, headers }){
-        let token = null
-        if( get(this.config, 'response_mode', 'body') === 'header' ){
-          token = headers[ get(this.config, 'response_token', 'access-token') ];
-        }else{
-          token = get(data, get(this.config, 'response_token', 'access_token'), 'token')
-        }
+    success(res){
+        let token = this.storageToken(res)
+        let { data, headers } = res;
 
         if( !token ) {
           this.loading = false;
           return this.$emit('auth:failed', {message: 'token not found', config, data, headers})
         }
-
-        sessionStorage.setItem(`${this.project.code}_session`, token)
-        this.logged(token)
+        let authRequest = this.authRequest(token)
+                    
+        return this.$emit('auth:logged', { logged: this.logged, request: authRequest })
     },
     error({ response, message }){
-      console.log('Auth Error', message, response.data)
+      console.log('Auth Error', message, response)
       this.loading = false;
       
       this.$emit('auth:failed', {message})
     },
-    logged(token){
+    async checkLogged(token){
       try{
-        if( !has(this.config, 'logged_url') ){
-          this.loading = false;
-          return this.$emit('auth:failed', {message: 'Logged url not found', config})
-        }
-        
-        let reqAuthData = this.authRequest(token)
-        let options = { method: 'get',  ...reqAuthData  }
+        let auth = await this.isLogged(token)
 
-        return request( get(this.config, 'logged_url'), options)
-                .then((data) => {
-                    let user = this.setUser(data)
-                    this.loading = false;
-                    this.$emit('auth:logged', {token, user, authRequest: reqAuthData })
-                })
+        console.log('checkLogged: token', auth)
+        
+        this.$emit('auth:logged', auth)
+
+        return auth
       }catch(e){
-        this.loading = false;
+        console.log('checkLogged failed: token', e)
         return this.$emit('auth:failed', {message: e.message})
       }
-    },
-    authRequest(token){
-      let tokenRequest = get(this.config, 'request_token_expression', '{token}')
-      if( get(this.config, 'request_mode', 'header') == 'query' )
-        return { 
-          params:{
-              [get(this.config, 'request_token', 'access-token')] : interpolate(tokenRequest, {token})
-          }
-        } 
-      else 
-        return {
-          headers:{
-            [get(this.config, 'request_token', 'access-token')] : interpolate(tokenRequest, {token})
-          }
-        }
-
-    },
-    setUser(data){
-        if( !has(this.config, 'logged_model') ) return {};
-
-        let { id, name, username, role } = get(this.config, 'logged_model')
-        let user = {
-          "id": get(data, id, "id"),
-          "name": get(data, name, "name"),
-          "username": get(data, username, "email"),
-          "role": get(data, role, "level")
-        }
-
-        this.$store.commit('set', ['currentProject', {...this.project, user }])
-
-        return user;
-    }
+    }, 
   },
-  mounted(){
+  beforeMount(){
+    this.login = false
+      console.log('caled before mount')
+  },
+  async mounted(){
     try{
-      this.loading = true;
+      console.log('caled mounted auth')
+      if( !this.hasAuth ) return this.login = true 
+
       let token = sessionStorage.getItem(`${this.project.code}_session`)
 
-      if( token && has(this.project, 'user') )
-        this.$emit('auth:logged', {token, user: get(this.project, 'user'), authRequest: this.authRequest(token) })
-      else if( token )
-        this.logged(token)
-      else
-        this.loading = false;
+      this.loading = true;
+      if( token && has(this.project, 'user') ){
+        this.$emit('auth:logged', {token, user: get(this.project, 'user'), request: this.authRequest(token) })
+        
+        console.log('if user mounted', this.authRequest(token), this.session)
+        this.schema.api = Object.assign(this.schema.api, this.authRequest(token))
+      }else if( token ){
+        let { request={}, ...data } = await this.checkLogged(token)
+        console.log('if token mounted', request, data)
+        this.schema.api = Object.assign(this.schema.api, request)
+      }else{
+        return this.$emit('auth:failed', {})
+      } 
+      
+      this.login = true;
+      this.loading = false;
     }catch(e){
-        this.$emit('auth:failed', e)
+      this.loading = false;
+      console.log('erro mounted auth', e)
+      this.$emit('auth:failed', e)
     } 
   }
 }

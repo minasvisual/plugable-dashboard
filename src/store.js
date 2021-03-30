@@ -23,7 +23,20 @@ const mutations = {
     state.sidebarShow = sidebarClosed ? true : 'responsive'
   },
   set (state, [variable, value]) {
-    state[variable] = value
+    return state[variable] = value
+  },
+  setAuth (state, [session, value]) {
+    console.log('setauth called', state.auth[session], value)
+    return state.auth[session] = value
+  }
+}
+
+const getters = {
+  logged(state){
+    return state.auth
+  },
+  dashLogged(state){
+    return state.auth.dash
   }
 }
 
@@ -40,7 +53,7 @@ const actions = {
       ).then( data => {
         let token =  get(data, process.env.VUE_APP_LOGIN_TOKEN_PATH, 'access_token' )
         localStorage.setItem('dash_session', token)
-        ctx.commit('set', ['auth', { isLogged: true, token }])
+        ctx.commit('setAuth', ['dash', { isLogged: true, token }])
       })
   },
   isLogged(ctx){
@@ -48,21 +61,21 @@ const actions = {
     if( token ){
       return getUserData()
           .then( data => {
-              ctx.commit('set', ['auth', { isLogged: true, token, user: data }])
+              ctx.commit('setAuth', ['dash', {isLogged: true, token, user: data }])
           })
           .catch(({response, message, statusCode }) => {
             if( statusCode > 400 && statusCoode < 410 )
-              ctx.commit('set', ['auth', { isLogged: false }])
+              ctx.commit('setAuth', ['dash', {isLogged: false}])
               ctx.dispatch('logout')
           })
     }else{
-      ctx.commit('set', ['auth', { isLogged: false }])
+      ctx.commit('setAuth', ['dash', { isLogged: false }])
     }
   },
   logout(ctx){
     let token = localStorage.getItem('dash_session')
     if( token ){   
-        ctx.commit('set', ['auth', { isLogged: false }]) 
+        ctx.commit('setAuth', ['dash', { isLogged: false }]) 
         localStorage.removeItem('dash_session')
     }
   }
@@ -70,5 +83,6 @@ const actions = {
 export default new Vuex.Store({
   state,
   mutations,
-  actions
+  actions,
+  getters
 })

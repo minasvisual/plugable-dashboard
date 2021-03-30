@@ -5,7 +5,7 @@
           @submit="submit"
           #default="{ hasErrors }"
     >
-
+    {{ JSON.stringify(schema.api.headers) }}
     <div class="action-buttons mt-3">
       <CButton
           type="button"
@@ -27,11 +27,10 @@
 </template>
 
 <script>
-import { get } from 'lodash'
-import { saveData } from '../../services/models'
-import { schemaColumns } from '../../services/helpers'
-
+import { schemaColumns, formatDate } from '../../services/helpers'
+import ControllerMixin from '../../services/controller.mixin'
 export default {
+    mixins:[ControllerMixin],
     data(){
       return{
         form: [],
@@ -47,25 +46,28 @@ export default {
       data: Object
     },
     mounted(){
-      this.form =  this.schema.properties
-      this.columns = schemaColumns(this.schema.properties)
-      this.columns.map(i => {
-        if( this.data[i.prop] && ['date'].includes(i.type) ){
-          //console.log('changed', this.data[i.prop], this.data[i.prop].replace(' ', 'T'))
-          this.data[i.prop] = this.data[i.prop].replace(' ', 'T')
-        } 
-      })
-      this.model = this.data
+      ( this.schema.api.bypassGetByid ? Promise.resolve(this.data) : this.getRow()).then( (data) => {
+            this.form =  this.schema.properties
+            this.columns = schemaColumns(this.schema.properties)
+            this.columns.map(i => {
+              if( data[i.prop] && ['date'].includes(i.type) ){
+                //console.log('changed', this.data[i.prop], this.data[i.prop].replace(' ', 'T'))
+                data[i.prop] = formatDate(data[i.prop], 'YYYY-MM-DD\\Thh:mm:ss', null, true)
+              } 
+            })
+            this.model = data
+        })
     },
     methods: {
       async submit (data) {
-        let response = await saveData(this.schema, data)
+        return await this.saveData(this.schema, data)
               .then((res) => {
-                  this.$message('Saved with success') 
                   this.$emit('close', { refresh: true })
                   this.$emit('model:saved', {data, response})
               }) 
-              .catch(e => this.$message( get(e, 'response.data.message', e.message ) )) 
+      },
+      getRow(){
+        return this.getData(this.schema, this.data)
       }
     },
 }
