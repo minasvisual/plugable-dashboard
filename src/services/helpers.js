@@ -27,8 +27,10 @@ export const filterParams = (api, queryInfo) => {
         params[ pagination.pageField || 'page' ] = page
     if( pageSize && has(pagination, 'limitField') )
         params[ pagination.limitField || 'limit'] = pageSize
-    if( sort && sort.prop && sort.order && has(pagination, 'sortField') && has(pagination, 'sortExp') )
-        params[ pagination.sortField || 'order' ] = interpolate( (pagination.sortExp || '{prop},{order}') , {prop: sort.prop, sort: sort.order == 'ascending'?'asc':'desc'})
+    if( sort && sort.prop && sort.order && has(pagination, 'sortField') && has(pagination, 'sortExp') ){
+        let pagData = {prop: sort.prop, sort: sort.order == 'ascending'? get(pagination,'sortAscChar','asc'): get(pagination, 'sortDescChar', 'desc')}
+        params[ pagination.sortField || 'order' ] = interpolate( get(pagination, 'sortExp', '{prop},{order}'), pagData)
+    }
 
     if( has(filters, '[0].prop') && has(filters, '[0].value') && has(pagination, 'filterField') && has(pagination, 'filterExp') )
         params[ pagination.filterField || 'filter' ] = interpolate( (pagination.filterExp || '{prop},like,%{value}%') , filters[0])
@@ -42,7 +44,7 @@ export const schemaColumns = (properties) => {
     let columns = []
     let extractdata = (col = {}, k) =>  {
         if( col.children && Array.isArray(col.children) )  col.children.map( i => extractdata(i, k))
-        else if( get(col, 'config.grid', false) )
+        if( get(col, 'config.grid', false) )
             columns.push({
                 sort: get(col, 'config.sort', k+1),
                 prop: get(col, 'name', col.id),

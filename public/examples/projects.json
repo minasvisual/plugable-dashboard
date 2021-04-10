@@ -5,9 +5,13 @@
       "url": "https://placeholder.com",
       "resources_path": "/examples/",
       "resources":{
-        "events":{
+        "basic":{
           "resource":"crud.json",
           "label": "CRUD Example"
+        },
+        "advanced":{
+          "resource":"crud_advanced.json",
+          "label": "CRUD Advanced Example"
         }
       }
     }

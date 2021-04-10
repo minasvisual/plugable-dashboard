@@ -5,7 +5,6 @@
           @submit="submit"
           #default="{ hasErrors }"
     >
-    {{ JSON.stringify(schema.api.headers) }}
     <div class="action-buttons mt-3">
       <CButton
           type="button"

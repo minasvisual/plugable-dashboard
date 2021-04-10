@@ -1,8 +1,8 @@
 {
   "type": "object",
-  "title": "Tests",
+  "title": "Basic",
   "primaryKey": "id",
-  "domain": "tests",
+  "domain": "basic",
   "properties": [
     {
       "component": "h3",

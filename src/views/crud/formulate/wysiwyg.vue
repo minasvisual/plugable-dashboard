@@ -43,19 +43,12 @@ export default {
           placeholder: 'Compose an epic...',
         }, 
     }
-  },
-  watch: {
-    
-  },
+  }, 
   computed: {
     model () {
       return this.context.model
-    },
-     
-  },
-  methods: {
-     
-  }
+    }
+  }, 
 }
 </script>
 

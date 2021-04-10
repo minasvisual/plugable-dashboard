@@ -10,7 +10,8 @@ export default {
   props: {
     context: {
       type: Object,
-      required: true
+      required: true,
+      default: { model:{}, options:[] }
     },
   }
 }

@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import Router from './router'
 import { get } from 'lodash'
 import { request, getUserData } from './services/models'
 
@@ -54,6 +55,9 @@ const actions = {
         let token =  get(data, process.env.VUE_APP_LOGIN_TOKEN_PATH, 'access_token' )
         localStorage.setItem('dash_session', token)
         ctx.commit('setAuth', ['dash', { isLogged: true, token }])
+        Router.push('/dashboard')
+      }).catch( err => {
+        alert('Login Error: '+ err.message)
       })
   },
   isLogged(ctx){
@@ -62,6 +66,7 @@ const actions = {
       return getUserData()
           .then( data => {
               ctx.commit('setAuth', ['dash', {isLogged: true, token, user: data }])
+              Router.push('/dashboard')
           })
           .catch(({response, message, statusCode }) => {
             if( statusCode > 400 && statusCoode < 410 )
@@ -70,6 +75,7 @@ const actions = {
           })
     }else{
       ctx.commit('setAuth', ['dash', { isLogged: false }])
+      ctx.dispatch('logout')
     }
   },
   logout(ctx){
@@ -77,6 +83,7 @@ const actions = {
     if( token ){   
         ctx.commit('setAuth', ['dash', { isLogged: false }]) 
         localStorage.removeItem('dash_session')
+        Router.push('/pages/login')
     }
   }
 }

@@ -88,8 +88,8 @@ export default {
                     
         return this.$emit('auth:logged', { logged: this.logged, request: authRequest })
     },
-    error({ response, message }){
-      console.log('Auth Error', message, response)
+    error({ response, message, ...data }){
+      console.log('Auth Error', message, response, data)
       this.loading = false;
       
       this.$emit('auth:failed', {message})
@@ -98,13 +98,13 @@ export default {
       try{
         let auth = await this.isLogged(token)
 
-        console.log('checkLogged: token', auth)
+        console.debug('checkLogged: isLogged', auth)
         
         this.$emit('auth:logged', auth)
 
         return auth
       }catch(e){
-        console.log('checkLogged failed: token', e)
+        console.debug('checkLogged failed: token', e)
         return this.$emit('auth:failed', {message: e.message})
       }
     }, 
@@ -115,27 +115,34 @@ export default {
   },
   async mounted(){
     try{
-      console.log('caled mounted auth')
+      console.debug('caled mounted auth')
       if( !this.hasAuth ) return this.login = true 
 
+      console.debug('auth process start')
       let token = sessionStorage.getItem(`${this.project.code}_session`)
+      console.debug('token session', token)
 
       this.loading = true;
-      if( token && has(this.project, 'user') ){
-        this.$emit('auth:logged', {token, user: get(this.project, 'user'), request: this.authRequest(token) })
+      if( token && get(this.session, 'logged', false) ){
+        this.$emit('auth:logged', {token, user: get(this.session, 'user', {}), request: this.authRequest(token) })
         
-        console.log('if user mounted', this.authRequest(token), this.session)
+        console.debug('token and user exists', this.authRequest(token), this.session)
         this.schema.api = Object.assign(this.schema.api, this.authRequest(token))
+        this.loading = false;
+        this.login = true;
       }else if( token ){
         let { request={}, ...data } = await this.checkLogged(token)
-        console.log('if token mounted', request, data)
+
+        console.debug('token exists relogin', request, data)
         this.schema.api = Object.assign(this.schema.api, request)
+        
+        this.loading = false;
+        this.login = true;
       }else{
-        return this.$emit('auth:failed', {})
+        this.loading = false;
+        this.login = false;
+        console.debug('show login form')
       } 
-      
-      this.login = true;
-      this.loading = false;
     }catch(e){
       this.loading = false;
       console.log('erro mounted auth', e)

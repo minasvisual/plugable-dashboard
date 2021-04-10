@@ -26,10 +26,13 @@
         <span v-else-if="cell.type == 'action'">
             <ActionLink :data="data.row[cell.prop]" :cell="cell" />
         </span>    
+        <span v-else-if="cell.type == 'expression'">
+            <Expression  :data="data.row[cell.prop]" :cell="cell" />
+        </span>
         <span v-else-if="cell.type == 'date'">
-            {{ data.row[cell.prop] | formatDate(cell.action.format || 'MM/DD/YYYY hh:mm', cell.action.from || null) }}
+            {{ data.row[cell.prop] | formatDate(cell.action.format || 'MM/DD/YYYY hh:mm', cell.action.from || null, cell.action.utc || false) }}
         </span>   
-        <span v-else-if="cell.type == 'object'" v-text="get(data, `row.${cell.action.name}`, data.row[cell.prop].toString())"></span>
+        <span v-else-if="cell.type == 'object'" v-text="get(data, `row.${cell.action.name}`, data.row[cell.prop])"></span>
         <span v-else-if="cell.type == 'html'" v-html="data.row[cell.prop]"></span>
         <span v-else v-text="data.row[cell.prop]"></span> 
     </span>
@@ -40,11 +43,14 @@ import { get } from 'lodash'
 import ImgCell from './image'
 import Tags from './tags'
 import ActionLink from './actions'
+import Expression from './expression'
+
 export default {
     components:{
         ImgCell,
         Tags,
-        ActionLink
+        ActionLink,
+        Expression
     },
     props:{
         data: {

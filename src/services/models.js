@@ -47,7 +47,7 @@ export const getData = async (model, data={}, config={}) => {
   let { api } = model;
   let url = ''
   let options = {
-    method: api.methodGet || "GET",
+    method: ( data[(model.primaryKey || 'id')] ? (api.methodGetById || 'GET') : (api.methodGet || 'GET') ),
     ...config
   }
   
@@ -67,7 +67,7 @@ export const getData = async (model, data={}, config={}) => {
   return request(url, options)
       .then( data => {  
         if( data[(model.primaryKey || 'id')] ){
-          return ( model.api.wrapData ? get(data, model.api.wrapData, data): data)
+          return ( model.api.wrapDataById ? get(data, model.api.wrapDataById, data): data)
         }else{
           let rows = ( model.api.wrapData ? get(data, model.api.wrapData, []): data)
           let total = ( model.api.totalData ? get(data, model.api.totalData, rows.length): rows.length )

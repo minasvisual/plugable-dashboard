@@ -8,7 +8,7 @@
         <p>Documentation and examples for Bootstrap typography,
           including global settings, headings, body text, lists, and more.</p>
 
-       <CTabs variant="pills" :vertical="{ navs: 'col-12 col-md-3', content: 'col-12 col-md-9' }">
+       <CTabs variant="pills" :vertical="{ navs: 'col-12 col-md-2 col-lg-3', content: 'col-12 col-md-10 col-lg-9' }">
               <CTab active>
                 <template slot="title">
                   <CIcon name="cil-calculator"/> Core UI Docs
@@ -19,18 +19,13 @@
                 <template slot="title">
                   <CIcon name="cil-basket"/> Vue Formulate + Forms Schema
                 </template>
-                  <a href="https://vueformulate.com/guide/inputs/"  target="_blank">https://vueformulate.com/guide/inputs/</a>
-                  <a href="https://www.npmjs.com/package/vue-formulate-extended"  target="_blank">https://www.npmjs.com/package/vue-formulate-extended</a>
-                  prismjs
-                  vue-quill
+                <DocsFormulate />
               </CTab>
               <CTab>
                 <template slot="title">
                   <CIcon name="cil-chart-pie"/> Vue Data tables
                 </template>
-                  <a href="https://www.njleonzhang.com/vue-data-tables/#/" target="_blank">https://www.njleonzhang.com/vue-data-tables/#/</a>
-                   
-                  
+                <DocsDatatables />
               </CTab>
               <CTab>
                 <template slot="title">
@@ -55,9 +50,14 @@
 
 <script>
 import DocsSettings from './docs/docs-settings'
+import DocsFormulate from './docs/docs-formulate'
+import DocsDatatables from './docs/docs-datatables'
+
 export default {
   components: {
-    DocsSettings
+    DocsSettings,
+    DocsFormulate,
+    DocsDatatables,
   },
   data () {
     return {

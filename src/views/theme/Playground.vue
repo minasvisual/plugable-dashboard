@@ -6,12 +6,12 @@
           <span>  Playground</span>
           
           <div class="card-header-actions" >
-            <select v-model="project" >
+            <!-- <select v-model="project" >
               <option :value="null" selected readonly>Select model</option>
               <option v-for="row of optionfy(projects, 'name', 'code')" :key="row.value" :value="row.value" v-text="row.label"></option>
-            </select>
+            </select> -->
 
-            <select v-if="project" v-model="model">
+            <select v-if="currentProject" v-model="model">
               <option v-for="row of optionfy(models, 'label', 'resource')" :key="row.value" :value="row.value" v-text="row.label"></option>
             </select>
 
@@ -21,35 +21,37 @@
       <CCardBody>
         <CRow>
           <CCol lg="7"> 
-            <CButton class="float-right" @click="forceRerender"><CIcon name="cil-reload" /> Reload Schema</CButton>
-            <CTabs variant="pills" :active-tab="0">
-              <CTab title="Auth" v-if="hasAuth">
-                  <Auth
-                      v-if="hasAuth && !!currentProject" 
-                      :project="currentProject" 
-                      @auth:logged="auth"
-                      @auth:failed="errors"
-                  />
-              </CTab>
-              <CTab title="Form" v-if="active">
-                  <Forms 
-                    v-if="active.properties && render"
-                    :schema="active" 
-                    :data="row"
-                  /> 
-              </CTab>
-              <CTab title="Table" v-if="active">
-                <Table 
-                  ref="tables" 
-                  v-if="((hasAuth && logged) || !hasAuth) && render"
-                  :schema="active"
-                  @actions:create="actions('FORM_CREATE', $event)"
-                  @actions:edit="actions('FORM_EDIT', $event)"
-                />
-                <span v-else>Login required</span>
-              </CTab>
-              
-            </CTabs>            
+            <CButton class="float-right" @click="forceRerender"><CIcon name="cil-reload" /> Update View</CButton>
+            <Auth
+                v-if="currentProject && active" 
+                :project="currentProject" 
+                :schema="active"
+                @auth:logged="auth"
+                @auth:failed="errors"
+            >
+              <template v-slot="{ schema }">
+                <CTabs variant="pills" :active-tab="0"> 
+                  <CTab title="Form" v-if="active">
+                      <Forms 
+                        v-if="schema.properties && render"
+                        :schema="schema"
+                        :data="row"
+                      /> 
+                  </CTab>
+                  <CTab title="Table" v-if="active"> 
+                    <Table 
+                      ref="tables" 
+                      v-if="((hasAuth && logged) || !hasAuth) && render"
+                      :schema="schema"
+                      @actions:create="actionsTable('FORM_CREATE', $event)"
+                      @actions:edit="actionsTable('FORM_EDIT', $event)"
+                    />
+                    <span v-else>Login required</span>
+                  </CTab>
+                  
+                </CTabs>
+              </template>
+            </Auth>        
           </CCol>
           <CCol lg="5" style="min-height: 500px">
             <select v-model="jsonEditorData">
@@ -59,8 +61,8 @@
             </select>
             <CButton type="button" @click="newJson(jsonEditorData)"><CIcon name="cil-plus" /> New {{ jsonEditorData }}</CButton>
 
-            <VJsoneditor v-if="jsonEditorData == 'projects'" v-model="projects" height="100%" :options="{mode: 'code'}" ></VJsoneditor>
-            <VJsoneditor v-else-if="jsonEditorData == 'project'" v-model="currentProject" height="100%" :options="{mode: 'code'}" ></VJsoneditor>
+            <!-- <VJsoneditor v-if="jsonEditorData == 'projects'" v-model="projects" height="100%" :options="{mode: 'code'}" ></VJsoneditor> -->
+            <VJsoneditor v-if="jsonEditorData == 'project'" v-model="currentProject" height="100%" :options="{mode: 'code'}" ></VJsoneditor>
             <VJsoneditor v-else-if="jsonEditorData == 'model'" v-model="active" height="100%" :options="{mode: 'code'}" ></VJsoneditor>
             <VJsoneditor v-else-if="jsonEditorData == 'row'" v-model="row" height="100%" :options="{mode: 'code'}" ></VJsoneditor>
           </CCol>
@@ -82,8 +84,11 @@
 </template>
 
 <script>
+import ControllerMixin from '../../services/controller.mixin'
+import SessionMixin from '../../services/session.mixin'
+
 import { loadProjects } from '../../services/models'
-import { get, debounce } from 'lodash'
+import { get, debounce, find } from 'lodash'
 import VJsoneditor from 'v-jsoneditor'
 import Auth from '../crud/auth'
 import Table from '../crud/table'
@@ -95,48 +100,40 @@ import axios from 'axios'
 
 export default {
   name: 'Colors',
+  mixins:[ControllerMixin, SessionMixin],
   components: { VJsoneditor, Forms, Table, Auth, NewProject, NewModel},
   data(){return{
     render: true,
-    jsonEditorData: 'projects',
+    jsonEditorData: 'project',
     project: null,
-    currentProject: null, 
     model: null,
     active: null,
-    logged: false,
-    row: {
-    },
+    row: { },
     addModal: {}
   }},
   watch:{
-    // active: debounce(function(newVal){
-    //   if( !newVal ) return false;
-      
-    //   console.log(newVal)
-    //   this.forceRerender()
-    // }, 3000),
-    project(newVal, oldVal){
-      if( newVal && !oldVal )
-        this.jsonEditorData = 'model'
+    currentProject(newVal, oldVal){
+      if( newVal )
+        this.forceRerender()
     },
     model(newVal){
       if( newVal )
         this.getModel(newVal)
+        this.forceRerender()
     }
   },
   computed:{
-    projects(){ 
-      return get( this.$store, 'state.projects', [])
-    },
     models(){
-      this.currentProject = get( this.$store, `state.projects`, []).find(i => i.code == this.project )
-      return this.currentProject && Object.values(this.currentProject.resources) || []
+      return Object.values( get(this.currentProject, 'resources', {}) )
     },
     hasAuth(){ 
       return this.currentProject && !!this.currentProject.auth 
     },
   },
   methods:{
+    actionsTable(action, data){
+        this.row = data
+    },
     getModel(model){
        axios.get(this.currentProject.resources_path + model)
         .then(({ data }) => this.active = data)
@@ -175,9 +172,6 @@ export default {
           this.render = true;
         });
     }
-  },
-  async mounted(){
-     
-  },
+  }
 }
 </script>

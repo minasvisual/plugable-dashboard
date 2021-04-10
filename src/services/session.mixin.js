@@ -41,6 +41,7 @@ export default {
                       }, false )
                 .then((res) => {
                   let token = this.storageToken(res)
+                  let reqAuthData = this.authRequest(token)
 
                   this.$store.commit('setAuth', [ this.currentProject.code, { request: reqAuthData, logged: true, token }])
                   return res
@@ -78,7 +79,7 @@ export default {
                 .then((data) => {
                     let user = this.setUser(data)
                     
-                    this.$store.commit('setAuth', [ this.currentProject.code, { request: reqAuthData, logged: true, token }])
+                    this.$store.commit('setAuth', [ this.currentProject.code, { user, request: reqAuthData, logged: true, token }])
                     return {token, user, request: reqAuthData }
                 })
       }catch(e){

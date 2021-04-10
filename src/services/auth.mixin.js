@@ -1,20 +1,20 @@
+import {  get } from 'lodash'
 import {  mapGetters } from 'vuex'
 export default  {
     created() {
-        if( !this.auth.isLogged && !this.$route.path.includes('pages') ) 
+        if( !get(this.auth, 'isLogged', false) && !get(this.$route, 'path', '').includes('pages') ) 
             this.$router.push('/pages/login')
-        if( !this.hasAuth && this.$route.path.includes('pages') )
+        if( !this.hasAuth && get(this.$route, 'path', '').includes('pages') )
             this.$router.push('/dashboard')
 
             
         this.$store.watch(
-            state =>state.auth.dash, 
+            state => state.auth.dash, 
             (next, prev) => {
-                console.log('alterado auth', next)
                 if( next ){
-                    if( this.hasAuth && !next.isLogged && !this.$route.path.includes('pages') ) 
+                    if( this.hasAuth && !get(next, 'isLogged', false) && !this.$route.path.includes('pages') ) 
                         this.$router.push('/pages/login')
-                    if( this.hasAuth && next.isLogged && !prev.isLogged && this.$route.path.includes('pages')) 
+                    if( this.hasAuth && get(next, 'isLogged', false) && !get(prev, 'isLogged', false) && this.$route.path.includes('pages')) 
                         this.$router.push('/dashboard')
                     if( !this.hasAuth && this.$route.path.includes('pages') )
                         this.$router.push('/dashboard')

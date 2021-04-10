@@ -5,7 +5,9 @@
     "type": "object",
     "title": "Users",                           // Schema title visible to user
     "domain": "users",                          // Schema slug visible on url
-    "properties": [
+    "primaryKey": "id",                         // Collection primary key (default: id)
+    "auth": true,                               // Define auth required before get data (auth config on project json)
+    "properties": [                             // Form/Datatable properties
         {                                       // VueFormulate / Grid table schema
             "name": "id",                       // Data object index
             "label": "ID",                      // Visible label
@@ -13,30 +15,34 @@
                 "grid": true,                   // Visible in grid
                 "sort": 0                       // Sort order in grid
             }                                   // Docs link: https://vueformulate.com/guide/inputs/
-        },
-        {
-            "name": "name",
-            "label": "Name",
-            "config": {
-            "grid": true,
-            }
-        }, 
-        {
-            "name": "bio",
-            "label": "About me",
-            "type": "textarea"
-        }
+        } 
     ],
     "api": {                                        //Crud endpoint config
-        "rootApi": "https://project.com/users",     //Endpoint base url 
-//Optional
+        "rootApi": "https://project.com/users",     //Endpoint base url - Required
+//
+//Optional 
+//
+        "urlGet": "",                               //Get all url expression ( def: '/{collection}') 
+        "urlGetById": "/{id}",                      //Get by id url expression ( def: '/{collection}/{primaryKey}') 
+        "urlPost": "/",                             //Create url expression ( def: '/{collection}') 
+        "urlPatch": "/{id}",                        //Update url expression ( def: '/{collection}/{primaryKey}') 
+        "urlDelete": "/{id}",                       //Delete url expression ( def: '/{collection}/{primaryKey}') 
+        "methodGet": "GET",                         //Get all method (def: GET)
+        "methodGetById": "GET",                     //Get One by id method (def: GET)
+        "methodPost": "POST",                       //Create method (def: POST)
+        "methodPatch": "PUT",                       //Update method (def: PUT)
+        "methodDelete": "GET",                      //Delete method (def: DELETE)
+        "bypassGetByid": true,                      //Use table row click instead GetById request (def: false)
         "wrapData": "rows",                         //Response object array data field (ex: { rows: [...] } means 'rows')
-        "totalData": "count",					    //Count data field | if not exists used data.length by default
+        "totalData": "count",                       //Count data field | if not exists used data.length by def
+        "wrapDataById": "data",                     //Wrap the GetOne Response (ex: { data: {...} } means 'data')  
         "pagination": {                             //Query string settings
             "pageField": "page",                    //pagination field
-            "limitField": "limit",				    //Data count limit field  
+            "limitField": "limit",                  //Data count limit field  
             "sortField": "order",                   //Sort field
-            "sortExp": "{sort}",                    //Sort expression data to be interpolated (ex: '{prop},{sort}' means 'sort=id,desc'
+            "sortExp": "{prop},{sort}",             //Sort expression data to be interpolated (ex: '{prop},{sort}' means 'sort=id,desc'
+            "sortAscChar": "asc",                   //Ascending sort character (def: 'asc')
+            "sortDescChar": "desc",                 //Descending sort character (def: 'desc')
             "filterField": "filter",                //Filter field
             "filterExp": "{prop},like,%{value}%"    //Field expression value
         },
@@ -47,7 +53,9 @@
         "headers":{                                 //Fixed headers params
             "app-key": "qwertyuiop-asdfghjkls"
         }
+//
 // END Optional
+//
     }
 }
     </pre>

@@ -24,7 +24,7 @@
                 
             >
               <template v-slot="{ schema }">
-                {{ JSON.stringify(schema.api) }}
+                
                 <Table 
                   ref="tables" 
                   v-if="schema.api"
@@ -33,22 +33,22 @@
                   @actions:edit="actions('FORM_EDIT', $event)"
                 />
 
-              <CModal
-                :title="formTitle"
-                :show.sync="formopen"
-                size="lg"
-                :closeOnBackdrop="false"
-              >
-                <Forms 
-                  v-if="formopen"
-                  :formopen="formopen"
-                  :schema="schema" 
-                  :data="row"
-                  @model:saved="reloadData"
-                  @close="reloadData"
-                /> 
-                <template slot="footer"><span></span></template>
-              </CModal>
+                <CModal
+                  :title="formTitle"
+                  :show.sync="formopen"
+                  size="lg"
+                  :closeOnBackdrop="false"
+                >
+                    <Forms 
+                      v-if="formopen"
+                      :formopen="formopen"
+                      :schema="schema" 
+                      :data="row"
+                      @model:saved="reloadData"
+                      @close="reloadData"
+                    /> 
+                    <template slot="footer"><span></span></template>
+                </CModal>
 
               </template>
             </Auth>
