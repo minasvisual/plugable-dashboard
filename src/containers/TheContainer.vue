@@ -36,6 +36,7 @@ export default {
     TheFooter
   },
   async beforeMount(){
+    this.$store.commit('set', ['loading', true])
     let { current } = getLocalStorage('settings') || {}
 
     await loadProjects().then( (data) => {
@@ -47,7 +48,11 @@ export default {
         }
 
         this.$store.commit('set', ['currentProject', find(data, ['code', current]) ])
-    }).catch( e => this.$message('Erro to load projects'))
+    }).catch( e => {
+      this.$message('Erro to load projects')
+    }).then(() => {
+      this.$store.commit('set', ['loading', false])
+    })
   }
 }
 </script>

@@ -1,10 +1,10 @@
 <template>
     <span>
         <span v-if="cell.type == 'tags'">
-            <Tags :data="data.row[cell.prop]" :cell="cell"  />
+            <Tags :data="data.row[cell.prop]" :cell="cell" :row="data.row"  />
         </span>
         <span v-else-if="cell.type == 'image'">
-            <ImgCell :data="data.row[cell.prop]" :cell="cell" />
+            <ImgCell :data="data.row[cell.prop]" :cell="cell" :row="data.row"  />
         </span>
         <span v-else-if="cell.type == 'switch'">
             <CSwitch
@@ -15,19 +15,14 @@
             />
         </span>
         <span v-else-if="cell.type == 'select'">
-            <CSelect
-                readonly
-                v-model="data.row[cell.prop]"
-                :options="cell.options"
-                size="sm"
-            />
+           <GridSelect :data="data.row[cell.prop]" :cell="cell" :row="data.row"  />
         </span>
        
         <span v-else-if="cell.type == 'action'">
-            <ActionLink :data="data.row[cell.prop]" :cell="cell" />
+            <ActionLink :data="data.row[cell.prop]" :cell="cell" :row="data.row"  />
         </span>    
         <span v-else-if="cell.type == 'expression'">
-            <Expression  :data="data.row[cell.prop]" :cell="cell" />
+            <Expression  :data="data.row[cell.prop]" :cell="cell" :row="data.row"  />
         </span>
         <span v-else-if="cell.type == 'date'">
             {{ data.row[cell.prop] | formatDate(cell.action.format || 'MM/DD/YYYY hh:mm', cell.action.from || null, cell.action.utc || false) }}
@@ -44,13 +39,15 @@ import ImgCell from './image'
 import Tags from './tags'
 import ActionLink from './actions'
 import Expression from './expression'
+import GridSelect from './select'
 
 export default {
     components:{
         ImgCell,
         Tags,
         ActionLink,
-        Expression
+        Expression,
+        GridSelect,
     },
     props:{
         data: {

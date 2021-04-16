@@ -2,123 +2,50 @@
   <div
     :class="`formulate-input-element formulate-input-element--${context.type}`"
     :data-type="context.type"
-  >
-    <div style="margin-bottom: 10px">
-      <el-row>
-        <el-col :span="16">
-          <span v-if="selectedRow.length > 0" 
-                class="selectedActions">
-            <label>Selected:</label> 
-            <CButton @click="bulkDelete">
-                <CIcon name="cil-trash" />
-            </CButton>
-          </span>
-          <CButton @click="onCreate">
-            <CIcon name="cil-plus" />
-          </CButton>
-        </el-col>
-
-        <el-col :span="8">
-          <el-input placeholder="Search value" v-model="filters[0].value" clearable  class="input-with-select" size="mini" >
-            <el-select v-model="filters[0].prop" placeholder="Search field" slot="prepend" size="mini" >
-              <el-option
-                v-for="item in titles"
-                :key="item.prop"
-                :label="item.label"
-                :value="item.prop">
-              </el-option>
-            </el-select>
-          </el-input>
-        </el-col>
-      </el-row>
-    </div>
-
-    <data-tables
-        v-if="renderComponent" 
-        :data="model" 
-        :total="model.length" 
-        :table-props="tableProps"
-        :pagination-props="{ pageSizes: [5, 20, 50, 150] }" 
-        :filters="filters" 
-        @selection-change="handleSelectionChange"
+    v-if="renderComponent"
+  > 
+    <Table
+      ref="tables" 
+      v-if="schema.api"
+      :schema="schema"
+      :resource="resource"
+      @actions:create="onCreate"
+      @actions:edit="onEdit"
     >
-      <el-table-column type="selection" width="55">
-      </el-table-column>
-
-      <el-table-column 
-        v-for="title in titles" 
-        :prop="title.prop" 
-        :label="title.label" 
-        :key="title.prop" 
-        sortable="custom">
-          <template slot-scope="props"> 
-              <CellTypes :cell="title" :data="props"/>
-          </template>
-      </el-table-column>
-
-      
-      <el-table-column
-        prop="actions" 
-        label="" 
-        :sortable="false">
-          <template slot-scope="props" > 
-            <section class="text-right">
-              <CButton  class="card-header-action mr-3"  @click="onEdit(props.row, props.$index)"> 
-                <CIcon name="cil-pencil" />
-              </CButton>
-              <CButton   class="card-header-action"  @click="onDelete(props.row, props.$index)"> 
-                <CIcon name="cil-trash" />
-              </CButton>
-            </section>
-          </template>
-      </el-table-column>
-
-    </data-tables>
-
+    </Table>
+ 
     <CModal
       :title="'Edit row'"
       :show.sync="formopen"
       :closeOnBackdrop="false"
     >
-      <FormulateForm 
-          v-if="row && row.data"
-          v-model="row.data"
-          :schema="schema.properties"
-          @submit="submit"
-          #default="{ hasErrors }"
-      >
-
-        <div class="action-buttons mt-3">
-          <CButton
-              type="button"
-              color="danger"
-              class="mr-2"
-              @click="() => formopen = null"
-            >
-                Cancel
-          </CButton>
-          <CButton
-              type="submit"
-              color="success"
-              :disabled="hasErrors"
-            >
-                Save
-          </CButton>
-        </div>
-      </FormulateForm>
-      <template slot="footer"><span></span></template>
+      <Form
+          ref="forms" 
+          v-if="formopen"
+          :formopen="formopen"
+          :schema="schema" 
+          :data="(row.data || {})"
+          @model:saved="submit"
+          @close="closeForm"
+        /> 
+  
+        <template slot="footer"><span></span></template>
     </CModal>
   </div>
 </template>
 
 <script>
-import { get, sortBy, debounce } from 'lodash';
-import { filterParams, schemaColumns } from '../../../services/helpers'
+import { get, has, findIndex } from 'lodash';
+import { interpolate } from '../../../services/helpers'
+import ControllerMixin from '../../../services/controller.mixin'
 
-import CellTypes from '../table-types/index'
+import Table from '../table'
+import Form from '../formulate'
+
 export default {
+  mixins: [ControllerMixin],
   components:{
-    CellTypes
+    Table, Form
   },
   props: {
     context: {
@@ -128,59 +55,55 @@ export default {
   },
   data () {
     return {
-        renderComponent: true,
+        schema: {},
+        renderComponent: false,
         formopen: false,
-        queryInfo: {},
-        search:'',
-        actions:{},
-        columns: {},
-        titles:[],
-        selectedRow: [],
-        filters: [{}],
-        tableProps:{
-          defaultSort: { prop: 'id', order: 'descending'} 
-        },
-        row: null
+        row: null,
+        resource:[]
     }
   },
   computed: {
     model:{
       get(){ 
-          return this.context.model || []
+          return this.context.model 
       },
       set(value){
           this.context.model = value
       }
     },
-    schema(){
-      return this.context.attributes?.schema || {}
+    isStandalone(){
+      return get(this.schema, 'api.bypassGetData', false)
     }
   },
-  mounted(){
-    this.titles = schemaColumns([ ...this.schema?.properties ])
-  },
   methods: {
+    closeForm({ refresh }){
+      if( refresh ) this.forceRerender()
+
+      this.row = null
+      this.formopen = false
+    },
     onCreate() { 
       this.row = { index:null, data:{} }
       this.formopen = true
     },
-    submit(data){
-      if( this.row.index === null ){
-        this.context.model.push(data)
-      }else{
-        this.context.model[this.row.index] = data;
-      }
-      this.row = null
-      this.formopen = false
-      this.$message('Added with success') 
-      this.forceRerender()
-    },
-    onEdit(data, index){
+    onEdit(data){
+      let index = null
+      let primaryKey = get(this.schema, 'primaryKey', 'id')
+      
+      if( this.isStandalone && Array.isArray(this.resource)) 
+        index = findIndex(this.resource, [primaryKey, data[primaryKey]])
+
       this.row = { index, data }
       this.formopen = true
     },
-    onDelete(row, index){
-      if( confirm('Are you sure to delete?') ){
+    onDelete(row){
+      let index = null
+      let primaryKey = get(this.schema, 'primaryKey', 'id')
+      
+      if( this.isStandalone && Array.isArray(this.resource)) 
+        index = findIndex(this.resource, [primaryKey, data[primaryKey]])
+
+      if( index !== null && confirm('Are you sure to delete?') ){
        this.model.splice(index, 1)
        this.$message('Deleted with success') 
       }
@@ -199,6 +122,15 @@ export default {
         this.$message('Deleted with success') 
       }
     },
+    saveRow(data){
+      if( this.row.index === null ){
+        this.context.model.push(data)
+        this.$message('Added with success') 
+      }else{
+        this.context.model[this.row.index] = data;
+        this.$message('Update with success') 
+      }
+    },
     forceRerender() {
       this.renderComponent = false;
 
@@ -206,31 +138,44 @@ export default {
         // Add the component back in
         this.renderComponent = true;
       });
+    },
+    async submit(data){
+      if( this.isStandalone ){
+        this.saveRow(data)
+      }else{
+        this.$refs.forms.loader = true
+        await this.saveData(this.schema, data).then(({data}) => {
+            console.debug('Sucess saved', data)
+        })
+        this.$refs.forms.loader = true
+      }
+      this.row = null
+      this.formopen = false
+      this.forceRerender()
+    },
+    transformSchema(schema){
+      schema.api = Object.assign(schema.api, this.request) 
+      
+      if( has(schema, 'api.rootApi') )
+        schema.api.rootApi = interpolate( schema.api.rootApi, { data: this.model, params: (schema.api.params || {}) } )
+
+      if( get(schema, 'api.params', false) && Object.keys(schema.api.params).length > 0 )
+        Object.keys(schema.api.params).map(key => {
+            if( typeof schema.api.params[key] == 'string' )
+              schema.api.params[key] = interpolate( schema.api.params[key], { data: this.model } )
+        })
+
+      return schema
     }
-  }
+  },
+  mounted(){
+    console.log('model', this.context.model)
+    this.schema = this.transformSchema( this.context.attributes?.schema || {} )
+
+    if( get(this.schema, 'api.bypassGetData',  false) && Array.isArray(this.model) )
+      this.resource = this.model
+
+    this.renderComponent = true
+  },
 }
 </script>
-
-<style scoped>
-@import "https://cdn.quilljs.com/1.2.6/quill.snow.css";
-</style>
-
-<style lang="scss">
-.el-input-group__prepend {
-    width: 40%;
-}
-.el-table__row td{
-   padding:0;
-   font-size: .9em;
-}
-.el-pagination{
-  margin-top:20px
-}
-.selectedActions{
-  border-right: 1px solid #ccc;
-  label {
-    padding-top: 5px;
-    margin: 0;
-  }
-}
-</style>

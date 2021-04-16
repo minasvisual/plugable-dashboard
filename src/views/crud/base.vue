@@ -6,9 +6,7 @@
           <strong>{{ currentProject.name }} | {{ active.title }}</strong>
           
           <div class="card-header-actions" >
-            <CButton v-if="hasAuth" size="sm" class="card-header-action"  @click="loadModel"> 
-              <CIcon name="cil-key" /> Login
-            </CButton>
+            <span v-if="session">Logged as {{  session.user.name ? session.user.name: 'anonimous' }}</span> |
             <CButton size="sm" class="card-header-action"  @click="loadModel"> 
               <CIcon name="cil-reload" /> Model
             </CButton>
@@ -44,8 +42,8 @@
                       :formopen="formopen"
                       :schema="schema" 
                       :data="row"
-                      @model:saved="reloadData"
-                      @close="reloadData"
+                      @model:saved="formHook"
+                      @close="closeForm"
                     /> 
                     <template slot="footer"><span></span></template>
                 </CModal>
@@ -92,12 +90,10 @@ export default {
   watch: {
     $route(to, from) {
         if( to.params.model != from.params.model )
-          this.loadModel()
+          this.loadModel({cache: {ignoreCache: true}})
     },
     currentProject(newVal, oldVal){
-        console.log('watched current project', newVal, oldVal)
       if( has(this.currentProject, 'code') && !oldVal.code ){
-        console.log('watched current project if', has(this.currentProject, 'code'), !oldVal)
         this.loadModel()
       }else if( has(this.currentProject, 'code') && this.currentProject.code !== newVal.code ){
         let res = Object.keys(newVal.resources)
@@ -122,8 +118,8 @@ export default {
     closeForm({ refresh }){
         if( refresh )
           this.reloadData()
-        else
-          this.formopen = false;
+          
+        this.formopen = false;
     },
     actions(action, data){
       if( action == 'FORM_CREATE'){
@@ -151,6 +147,17 @@ export default {
 
       return request
     },
+    async formHook(data){
+      try{
+        return await this.saveData(this.active, data)
+          .then((res) => {
+              this.closeForm({ refresh: true })
+              return res
+          })
+      }catch(err){
+        console.debug('Form submit error', err)
+      }
+    }
   }
 }
 </script>

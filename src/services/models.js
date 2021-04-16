@@ -1,8 +1,19 @@
 import { get, has } from 'lodash'
 import axios from 'axios'
+import { setup } from 'axios-cache-adapter'
 import { interpolate, queryString } from './helpers'
 
-axios.interceptors.request.use(
+// Create `axios-cache-adapter` instance
+const api = setup({
+  maxAge: 1 * ( 60 * 1000 ), // N x 1 minute
+  //ignoreCache: process.env.VUE_APP_ENV === 'local',
+  exclude: {
+    // Only exclude PUT, PATCH and DELETE methods from cache
+    methods: ['put', 'patch', 'delete']
+  }
+})
+
+api.interceptors.request.use(
   function (config) {
 
     if( !config.headers[( process.env.VUE_APP_LOGIN_TOKEN_HEADER || 'access-token')] ){
@@ -28,13 +39,16 @@ axios.interceptors.request.use(
 // }
 
 export const request = (query, options={}, wrap=true) => {
-  return axios({ url: query,  ...options }).then((res) => wrap ? res.data: res )
+  return api({ url: query,  ...options }).then((res) => {
+    console.debug('Cached request', res.request.fromCache !== true)
+    return wrap ? res.data: res 
+  })
 }
 
 export const loadModel = async (url, options) => {
 
-   return await request(url)
- 
+   return await request(url, options)
+
 }
 
 export const loadProjects = async () => {
@@ -69,8 +83,11 @@ export const getData = async (model, data={}, config={}) => {
         if( data[(model.primaryKey || 'id')] ){
           return ( model.api.wrapDataById ? get(data, model.api.wrapDataById, data): data)
         }else{
-          let rows = ( model.api.wrapData ? get(data, model.api.wrapData, []): data)
+          let rows = ( model.api.wrapData ? get(data, model.api.wrapData, data): data)
           let total = ( model.api.totalData ? get(data, model.api.totalData, rows.length): rows.length )
+
+          if( !Array.isArray(rows) ) rows = [rows]
+          if( typeof total !== 'number' ) total = rows.length
 
           return {
             rows,

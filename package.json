@@ -35,6 +35,7 @@
     "@coreui/vue": "^3.0.12",
     "@coreui/vue-chartjs": "^1.0.5",
     "axios": "^0.21.1",
+    "axios-cache-adapter": "^2.7.3",
     "dotenv": "^8.2.0",
     "element-ui": "2.13.2",
     "imask": "6.0.5",

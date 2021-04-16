@@ -4,7 +4,7 @@
       vazio
     </slot>
     <div  v-else class="col-12 col-md-4 offset-md-4">
-        <h3 v-if="loading" class="text-center">Authenticating...</h3>
+        <h3 v-if="loading" class="text-center">Authenticating...<CSpinner color="info" size="sm"/></h3>
         <FormulateForm 
           v-else
           v-model="model"
@@ -16,7 +16,7 @@
           
           <FormulateInput type="text" name="username" placeholder="Username" /> 
 
-          <FormulateInput type="text" name="secret"  placeholder="Password" /> 
+          <FormulateInput type="password" name="secret"  placeholder="Password" /> 
 
           <FormulateInput type="checkbox" name="remember" label="remember" /> 
 
@@ -85,8 +85,11 @@ export default {
           return this.$emit('auth:failed', {message: 'token not found', config, data, headers})
         }
         let authRequest = this.authRequest(token)
+       
+        this.$emit('auth:logged', { logged: this.logged, request: authRequest })
+        this.loading = false;
+        this.login = true;
                     
-        return this.$emit('auth:logged', { logged: this.logged, request: authRequest })
     },
     error({ response, message, ...data }){
       console.log('Auth Error', message, response, data)
@@ -105,6 +108,7 @@ export default {
         return auth
       }catch(e){
         console.debug('checkLogged failed: token', e)
+        this.login = false;
         return this.$emit('auth:failed', {message: e.message})
       }
     }, 
@@ -144,6 +148,7 @@ export default {
         console.debug('show login form')
       } 
     }catch(e){
+      this.login = false;
       this.loading = false;
       console.log('erro mounted auth', e)
       this.$emit('auth:failed', e)

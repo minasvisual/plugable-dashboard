@@ -78,7 +78,7 @@
                                 <li>
                                     attributes: object 
                                     <ul>
-                                    <li>url: string - URL of items</li>
+                                    <li>url: string - URL of items (Can use {data} to interpolate row)</li>
                                     <li>wrapData: string - response object|array wrap</li>
                                     <li>fieldLabel: string - response row index of label field</li>
                                     <li>fieldValue: string - response row index of value field</li>

@@ -11,7 +11,8 @@ const state = {
   sidebarMinimize: true,
   projects:[],
   currentProject: {},
-  auth:{}
+  auth:{},
+  loading: false
 }
 
 const mutations = {

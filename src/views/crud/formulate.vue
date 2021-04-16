@@ -1,5 +1,9 @@
 <template>
+    <div class="form-loader w-100 text-center" v-if="loader">
+      <CSpinner color="info"/>
+    </div>
     <FormulateForm 
+          v-else
           v-model="model"
           :schema="form"
           @submit="submit"
@@ -26,15 +30,18 @@
 </template>
 
 <script>
-import { schemaColumns, formatDate } from '../../services/helpers'
+import { get } from 'lodash'
+import { schemaColumns, formatDate, formatModel } from '../../services/helpers'
 import ControllerMixin from '../../services/controller.mixin'
+
 export default {
     mixins:[ControllerMixin],
     data(){
       return{
         form: [],
         model: {},
-        columns: []
+        columns: [],
+        loader: true
       }
     },
     props:{
@@ -44,29 +51,34 @@ export default {
       },
       data: Object
     },
+    computed:{
+      isStandalone(){
+        return get(this.schema, 'api.bypassGetByid', false) || get(this.schema, 'api.bypassGetData', false)
+      }
+    },
     mounted(){
-      ( this.schema.api.bypassGetByid ? Promise.resolve(this.data) : this.getRow()).then( (data) => {
+      ( this.isStandalone ? Promise.resolve(this.data) : this.getRow() ).then( (data) => {
             this.form =  this.schema.properties
             this.columns = schemaColumns(this.schema.properties)
-            this.columns.map(i => {
-              if( data[i.prop] && ['date'].includes(i.type) ){
-                //console.log('changed', this.data[i.prop], this.data[i.prop].replace(' ', 'T'))
-                data[i.prop] = formatDate(data[i.prop], 'YYYY-MM-DD\\Thh:mm:ss', null, true)
-              } 
-            })
+            data = formatModel(this.columns, data)
+            
             this.model = data
+            this.loader = false
+        }).catch((err) => {
+          console.debug('Form mounted error', err)
+          this.$message(err.message, 'danger')
+            
+          this.loader = false
         })
     },
     methods: {
       async submit (data) {
-        return await this.saveData(this.schema, data)
-              .then((res) => {
-                  this.$emit('close', { refresh: true })
-                  this.$emit('model:saved', {data, response})
-              }) 
+        this.$emit('model:saved', data)
+        
+        return data
       },
       getRow(){
-        return this.getData(this.schema, this.data)
+          return this.getData(this.schema, this.data)
       }
     },
 }

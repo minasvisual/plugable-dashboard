@@ -1,6 +1,16 @@
 import { has, sortBy, get } from 'lodash'
 import moment from 'moment'
 
+export const formatModel = (columns=[], data) => {
+    columns.map(i => {
+        if( data[i.prop] && ['date'].includes(i.type) ){ 
+            let format = ( i.type == 'date' ? 'YYYY-MM-DD': 'YYYY-MM-DD\\Thh:mm:ss' )
+            data[i.prop] = formatDate(data[i.prop], format, null, true)
+        } 
+    })
+    return data
+}
+
 export const formatDate = function(value, format, from, utc=false) {
     if (value) {
       let date = moment(String(value), from)
@@ -14,10 +24,19 @@ export const interpolate = (string, scope) => {
 }
 
 export const queryString = (params, join) => {
-    if( params && Object.keys(params).length > 0 )
-        return join+new URLSearchParams(params)
-    else
-        return ''
+    let rtn = ''
+    let arrQuery = []
+    if( params && Object.keys(params).length > 0 ){
+        Object.keys(params).map(k => {
+            if( Array.isArray(params[k]) )
+                params[k].map(i => arrQuery.push([k, i]) )
+            else
+                arrQuery.push([k, params[k]])
+        })
+
+        rtn = join+new URLSearchParams( arrQuery )
+    }
+    return rtn
 }
 
 export const filterParams = (api, queryInfo) => {
@@ -32,10 +51,11 @@ export const filterParams = (api, queryInfo) => {
         params[ pagination.sortField || 'order' ] = interpolate( get(pagination, 'sortExp', '{prop},{order}'), pagData)
     }
 
+    let filterField = interpolate( get(pagination, 'filterField', 'filter'), get(filters, '[0]', {}) )
     if( has(filters, '[0].prop') && has(filters, '[0].value') && has(pagination, 'filterField') && has(pagination, 'filterExp') )
-        params[ pagination.filterField || 'filter' ] = interpolate( (pagination.filterExp || '{prop},like,%{value}%') , filters[0])
+        params[ filterField ] = interpolate( (pagination.filterExp || '{prop},like,%{value}%') , filters[0])
     else if( has(pagination, 'filterField') )
-        delete params[ pagination.filterField || 'filter' ]
+        delete params[ filterField ]
 
     return {...api, params};
 }
@@ -50,7 +70,7 @@ export const schemaColumns = (properties) => {
                 prop: get(col, 'name', col.id),
                 label: get(col, 'label', col.id),
                 type: get(col, 'config.type', (col.type || 'text')),
-                action: get(col, 'config.action', {}),
+                action: get(col, 'config.action', (col.attributes || {})),
                 options: get(col, 'options', {}),
             })
     }

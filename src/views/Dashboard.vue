@@ -2,18 +2,18 @@
   <div>
     
     <CRow>
-      <CCol md=3>
+      <CCol md=2>
         <CWidgetSimple header="Projects" :text="projects.length.toString()">
           <CChartLineSimple style="height:40px" border-color="danger"/>
         </CWidgetSimple>
       </CCol>
 
-      <CCol md=3 v-for="row of projects" :key="row.code" @click="setProject(row)">
+      <CCol md=2 v-for="row of projects" :key="row.code" @click="setProject(row)">
         <CWidgetSimple :header="row.name" :text="calcResources(row) + ' apis'">
           <CChartLineSimple style="height:40px" border-color="primary"/>
         </CWidgetSimple>
       </CCol>
-    </CRow>
+    </CRow> 
 
     <CCard>
       <CCardBody>

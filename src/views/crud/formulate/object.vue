@@ -1,6 +1,6 @@
 <template>
     <FormulateForm
-      v-model="context.model"
+      v-model="model"
       :schema="context.options"
     />
 </template>
@@ -13,6 +13,19 @@ export default {
       required: true,
       default: { model:{}, options:[] }
     },
+  },
+  computed:{
+    model:{
+      get(){ 
+          return this.context.model || {}
+      },
+      set(value){
+          this.context.model = value
+      }
+    },
+    options(){
+      return context.options || []
+    }
   }
 }
 </script>

@@ -1,40 +1,24 @@
 <template>
-  <div
-    :class="`formulate-input-element formulate-input-element--${context.type}`"
-    :data-type="context.type"
-    v-if="renderComponent"
-  >
     <CSelect
-        v-model="context.model"
-        @change="change"
-        v-bind="context.attributes"
-        :options="options"
+        readonly
+        v-if="renderComponent"
+        v-model="data"
+        :options="(cell.options || [])"
+        size="sm"
     />
-  </div>
 </template>
+
 
 <script>
 import { get } from 'lodash'
 import { request } from '../../../services/models'
 import { interpolate } from '../../../services/helpers'
 export default {
-  props: {
-    context: {
-      type: Object,
-      required: true
-    },
-  },
+  props:['data', 'cell'],
   data(){return{
-    renderComponent: true,
-    options: []
+    renderComponent: true
   }},
   computed:{
-    model(){
-      return this.context.model
-    },
-    type(){ 
-      return this.context.attributes.attributes.type || 'select' 
-    }, 
     currentProject(){
       return this.$store.state.currentProject || null
     }, 
@@ -43,15 +27,11 @@ export default {
     }, 
   },
   created(){
-    this.options = this.context.options
-    let { attributes } = this.context.attributes
+    let { action } = this.cell
 
-    this.getOptions(attributes || {})
+    this.getOptions(action || {})
   },
   methods:{
-    change({target: { value }}){
-      this.context.model = value
-    },
     forceRerender() {
       this.renderComponent = false;
 
@@ -63,19 +43,16 @@ export default {
       try{
         if( url ){
           requestOptions = Object.assign(requestOptions, this.request)
-          let urlNew = interpolate(url, { data: this.context.model })
-          let data = await request( urlNew, { method:'get', ...requestOptions })
+          let data = await request(url, { method:'get', ...requestOptions })
 
           if( wrapData )
             data = get(data, wrapData, data)
 
-
-          this.options = data && data.map((i, k) => ({ 
+          this.cell.options = data && data.map((i, k) => ({ 
               label: get(i, fieldLabel, i.toString()), 
               value: get(i, fieldValue, k)
             }) 
           )
-          
           this.forceRerender()
         }
       }catch(e){

@@ -4,8 +4,7 @@ import App from './App'
 import router from './router'
 import CoreuiVue from '@coreui/vue'
 import { iconsSet as icons } from './assets/icons/icons.js'
-import store from './store'
-import VeeValidate from 'vee-validate'
+import store from './store' 
 import VueQuill from 'vue-quill'
 import { formatDate } from './services/helpers'
 
@@ -28,8 +27,7 @@ Vue.config.performance = true
 Vue.use(VueQuill)
 Vue.use(ElementUI, { locale })
 Vue.use(CoreuiVue)
-Vue.use(VueDataTables)
-Vue.use(VeeValidate, { errorBagName: 'vErrors' });
+Vue.use(VueDataTables) 
 
 Vue.use(VJsoneditor)
 Vue.filter('formatDate', formatDate)

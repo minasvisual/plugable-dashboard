@@ -36,12 +36,13 @@
                         v-if="schema.properties && render"
                         :schema="schema"
                         :data="row"
+                        @model:saved="submitHandler"
                       /> 
                   </CTab>
                   <CTab title="Table" v-if="active"> 
                     <Table 
                       ref="tables" 
-                      v-if="((hasAuth && logged) || !hasAuth) && render"
+                      v-if="schema.api && render"
                       :schema="schema"
                       @actions:create="actionsTable('FORM_CREATE', $event)"
                       @actions:edit="actionsTable('FORM_EDIT', $event)"
@@ -58,6 +59,7 @@
               <option value="project">Project</option>
               <option value="model">Model</option>
               <option value="row">Form values</option>
+              <option value="result">Result</option>
             </select>
             <CButton type="button" @click="newJson(jsonEditorData)"><CIcon name="cil-plus" /> New {{ jsonEditorData }}</CButton>
 
@@ -65,6 +67,7 @@
             <VJsoneditor v-if="jsonEditorData == 'project'" v-model="currentProject" height="100%" :options="{mode: 'code'}" ></VJsoneditor>
             <VJsoneditor v-else-if="jsonEditorData == 'model'" v-model="active" height="100%" :options="{mode: 'code'}" ></VJsoneditor>
             <VJsoneditor v-else-if="jsonEditorData == 'row'" v-model="row" height="100%" :options="{mode: 'code'}" ></VJsoneditor>
+            <VJsoneditor v-else-if="jsonEditorData == 'result'" v-model="submit" height="100%" :options="{mode: 'code'}" ></VJsoneditor>
           </CCol>
         </CRow>
         
@@ -99,7 +102,6 @@ import NewModel from './playgrounds/NewModel'
 import axios from 'axios'
 
 export default {
-  name: 'Colors',
   mixins:[ControllerMixin, SessionMixin],
   components: { VJsoneditor, Forms, Table, Auth, NewProject, NewModel},
   data(){return{
@@ -109,6 +111,7 @@ export default {
     model: null,
     active: null,
     row: { },
+    submit: {},
     addModal: {}
   }},
   watch:{
@@ -132,10 +135,12 @@ export default {
   },
   methods:{
     actionsTable(action, data){
-        this.row = data
+      console.debug('action table', data)
+      this.row = data
+      this.$message("Row added to form values")
     },
     getModel(model){
-       axios.get(this.currentProject.resources_path + model)
+      axios.get(this.currentProject.resources_path + model)
         .then(({ data }) => this.active = data)
     },
     newJson(type){
@@ -171,6 +176,10 @@ export default {
         this.$nextTick(() => {
           this.render = true;
         });
+    },
+    submitHandler(data){
+      this.submit = data
+      this.$message('Data saved in result on json viewer')
     }
   }
 }
