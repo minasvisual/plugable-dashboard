@@ -171,3 +171,23 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.el-input-group__prepend {
+    width: 40%;
+}
+.el-table__row td{
+   padding:0;
+   font-size: .9em;
+}
+.el-pagination{
+  margin-top:20px
+}
+.selectedActions{
+  border-right: 1px solid #ccc;
+  label {
+    padding-top: 5px;
+    margin: 0;
+  }
+}
+</style>

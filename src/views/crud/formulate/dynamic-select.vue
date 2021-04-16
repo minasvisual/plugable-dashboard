@@ -9,7 +9,9 @@
         @change="change"
         v-bind="context.attributes"
         :options="options"
-    />
+        :placeholder="placeholder"
+    >
+    </CSelect>
   </div>
 </template>
 
@@ -26,6 +28,7 @@ export default {
   },
   data(){return{
     renderComponent: true,
+    loading: false,
     options: []
   }},
   computed:{
@@ -41,6 +44,9 @@ export default {
     request(){
       return get(this.$store, `state.auth.${this.currentProject.code}.request`, {})
     }, 
+    placeholder(){
+      return this.loading ? 'Loading...' : 'Select One'
+    }
   },
   created(){
     this.options = this.context.options
@@ -62,6 +68,7 @@ export default {
     async getOptions({ url, requestOptions={}, fieldLabel, fieldValue, wrapData=null }){
       try{
         if( url ){
+          this.loading = true;
           requestOptions = Object.assign(requestOptions, this.request)
           let urlNew = interpolate(url, { data: this.context.model })
           let data = await request( urlNew, { method:'get', ...requestOptions })
@@ -75,6 +82,8 @@ export default {
               value: get(i, fieldValue, k)
             }) 
           )
+          
+          this.loading = false;
           
           this.forceRerender()
         }

@@ -79,7 +79,7 @@ export default {
     closeForm({ refresh }){
       if( refresh ) this.forceRerender()
 
-      this.row = null
+      this.row = { index:null, data:{} }
       this.formopen = false
     },
     onCreate() { 
@@ -88,6 +88,7 @@ export default {
     },
     onEdit(data){
       let index = null
+      console.log('form edit click', data)
       let primaryKey = get(this.schema, 'primaryKey', 'id')
       
       if( this.isStandalone && Array.isArray(this.resource)) 
@@ -149,31 +150,30 @@ export default {
         })
         this.$refs.forms.loader = true
       }
-      this.row = null
+      this.row = { index:null, data:{} }
       this.formopen = false
       this.forceRerender()
     },
     transformSchema(schema){
-      schema.api = Object.assign(schema.api, this.request) 
+      schema.api = Object.assign( get(schema, 'api', {}), this.request) 
       
-      if( has(schema, 'api.rootApi') )
-        schema.api.rootApi = interpolate( schema.api.rootApi, { data: this.model, params: (schema.api.params || {}) } )
+      // if( this.model && has(schema, 'api.rootApi') )
+      //   schema.api.rootApi = interpolate( schema.api.rootApi, { data: this.model } )
 
-      if( get(schema, 'api.params', false) && Object.keys(schema.api.params).length > 0 )
-        Object.keys(schema.api.params).map(key => {
-            if( typeof schema.api.params[key] == 'string' )
-              schema.api.params[key] = interpolate( schema.api.params[key], { data: this.model } )
-        })
+      // if( this.model && get(schema, 'api.params', false) && Object.keys(schema.api.params).length > 0 )
+      //   Object.keys( get(schema, 'api.params', {}) ).map(key => {
+      //       if( typeof schema.api.params[key] == 'string' )
+      //         schema.api.params[key] = interpolate( schema.api.params[key], { data: this.model })
+      //   })
 
       return schema
     }
   },
   mounted(){
-    console.log('model', this.context.model)
-    this.schema = this.transformSchema( this.context.attributes?.schema || {} )
+    this.schema = this.transformSchema( { ...(this.context.attributes?.schema || {}) } )
 
-    if( get(this.schema, 'api.bypassGetData',  false) && Array.isArray(this.model) )
-      this.resource = this.model
+    //if( get(this.schema, 'api.bypassGetData',  false) && Array.isArray(this.model) )
+    this.resource = this.model
 
     this.renderComponent = true
   },

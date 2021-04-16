@@ -46,9 +46,7 @@ export const request = (query, options={}, wrap=true) => {
 }
 
 export const loadModel = async (url, options) => {
-
    return await request(url, options)
-
 }
 
 export const loadProjects = async () => {
@@ -64,8 +62,8 @@ export const getData = async (model, data={}, config={}) => {
     method: ( data[(model.primaryKey || 'id')] ? (api.methodGetById || 'GET') : (api.methodGet || 'GET') ),
     ...config
   }
-  
-  let query = interpolate( queryString(api.params, (api.rootApi.includes('?') ? '&':'?')),  api.params)
+
+  let query = queryString(api.params, (api.rootApi.includes('?') ? '&':'?'), data)
 
   if( data[(model.primaryKey || 'id')] )
     url = `${api.rootApi}${api.urlGetById || '/{id}'}${query}`
@@ -77,7 +75,7 @@ export const getData = async (model, data={}, config={}) => {
   
   url = interpolate(url, {...data})
   
-  console.log('get data', url, options)
+  console.debug('get data', url, options)
   return request(url, options)
       .then( data => {  
         if( data[(model.primaryKey || 'id')] ){

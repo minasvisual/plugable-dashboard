@@ -52,6 +52,9 @@ export default {
       data: Object
     },
     computed:{
+      primaryKey(){
+        return get(this.schema, 'primaryKey', 'id')
+      },
       isStandalone(){
         return get(this.schema, 'api.bypassGetByid', false) || get(this.schema, 'api.bypassGetData', false)
       }
@@ -78,6 +81,8 @@ export default {
         return data
       },
       getRow(){
+          if( !this.data || Object.keys( this.data ).length == 0 ) return Promise.resolve({})
+
           return this.getData(this.schema, this.data)
       }
     },

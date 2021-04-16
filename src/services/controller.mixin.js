@@ -59,11 +59,6 @@ export default {
       }
     },
     getData(schema, options){
-
-      // schema.api = Object.assign(schema.api, this.request)
-
-      // console.log(schema, request)
-
       return getData(schema, options)
     },
     saveData(schema, data){

@@ -49,6 +49,10 @@
 	- [ ] dashboard flows ( schema i/o data subsequent)
 	- [ ] Cache schema
 
+## SECURITY ALERT
+
+Don't use this dashboard online, or if you use, protect folder by password access. Pluggable dashboard its designed to use with ElectronJS, locally and safe from  web attacks.
+
 ## Dashboard Config
 
 To configure dashboard fill the .env and build vue

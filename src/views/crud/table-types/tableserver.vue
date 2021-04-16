@@ -145,11 +145,11 @@ export default {
         
         if( this.validateQueryInfo(queryInfo) ){
           this.queryInfo = queryInfo
-          this.schema.api = filterParams(this.schema.api, queryInfo) 
+          this.schema.api = filterParams(this.schema.api, { ...queryInfo, data: this.resource }) 
           //this.resetGrid()
 
           this.loading = true
-          this.data = await getData(this.schema, {})
+          this.data = await getData(this.schema, { ...queryInfo, data: this.resource })
         }
         this.loading = false
         return true;
@@ -183,3 +183,23 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.el-input-group__prepend {
+    width: 40%;
+}
+.el-table__row td{
+   padding:0;
+   font-size: .9em;
+}
+.el-pagination{
+  margin-top:20px
+}
+.selectedActions{
+  border-right: 1px solid #ccc;
+  label {
+    padding-top: 5px;
+    margin: 0;
+  }
+}
+</style>

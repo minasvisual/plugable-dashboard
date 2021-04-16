@@ -9,7 +9,7 @@ export default {
             if( !queryInfo || typeof queryInfo !== 'object' ) return false;
             
             if( ['sizeChange', 'size', 'pageChange', 'sort', 'filter', 'page', 'init'].includes(queryInfo.type) ){
-                if( queryInfo.type == 'filter' && ( !get(queryInfo, 'filters[0].prop') || !get(queryInfo, 'filters[0].value') ) )
+                if( queryInfo.type == 'filter' &&  !get(queryInfo, 'filters[0].prop')  )
                     return false;
             }else{
                 return false;

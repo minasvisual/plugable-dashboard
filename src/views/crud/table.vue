@@ -15,6 +15,7 @@
         @actions:create="$emit('actions:create', $event)"
         @actions:edit="$emit('actions:edit', $event)" 
     />
+    <p v-else class="text-center"><small>Missing rootApi (Server Crud) or bypassGetData (Sub object Crud) property</small></p>
 
   </section>
 </template>
@@ -48,14 +49,12 @@ export default {
     boot(){   
       if( get(this.schema, 'api.bypassGetData', false) && Array.isArray(this.resource) ){
         this.layout = 'local' 
-        this.renderComponent = true
       }else if( get(this.schema, 'api.rootApi', false) ) {
         this.layout = 'server' 
-        this.renderComponent = true
       }else{
         console.log('table cant be rendered: rootApi', get(this.schema, 'api.rootApi', false), ' resource: ', this.resource)
       }
-      console.log('schema', this.layout, this.schema)
+      this.renderComponent = true
     },
   },
   mounted(){
@@ -63,23 +62,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-.el-input-group__prepend {
-    width: 40%;
-}
-.el-table__row td{
-   padding:0;
-   font-size: .9em;
-}
-.el-pagination{
-  margin-top:20px
-}
-.selectedActions{
-  border-right: 1px solid #ccc;
-  label {
-    padding-top: 5px;
-    margin: 0;
-  }
-}
-</style>

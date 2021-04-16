@@ -19,19 +19,21 @@ export const formatDate = function(value, format, from, utc=false) {
     }
 }
 
-export const interpolate = (string, scope) => {
-    return string.replace(/\{([^}]*)}/g, (r,k) => get(scope, k) );
+export const interpolate = (string, scope, def) => {
+    if( typeof string !== 'string' ) return string; 
+
+    return string.replace(/\{([^}]*)}/g, (r,k) => get(scope, k, (def ? def:'{'+k+'}')) );
 }
 
-export const queryString = (params, join) => {
+export const queryString = (params, join, data) => {
     let rtn = ''
     let arrQuery = []
     if( params && Object.keys(params).length > 0 ){
         Object.keys(params).map(k => {
             if( Array.isArray(params[k]) )
-                params[k].map(i => arrQuery.push([k, i]) )
+                params[k].map(i => arrQuery.push([ interpolate(k, data), interpolate(i, data)]) )
             else
-                arrQuery.push([k, params[k]])
+                arrQuery.push([interpolate(k, data), interpolate(params[k], data)])
         })
 
         rtn = join+new URLSearchParams( arrQuery )

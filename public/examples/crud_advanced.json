@@ -130,17 +130,62 @@
     },
     {
       "name": "grid",
-      "label": "Grid",
+      "label": "Grid Local",
       "type": "grid",
       "schema": {
+        "api": {
+          "bypassGetData": true
+        },
         "properties": [
           {
             "name": "name",
-            "label": "name"
+            "label": "name",
+            "config": {
+              "grid": true
+            }
           },
           {
             "name": "email",
-            "label": "Email"
+            "label": "Email",
+            "config": {
+              "grid": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "gridserver",
+      "label": "Grid HTTP",
+      "type": "grid",
+      "schema": {
+        "api": {
+          "rootApi": "/examples/advanced_data.json",
+          "urlGetById": " ",
+          "wrapData": "users",
+          "wrapDataById": "users[0]"
+        },
+        "properties": [ 
+          {
+            "name": "id",
+            "label": "ID",
+            "config": {
+              "grid": true
+            }
+          },
+          {
+            "name": "name",
+            "label": "name",
+            "config": {
+              "grid": true
+            }
+          },
+          {
+            "name": "email",
+            "label": "Email",
+            "config": {
+              "grid": true
+            }
           }
         ]
       }
