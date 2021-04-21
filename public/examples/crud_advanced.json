@@ -6,7 +6,11 @@
   "properties": [
     {
       "component": "h3",
-      "children": "Example component"
+      "children": "Example component (crud by datasource json, canoot)"
+    },
+    {
+      "component": "small",
+      "children": "Crud by datasource json, just read"
     },
     {
       "name": "id",

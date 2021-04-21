@@ -53,9 +53,22 @@
 
 Don't use this dashboard online, or if you use, protect folder by password access. Pluggable dashboard its designed to use with ElectronJS, locally and safe from  web attacks.
 
-## Dashboard Config
+### Installation
 
-To configure dashboard fill the .env and build vue
+#### Clone repo
+
+``` bash
+# clone the repo
+
+# go into app's directory
+
+# install app's dependencies
+$ npm install
+```
+
+#### Dashboard Config
+
+To configure dashboard fill the .env and build vue (You can clone .env.example to .env)
 ```
 VUE_APP_ENV=local
 VUE_APP_DATABASE=/models/projects.json			// Projects json file path/url | default /public/models/projects.json
@@ -70,9 +83,24 @@ VUE_APP_LOGIN_TOKEN_HEADER=access-token			// Request token header JWT
 VUE_APP_LOGGED_URL=https://project.com/auth/logged	// Get logged user data url
 ```
 
-Run locally:
-```
+#### Usage
+
+``` bash
+# serve with hot reload at localhost:8080
 npm run serve
+
+# build for production with minification
+npm run build
+
+# run linter
+npm run lint
+
+# run unit tests
+npm run test:unit
+
+# run e2e tests
+npm run test:e2e
+
 ```
 
 ## Projects Api
@@ -177,35 +205,3 @@ Project file contains tenants and schemas of apis to be consumed. Dashboard proj
 ### Libs
 - https://github.com/RasCarlito/axios-cache-adapter
   
-### Installation
-
-#### Clone repo
-
-``` bash
-# clone the repo
-
-# go into app's directory
-
-# install app's dependencies
-$ npm install
-```
-
-#### Usage
-
-``` bash
-# serve with hot reload at localhost:8080
-npm run serve
-
-# build for production with minification
-npm run build
-
-# run linter
-npm run lint
-
-# run unit tests
-npm run test:unit
-
-# run e2e tests
-npm run test:e2e
-
-```

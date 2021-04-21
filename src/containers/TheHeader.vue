@@ -33,7 +33,7 @@
     <CHeaderNav class="mr-4"> 
       <CDropdown
           color="primary"
-          :toggler-text="current.name" 
+          :toggler-text="(current.name || 'Choose')" 
           class=""
           size="sm"
           placement="bottom-end"

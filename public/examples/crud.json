@@ -6,7 +6,7 @@
   "properties": [
     {
       "component": "h3",
-      "children": "Repo Form"
+      "children": "Fake Rest API"
     },
     {
       "name": "id",
