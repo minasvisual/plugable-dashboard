@@ -6,8 +6,8 @@
           <strong>{{ currentProject.name }} | {{ active.title }}</strong>
           
           <div class="card-header-actions" >
-            <span v-if="session">Logged as {{  session.user.name ? session.user.name: 'anonimous' }}</span> |
-            <CButton size="sm" class="card-header-action"  @click="loadModel"> 
+            <span v-if="session">Logged as {{  session.user.name ? session.user.name: 'anonimous' }} | </span>
+            <CButton size="sm" class="card-header-action"  @click="loadModel({ cache:{ ignoreCache: true } })"> 
               <CIcon name="cil-reload" /> Model
             </CButton>
           </div>
@@ -161,3 +161,15 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+@media (max-width: 728px) {
+  .c-body .c-main{
+    padding-top: .6em;
+    .container-fluid{
+      overflow: hidden;
+      padding: 0px 0;
+    }
+  }
+}
+</style>

@@ -62,3 +62,21 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+@media (max-width: 728px){
+  .el-table-column--selection{
+    width: 15px; 
+  }
+  .pagination-wrap{
+    .el-pagination__jump{
+      display: none !important;
+    }
+    .el-pager{
+      .number:not(.active){
+        display:none !important;
+      }
+    }
+  }
+}
+</style>

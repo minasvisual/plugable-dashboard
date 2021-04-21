@@ -1,5 +1,5 @@
 <template>
-  <CHeader fixed with-subheader light>
+  <CHeader fixed light class="justify-content-between">
     <CToggler
       in-header
       class="ml-3 d-lg-none"
@@ -10,9 +10,9 @@
       class="ml-3 d-md-down-none"
       @click="$store.commit('toggleSidebarDesktop')"
     />
-    <CHeaderBrand class="mx-auto d-lg-none" to="/">
+    <!-- <CHeaderBrand class="mx-auto d-lg-none" to="/">
       <CIcon name="logo" height="48" alt="Logo"/>
-    </CHeaderBrand>
+    </CHeaderBrand> -->
     <CHeaderNav class="d-md-down-none mr-auto">
       <CHeaderNavItem class="px-3">
         <CHeaderNavLink to="/dashboard">
@@ -30,9 +30,9 @@
         </CHeaderNavLink>
       </CHeaderNavItem>
     </CHeaderNav>
-    <CHeaderNav class="mr-4"> 
+    <CHeaderNav class="mr-4 right"> 
       <CDropdown
-          color="primary"
+          color="write"
           :toggler-text="(current.name || 'Choose')" 
           class=""
           size="sm"

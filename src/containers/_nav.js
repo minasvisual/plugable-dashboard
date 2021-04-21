@@ -7,10 +7,10 @@ export default [
         name: 'Dashboard',
         to: '/dashboard',
         icon: 'cil-speedometer',
-        badge: {
-          color: 'primary',
-          text: 'NEW'
-        }
+        // badge: {
+        //   color: 'primary',
+        //   text: 'NEW'
+        // }
       },
       {
         _name: 'CSidebarNavDropdown',
@@ -36,12 +36,12 @@ export default [
         _name: 'CSidebarNavTitle',
         _children: ['Settings']
       }, 
-      {
-        _name: 'CSidebarNavItem',
-        name: 'Users',
-        to: '/users',
-        icon: 'cil-drop'
-      },
+      // {
+      //   _name: 'CSidebarNavItem',
+      //   name: 'Users',
+      //   to: '/users',
+      //   icon: 'cil-drop'
+      // },
       {
         _name: 'CSidebarNavItem',
         name: 'Settings',

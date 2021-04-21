@@ -23,7 +23,7 @@ export default {
   methods: {
     async loadModel(opts) {
       try{
-          if (!has(this.currentProject, "resources")) return console.log('sem projeto definido');
+          if (!has(this.currentProject, "resources")) return console.debug('sem projeto definido');
 
           if (
             has(this.$route, "params.model") &&

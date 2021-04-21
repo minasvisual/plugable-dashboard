@@ -7,12 +7,9 @@
   >
     <template #toggler>
       <CHeaderNavLink>
-        <span class="mr-2">{{ user.fullname }}</span>
-        <div class="c-avatar">
-          <img
-            src="img/avatars/6.jpg"
-            class="c-avatar-img "
-          />
+        <span class="mr-2">{{ user.name }}</span>
+        <div class="c-avatar bg-info">
+          {{ (user.name || 'Visitor').toUpperCase().charAt(0) }}
         </div>
       </CHeaderNavLink>
     </template>
@@ -76,7 +73,7 @@ export default {
     }
   },
   computed:{
-    user(){return get(this.$store, 'state.auth.user', {})}
+    user(){return get(this.$store, 'state.auth.dash.user', {})}
   },
   methods:{
     logout(){

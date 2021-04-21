@@ -76,9 +76,9 @@ VUE_APP_DATABASE=/models/projects.json			// Projects json file path/url | defaul
 VUE_APP_LOGIN=true  | true/false
 // Required if login true
 VUE_APP_LOGIN_URL=https://project.com/auth/login	// Dashboard Login auth url
-VUE_APP_LOGIN_USER_FIELD=email					// Username field
-VUE_APP_LOGIN_PASS_FIELD=password				// Password field
-VUE_APP_LOGIN_TOKEN_PATH=token					// Response token path in data object
+VUE_APP_LOGIN_USER_FIELD=email              // Username field
+VUE_APP_LOGIN_PASS_FIELD=password           // Password field
+VUE_APP_LOGIN_TOKEN_PATH=token              // Response token path in data object
 VUE_APP_LOGIN_TOKEN_HEADER=access-token			// Request token header JWT 
 VUE_APP_LOGGED_URL=https://project.com/auth/logged	// Get logged user data url
 ```
@@ -107,14 +107,14 @@ npm run test:e2e
 
 Project file contains tenants and schemas of apis to be consumed. Dashboard project json by default is located in /public/models/ folder.
 
-```
+```json
 [
-	{
+  {
 	  //required | Project config
 	  "code": "modelslug",
 	  "name": "Model Label",
 	  "url": "https://project-url.com",
-	  "resources_path": "/models/", //Base path or base URL of Json Models folder
+	  "resources_path": "/models/",       //Base path or base URL of Json Models folder
 	  "resources": {
 		// Project crud endpoints schema
 		"users": {
@@ -129,18 +129,18 @@ Project file contains tenants and schemas of apis to be consumed. Dashboard proj
 	  // optional | Project authentication api
 	  "auth": {
 		"url_login": "https://project-url.com/api/user",	// Url of login api
-		"url_method": "post",								// Login http method  | Default POST
-		"field_username": "user_id",						// Username field to be send | Defaut email
-		"field_secret": "access_token",						// Password/Secret field  | Default password
-		"field_remember": "remember",						// Remember field to permanent login (if exists) | Default remember
-		"response_mode": "body",							// How to get token string | opts: body/header | Default body
-		"response_token": "token",							// Response data token location (ex: {user:{token: '...'}} means user.token) | Default 'token'
-		"request_mode": "header",							// How to send token between requests | opts: header/query | Default header
+		"url_method": "post",                     // Login http method  | Default POST
+		"field_username": "user_id",              // Username field to be send | Defaut email
+		"field_secret": "access_token",           // Password/Secret field  | Default password
+		"field_remember": "remember",             // Remember field to permanent login (if exists) | Default remember
+		"response_mode": "body",                  // How to get token string | opts: body/header | Default body
+		"response_token": "token",                // Response data token location (ex: {user:{token: '...'}} means user.token) | Default 'token'
+		"request_mode": "header",                 // How to send token between requests | opts: header/query | Default header
 		"request_token": "access-token",					// Token field name | Default access-token
 		"request_token_expression": "Bearer {token}",		// Token request value expression to be interpolated | Default {token}		
 		"logged_url": "https://project-url.com/api/user",	// Url to How to get logged user data  
-		"logged_model": {									// User response DTO
-		  "id": "_id",										// Ex: { id: 1, fullname: 'John doe', email: 'email@email.com', level: 'admin' }
+		"logged_model": {                         // User response DTO
+		  "id": "_id",                            // Ex: { id: 1, fullname: 'John doe', email: 'email@email.com', level: 'admin' }
 		  "name": "fullname",
 		  "username": "email",
 		  "role": "level"
@@ -150,20 +150,20 @@ Project file contains tenants and schemas of apis to be consumed. Dashboard proj
 ]
 ```
 
-## CRUD Schema
-```
+## Basic CRUD Schema (see advanced docs running dash > docs)
+```json
 {
   "type": "object",
-  "title": "Users",					// Schema title visible to user
+  "title": "Users",         // Schema title visible to user
   "domain": "users",				// Schema slug visible on url
   "properties": [
-    {								// VueFormulate / Grid table schema
+    {                       // VueFormulate / Grid table schema
       "name": "id",					// Data object index
       "label": "ID"					// Visible label
 	  "config":{					// Table grid config
 		"grid": true,				// Visible in grid
         "sort": 0					// Sort order in grid
-	  }								// Docs link: https://vueformulate.com/guide/inputs/
+	  }                     // Docs link: https://vueformulate.com/guide/inputs/
     },
     {
       "name": "name",
@@ -178,24 +178,24 @@ Project file contains tenants and schemas of apis to be consumed. Dashboard proj
 	  "type": "textarea"
 	}
   ],
-  "api": {							// Crud endpoint config
+  "api": {                          // Crud endpoint config
     "rootApi": "https://project.com/users", // Endpoint base url 
 	// Optional
-    "wrapData": "rows",						// Response object array data field (ex: { rows: [...] } means 'rows')
-    "totalData": "count",					// Count data field | if not exists used data.length by default
-    "pagination": {							// Query string settings
+    "wrapData": "rows",						  // Response object array data field (ex: { rows: [...] } means 'rows')
+    "totalData": "count",					  // Count data field | if not exists used data.length by default
+    "pagination": {                 // Query string settings
       "pageField": "page",					// pagination field
       "limitField": "limit",				// Data count limit field  
       "sortField": "order",					// Sort field
       "sortExp": "{sort}",					// Sort expression data to be interpolated (ex: '{prop},{sort}' means 'sort=id,desc'
-      "filterField": "filter",				// Filter field
+      "filterField": "filter",      // Filter field
       "filterExp": "{prop},like,%{value}%"	// Field expression value
     },
-    "params": {								// Fixed query string params
+    "params": {                     // Fixed query string params
       "limit": 15,
       "ga": "123-1224"
     },
-	"headers":{								// Fixed headers params
+	"headers":{                       // Fixed headers params
 		"app-key": "qwertyuiop-asdfghjkls"
 	}
   }
@@ -203,5 +203,11 @@ Project file contains tenants and schemas of apis to be consumed. Dashboard proj
 ``` 
  
 ### Libs
+- Lodash
+- Moment
+- axios
+- quill
+- prismjs
+- jsoneditor
 - https://github.com/RasCarlito/axios-cache-adapter
   

@@ -16,3 +16,11 @@ export default {
   name: 'TheFooter'
 }
 </script>
+
+<style lang="scss">
+@media (max-width: 728px) {
+  .c-footer{
+    font-size: 10px;
+  }
+}
+</style>

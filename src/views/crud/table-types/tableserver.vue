@@ -2,9 +2,9 @@
   <section>
     <div style="margin-bottom: 10px">
       <el-row>
-        <el-col :span="16">
+        <el-col class="col-12 col-md-8 p-0">
           <span v-if="selectedRow.length > 0" class="selectedActions">
-            <label>Selected:</label> 
+            <label>Selected: {{ selectedRow.length }} </label> 
             <CButton @click="bulkDelete">
                 <CIcon name="cil-trash" />
             </CButton>
@@ -17,7 +17,7 @@
           </CButton>
         </el-col>
 
-        <el-col :span="8">
+        <el-col class="col-12 col-md-4  p-0">
           <el-input placeholder="Search value" v-model="filters[0].value" clearable  class="input-with-select" size="mini" >
             <el-select v-model="filters[0].prop" placeholder="Search field" slot="prepend" size="mini" >
               <el-option
