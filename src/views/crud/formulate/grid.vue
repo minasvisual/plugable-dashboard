@@ -35,8 +35,7 @@
 </template>
 
 <script>
-import { get, has, findIndex } from 'lodash';
-import { interpolate } from '../../../services/helpers'
+import { get, has, findIndex, merge } from 'lodash'
 import ControllerMixin from '../../../services/controller.mixin'
 
 import Table from '../table'
@@ -71,8 +70,14 @@ export default {
           this.context.model = value
       }
     },
+    schemaProp(){
+      return get(this.context, 'schema', get(this.context, 'attributes.schema', {}))
+    },  
     isStandalone(){
       return get(this.schema, 'api.bypassGetData', false)
+    },  
+    formValues(){
+      return this.$store.state.crud.row || {}
     }
   },
   methods: {
@@ -154,26 +159,26 @@ export default {
       this.formopen = false
       this.forceRerender()
     },
+    async loadSubmodel(modelPath){
+       let url = this.currentProject.resources_path + modelPath
+      return await this.loadModelByUrl(url).catch(err => this.$message(`Error to load submodel: ${err.message}`))
+    },
     transformSchema(schema){
       schema.api = Object.assign( get(schema, 'api', {}), this.request) 
-      
-      // if( this.model && has(schema, 'api.rootApi') )
-      //   schema.api.rootApi = interpolate( schema.api.rootApi, { data: this.model } )
-
-      // if( this.model && get(schema, 'api.params', false) && Object.keys(schema.api.params).length > 0 )
-      //   Object.keys( get(schema, 'api.params', {}) ).map(key => {
-      //       if( typeof schema.api.params[key] == 'string' )
-      //         schema.api.params[key] = interpolate( schema.api.params[key], { data: this.model })
-      //   })
 
       return schema
     }
   },
-  mounted(){
-    this.schema = this.transformSchema( { ...(this.context.attributes?.schema || {}) } )
+  async mounted(){
+    if( typeof this.schemaProp == 'string' ){ 
+      let loadedSchema = await this.loadSubmodel(this.schemaProp)
+      console.debug('loaded model', loadedSchema, this.context.overwrite )
+      this.schema = this.transformSchema( merge( loadedSchema, (this.context.overwrite || {})) )
+    }else{
+      this.schema = this.transformSchema( this.schemaProp ) 
+    }
 
-    //if( get(this.schema, 'api.bypassGetData',  false) && Array.isArray(this.model) )
-    this.resource = this.model
+    this.resource = this.formValues
 
     this.renderComponent = true
   },

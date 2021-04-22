@@ -58,6 +58,13 @@ export default {
         this.$message("Error to load Model " + this.$route.params.model +" : "+ err.message);
       }
     },
+    loadModelByUrl(url, opts){
+        return loadModel(url, opts).then((data) => {
+          if( !data.title ) throw {message: 'JSON parse fails'}; 
+          
+          return data;
+      })
+    },
     getData(schema, options){
       return getData(schema, options)
     },

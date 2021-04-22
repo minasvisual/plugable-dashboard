@@ -48,7 +48,7 @@
                                         { "value": 1, "label": "Jon Doe"  }
                                     ]
                                 }
-                            </pre> /> 
+                            </pre>
                         </td>
                     </tr>
                     <tr>
@@ -300,8 +300,38 @@
                             </pre>
                         </td>
                     </tr>
+                    
                 </table>
                 
+                <p>
+                    <h4>Html Styled Component</h4>
+                    <p>You can add html wrappers and use global components as a formulate property. Example: 
+                        <pre>
+                            {
+                                "component": "h4",
+                                "children": "My big title"
+                            }
+                        </pre>
+                    </p>
+                    <p>
+                        You can define a sub Crud using a schema or loading a new schema, overwriting schema properties, like:
+                         <pre>
+                            {
+                                "component": "Crud",
+                                "context":{
+                                    "schema": "object schema or filename (only in the same project), ex: roles.json",
+                                    "overwrite":{
+                                        "api":{
+                                            "params": { 
+                                                "filter": "user_id,eq,{data.id}"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        </pre>
+                    </p>
+                </p>
             </div>
         </p>
     </div>

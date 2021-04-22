@@ -108,6 +108,9 @@ export default {
   computed:{
     formTitle(){ 
       return this.row && this.row.id ? `Update ${this.active.title} | ID: ${this.row.id}`: `New ${this.active.title}`
+    },
+    crud(){
+      return this.$store.state.crud || {}
     }
   },
   methods:{
@@ -120,14 +123,17 @@ export default {
           this.reloadData()
           
         this.formopen = false;
+        this.$store.commit('set', ['crud', {...this.crud, row: null }] )
     },
     actions(action, data){
       if( action == 'FORM_CREATE'){
         this.formopen = true;
         this.row = {}
+        this.$store.commit('set', ['crud', {...this.crud, row: {} }] )
       }else if(action == 'FORM_EDIT'){
         this.formopen = true;
         this.row = { ...data }
+        this.$store.commit('set', ['crud', {...this.crud, row: this.row }] )
       }else if(action == 'FORM_DELETE'){
           this.deleteData(data).then(() => {
             this.$message('Successfully deleted!')

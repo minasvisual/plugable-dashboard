@@ -12,7 +12,9 @@ const state = {
   projects:[],
   currentProject: {},
   auth:{},
-  loading: false
+  loading: false,
+  cache:{},
+  crud:{}
 }
 
 const mutations = {

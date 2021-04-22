@@ -123,6 +123,9 @@ export default {
       if( newVal )
         this.getModel(newVal)
         this.forceRerender()
+    },
+    row(val){
+      this.$store.commit('set', ['crud', {...this.crud, row: val}])
     }
   },
   computed:{
@@ -131,7 +134,10 @@ export default {
     },
     hasAuth(){ 
       return this.currentProject && !!this.currentProject.auth 
-    },
+    },  
+    crud(){
+      return this.$store.state.crud || {}
+    }
   },
   methods:{
     actionsTable(action, data){
@@ -141,7 +147,10 @@ export default {
     },
     getModel(model){
       axios.get(this.currentProject.resources_path + model)
-        .then(({ data }) => this.active = data)
+        .then(({ data }) => {
+          this.active = data
+          this.$store.commit('set', ['crud', {...this.crud, row: this.row}])
+        })
     },
     newJson(type){
       this.addModal = { show: true, type }
