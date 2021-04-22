@@ -107,7 +107,7 @@ npm run test:e2e
 
 Project file contains tenants and schemas of apis to be consumed. Dashboard project json by default is located in /public/models/ folder.
 
-```json
+```
 [
   {
 	  //required | Project config
@@ -151,7 +151,7 @@ Project file contains tenants and schemas of apis to be consumed. Dashboard proj
 ```
 
 ## Basic CRUD Schema (see advanced docs running dash > docs)
-```json
+```
 {
   "type": "object",
   "title": "Users",         // Schema title visible to user
