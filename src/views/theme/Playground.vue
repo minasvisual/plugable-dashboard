@@ -90,7 +90,7 @@
 import ControllerMixin from '../../services/controller.mixin'
 import SessionMixin from '../../services/session.mixin'
 
-import { loadProjects } from '../../services/models'
+import { loadProjects, request } from '../../services/models'
 import { get, debounce, find } from 'lodash'
 import VJsoneditor from 'v-jsoneditor'
 import Auth from '../crud/auth'
@@ -99,7 +99,6 @@ import Forms from '../crud/formulate'
 
 import NewProject from './playgrounds/NewProject'
 import NewModel from './playgrounds/NewModel'
-import axios from 'axios'
 
 export default {
   mixins:[ControllerMixin, SessionMixin],
@@ -146,8 +145,10 @@ export default {
       this.$message("Row added to form values")
     },
     getModel(model){
-      axios.get(this.currentProject.resources_path + model)
-        .then(({ data }) => {
+      return request(this.currentProject.resources_path + model, { cache:{ ignoreCache: true } })
+        .then((data) => {
+          if( !data.api ) return alert("Model load error")
+
           this.active = data
           this.$store.commit('set', ['crud', {...this.crud, row: this.row}])
         })
@@ -174,7 +175,7 @@ export default {
       console.log('error', data)
     },
     reloadProjects(){
-      loadProjects().then(data => {
+      loadProjects({ cache:{ ignoreCache: true } }).then(data => {
         this.$store.commit('set', ['projects', data])
 
       })

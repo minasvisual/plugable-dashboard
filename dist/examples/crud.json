@@ -1,0 +1,121 @@
+{
+  "type": "object",
+  "title": "Basic",
+  "primaryKey": "id",
+  "domain": "basic",
+  "properties": [
+    {
+      "component": "h3",
+      "children": "Fake Rest API"
+    },
+    {
+      "name": "id",
+      "label": "ID",
+      "readonly": true,
+      "config": {
+        "grid": true,
+        "sort": 1
+      }
+    },
+    {
+      "component": "div",
+      "class": "d-flex",
+      "children": [
+        {
+          "name": "name",
+          "label": "Name",
+          "config": {
+            "grid": true,
+            "sort": 1
+          },
+          "depth": 2
+        },
+        {
+          "name": "email",
+          "label": "Email",
+          "config": {
+            "grid": true,
+            "sort": 1
+          },
+          "depth": 2
+        },
+        {
+          "name": "phone",
+          "label": "Phone",
+          "config": {
+            "grid": true,
+            "sort": 1
+          },
+          "depth": 2
+        },
+        {
+          "name": "gender",
+          "label": "Gender",
+          "type": "select",
+          "options": [
+            {
+              "value": "male",
+              "label": "Male"
+            },
+            {
+              "value": "female",
+              "label": "Female"
+            }
+          ],
+          "depth": 2
+        }
+      ]
+    },
+    {
+      "name": "address",
+      "type": "object",
+      "options": [
+        {
+          "component": "div",
+          "class": "d-flex",
+          "children": [
+            {
+              "name": "street",
+              "label": "Street",
+              "depth": 2
+            },
+            {
+              "name": "suite",
+              "label": "Suite",
+              "depth": 2
+            },
+            {
+              "name": "city",
+              "label": "City",
+              "depth": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "website",
+      "label": "Website",
+      "type": "wysiwyg"
+    }
+  ],
+  "api": {
+    "rootApi": "https://jsonplaceholder.typicode.com/users",
+    "pagination": {
+      "pageField": "page",
+      "limitField": "per_page",
+      "sortField": "direction",
+      "sortExp": "{sort}",
+      "filterField": "filter",
+      "filterExp": "{prop},like,%{value}%"
+    },
+    "params": {
+      "page": 1,
+      "per_page": 15,
+      "direction": "desc"
+    },
+    "headers": {
+      "Accept": "application/json"
+    }
+  }
+}

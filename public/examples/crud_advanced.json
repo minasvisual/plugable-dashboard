@@ -163,9 +163,10 @@
       "label": "Grid HTTP",
       "type": "grid",
       "schema": {
+        "primaryKey": "id",
         "api": {
           "rootApi": "/examples/advanced_data.json",
-          "urlGetById": " ",
+          "urlGetById": "?",
           "wrapData": "users",
           "wrapDataById": "users[0]"
         },
@@ -192,6 +193,21 @@
             }
           }
         ]
+      }
+    },
+    {
+      "component": "b",
+      "children": "Independent Crud"
+    },
+    {
+      "component": "Crud",
+      "context":{
+        "schema": "crud.json",
+        "overwrite":{
+          "api":{
+            "headers":{ "Accept": "application/json" }
+          }
+        }
       }
     },
     {

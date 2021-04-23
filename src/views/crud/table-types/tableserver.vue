@@ -17,7 +17,7 @@
           </CButton>
         </el-col>
 
-        <el-col class="col-12 col-md-4  p-0">
+        <el-col class="col-12 col-md-4  p-0" v-if="hasFilter">
           <el-input placeholder="Search value" v-model="filters[0].value" clearable  class="input-with-select" size="mini" >
             <el-select v-model="filters[0].prop" placeholder="Search field" slot="prepend" size="mini" >
               <el-option
@@ -132,6 +132,9 @@ export default {
   computed:{
     titles(){
       return has(this.schema, 'properties') ? schemaColumns([ ...this.schema.properties ]) : []
+    },
+    hasFilter(){
+      return has(this.schema, 'api.pagination.filterField') && has(this.schema, 'api.pagination.filterExp')
     }
   },
   methods:{

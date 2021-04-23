@@ -22,11 +22,11 @@
 //
 //Optional 
 //
-        "urlGet": "",                               // Get all url expression ( def: '/{collection}') 
-        "urlGetById": "/{id}",                      // Get by id url expression ( def: '/{collection}/{primaryKey}') 
-        "urlPost": "/",                             // Create url expression ( def: '/{collection}') 
-        "urlPatch": "/{id}",                        // Update url expression ( def: '/{collection}/{primaryKey}') 
-        "urlDelete": "/{id}",                       // Delete url expression ( def: '/{collection}/{primaryKey}') 
+        "urlGet": "{query}",                        // Get all url expression with datatables query string by default ( def: '/{collection}{query}') 
+        "urlGetById": "/{id}{query}",               // Get by id url expression  with datatables query string by default ( def: '/{collection}/{primaryKey}{query}') 
+        "urlPost": "/",                             // Create url expression ( def: '/{collection}') | you can add {query} if applied
+        "urlPatch": "/{id}",                        // Update url expression ( def: '/{collection}/{primaryKey}') | you can add {query} if applied
+        "urlDelete": "/{id}",                       // Delete url expression ( def: '/{collection}/{primaryKey}') | you can add {query} if applied
         "methodGet": "GET",                         // Get all method (def: GET)
         "methodGetById": "GET",                     // Get One by id method (def: GET)
         "methodPost": "POST",                       // Create method (def: POST)

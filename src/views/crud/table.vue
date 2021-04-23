@@ -47,8 +47,9 @@ export default {
       this.$refs.tables.fetchData({ type: "pageChange" });
     },
     boot(){   
-      if( get(this.schema, 'api.bypassGetData', false) && Array.isArray(this.resource) ){
+      if( get(this.schema, 'api.bypassGetData', false) ){
         this.layout = 'local' 
+        if( !Array.isArray(this.resource) ) this.resource = []
       }else if( get(this.schema, 'api.rootApi', false) ) {
         this.layout = 'server' 
       }else{

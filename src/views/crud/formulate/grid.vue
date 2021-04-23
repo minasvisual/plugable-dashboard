@@ -178,7 +178,10 @@ export default {
       this.schema = this.transformSchema( this.schemaProp ) 
     }
 
-    this.resource = this.formValues
+    if( get(this.schema, 'api.bypassGetData', false) )
+        this.resource = this.model
+    else
+        this.resource = this.formValues
 
     this.renderComponent = true
   },

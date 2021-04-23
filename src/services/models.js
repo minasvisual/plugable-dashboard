@@ -30,14 +30,6 @@ api.interceptors.request.use(
   }
 )
 
-// export const models = async (path) => {
-//   return Promise.resolve({
-//     "test": {
-//       baseUrl: "http://localhost:3000/schema" 
-//     }
-//   })
-// }
-
 export const request = (query, options={}, wrap=true) => {
   return api({ url: query,  ...options }).then((res) => {
     console.debug('Cached request', res.request.fromCache !== true)
@@ -49,36 +41,37 @@ export const loadModel = async (url, options) => {
    return await request(url, options)
 }
 
-export const loadProjects = async () => {
+export const loadProjects = async (opts) => {
 
-   return await request(process.env.VUE_APP_DATABASE)
+   return await request(process.env.VUE_APP_DATABASE, opts)
       
 }
 
 export const getData = async (model, data={}, config={}) => { 
   let { api } = model;
   let url = ''
+  let isRow = has(data, `[${model.primaryKey || 'id'}]`)
   let options = {
-    method: ( data[(model.primaryKey || 'id')] ? (api.methodGetById || 'GET') : (api.methodGet || 'GET') ),
+    method: ( isRow ? (api.methodGetById || 'GET') : (api.methodGet || 'GET') ),
     ...config
   }
 
   let query = queryString(api.params, (api.rootApi.includes('?') ? '&':'?'), data)
 
-  if( data[(model.primaryKey || 'id')] )
-    url = `${api.rootApi}${api.urlGetById || '/{id}'}${query}`
+  if( isRow )
+    url = `${api.rootApi}${api.urlGetById || '/{id}{query}'}`
   else
-    url = `${api.rootApi}${api.urlGet || ''}${query}`
+    url = `${api.rootApi}${api.urlGet || '{query}'}`
 
   if( api.headers )
     options['headers'] = api.headers
   
-  url = interpolate(url, {...data})
+  url = interpolate(url, {...data, query })
   
   console.debug('get data', url, options)
   return request(url, options)
       .then( data => {  
-        if( data[(model.primaryKey || 'id')] ){
+        if( isRow ){
           return ( model.api.wrapDataById ? get(data, model.api.wrapDataById, data): data)
         }else{
           let rows = ( model.api.wrapData ? get(data, model.api.wrapData, data): data)
@@ -102,11 +95,11 @@ export const saveData = async (model, data, config={}) => {
   let query = interpolate( queryString(api.params, (api.rootApi.includes('?') ? '&':'?')),  api.params)
  
   if( data[(model.primaryKey || 'id')] )
-    url = `${api.rootApi}${api.urlPatch || '/{id}'}${query}`
+    url = `${api.rootApi}${api.urlPatch || '/{id}'}`
   else
-    url = `${api.rootApi}${api.urlPost || ''}${query}`
+    url = `${api.rootApi}${api.urlPost || ''}`
 
-  url = interpolate(url, {...data})
+  url = interpolate(url, {...data, query})
 
   let options = {
     method,
@@ -128,9 +121,9 @@ export const deleteData = async (model, data) => {
   
   let query = interpolate( queryString(api.params, (api.rootApi.includes('?') ? '&':'?')),  api.params)
   
-  let url = `${api.rootApi}${api.urlDelete || '/{id}'}${query}`
+  let url = `${api.rootApi}${api.urlDelete || '/{id}'}`
   
-  url = interpolate(url, {...data})
+  url = interpolate(url, {...data, query})
 
   let options = {
     method,

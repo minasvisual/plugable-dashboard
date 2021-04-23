@@ -130,14 +130,14 @@
                                     "label": "Grid",
                                     "type": "grid",
                                     "schema": {
+                                        "api": {
+                                            "bypassGetData": true // required to local array edit
+                                            "rootApi": "http://..." // required if is relation crud edit
+                                        },
                                         "properties":[
                                             { 
                                                 "name": "name", 
                                                 "label": "name" 
-                                            },
-                                            { 
-                                                "name": "email",
-                                                "label": "Email"
                                             }
                                         ]
                                     }
@@ -323,7 +323,7 @@
                                     "overwrite":{
                                         "api":{
                                             "params": { 
-                                                "filter": "user_id,eq,{data.id}"
+                                                "filter": "user_id,eq,{data.id}" // data is active form values
                                             }
                                         }
                                     }

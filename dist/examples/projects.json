@@ -1,0 +1,18 @@
+[
+    {
+      "code": "example",
+      "name": "Example",
+      "url": "https://placeholder.com",
+      "resources_path": "/examples/",
+      "resources":{
+        "basic":{
+          "resource":"crud.json",
+          "label": "CRUD Example"
+        },
+        "advanced":{
+          "resource":"crud_advanced.json",
+          "label": "CRUD Advanced Example"
+        }
+      }
+    }
+]

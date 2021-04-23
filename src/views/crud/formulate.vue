@@ -56,7 +56,7 @@ export default {
         return get(this.schema, 'primaryKey', 'id')
       },
       isStandalone(){
-        return get(this.schema, 'api.bypassGetByid', false) || get(this.schema, 'api.bypassGetData', false)
+        return get(this.schema, 'api.bypassGetByid', false) || !get(this.schema, 'api.rootApi', false)//|| get(this.schema, 'api.bypassGetData', false)
       }
     },
     mounted(){
