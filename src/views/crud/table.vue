@@ -4,7 +4,7 @@
     <Tablelocal  v-if="layout == 'local'"
         ref="tables" 
         :schema="schema" 
-        :resource="resource"
+        :resource="data"
         @actions:create="$emit('actions:create', $event)"
         @actions:edit="$emit('actions:edit', $event)" 
         @actions:delete="$emit('actions:delete', $event)" 
@@ -53,7 +53,7 @@ export default {
     boot(){   
       if( get(this.schema, 'api.bypassGetData', false) ){
         this.layout = 'local' 
-        if( !Array.isArray(this.resource) ) this.resource = []
+        if( !Array.isArray(this.resource) ) this.data = []
       }else if( get(this.schema, 'api.rootApi', false) ) {
         this.layout = 'server' 
       }else{
@@ -72,6 +72,10 @@ export default {
 @media (max-width: 728px){
   .el-table-column--selection{
     width: 15px; 
+  }
+  .el-table th > .cell{
+    white-space: nowrap !important;
+    flex-wrap: nowrap !important;
   }
   .pagination-wrap{
     .el-pagination__jump{

@@ -71,31 +71,31 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>dynamicSelect</td>
+                        <td>select</td>
                         <td>
-                            <p>options: array|object - Default options</p>
                             <ul>
+                                <li>options: array|object - Default options</li>
                                 <li>
                                     attributes: object 
                                     <ul>
-                                    <li>url: string - URL of items (Can use {data} to interpolate row)</li>
-                                    <li>wrapData: string - response object|array wrap</li>
-                                    <li>fieldLabel: string - response row index of label field</li>
-                                    <li>fieldValue: string - response row index of value field</li>
-                                    <li>requestOptions: object - request headers,params,querystring config (like api)</li>
+                                        <li>url: string - URL of items (Can use {data} to interpolate row)</li>
+                                        <li>wrapData: string - response object|array wrap</li>
+                                        <li>fieldLabel: string - response row index of label field</li>
+                                        <li>fieldValue: string - response row index of value field</li>
+                                        <li>requestOptions: object - request headers,params,querystring config (like api)</li>
                                     </ul>
                                 </li>
                             </ul>
                         </td>
                         <td>
-                            Make a http request to get select options.  
+                            Native select + Make a http request to get select options.  
                         </td>
                         <td>
                             <pre>
                                 {
                                     "name": "dynamicselect",
                                     "label": "Dynamic Select",
-                                    "type": "dynamicSelect",
+                                    "type": "select",
                                     "options": [],
                                     "attributes":{
                                         "url": "/examples/advanced_data.json",

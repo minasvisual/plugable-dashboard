@@ -137,7 +137,7 @@ export default {
         this.row = { ...data }
         this.$store.commit('set', ['crud', {...this.crud, row: this.row }] )
       }else if(action == 'FORM_DELETE'){
-          this.deleteData(data).then(() => {
+          this.deleteData(this.active, data).then(() => {
             this.$message('Successfully deleted!')
             this.reloadData()
           })

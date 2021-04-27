@@ -95,11 +95,11 @@ export default {
     },
     onEdit(data){
       let index = null
-      console.log('form edit click', data)
       let primaryKey = get(this.schema, 'primaryKey', 'id')
       
-      if( this.isStandalone && Array.isArray(this.resource)) 
+      if( this.isStandalone && Array.isArray(this.resource)) {
         index = findIndex(this.resource, [primaryKey, data[primaryKey]])
+      }
 
       this.row = { index, data }
       this.formopen = true
@@ -108,12 +108,19 @@ export default {
       let index = null
       let primaryKey = get(this.schema, 'primaryKey', 'id')
       
-      if( this.isStandalone && Array.isArray(this.resource)) 
-        index = findIndex(this.resource, [primaryKey, data[primaryKey]])
+      if( this.isStandalone && Array.isArray(this.resource)) {
+        index = findIndex(this.resource, [primaryKey, row[primaryKey]])
 
-      if( index !== null && confirm('Are you sure to delete?') ){
-       this.model.splice(index, 1)
-       this.$message('Deleted with success') 
+        if( index !== null ){
+          this.model.splice(index, 1)
+          this.$message('Deleted with success') 
+        }
+      }else if( get(this.schema, 'api.rootApi', false) ){
+        this.deleteData(this.schema, row).then(() => {
+          this.$message('Deleted with success') 
+        })
+      }else{
+        this.$message('No Deleted action selected: Local/Server') 
       }
     },
     handleSelectionChange(val) {
@@ -121,22 +128,36 @@ export default {
       this.selectedRow = val
     },
     async bulkDelete() {
-      if( confirm(`Are you sure to delete ${this.selectedRow.length} rows?`) ){
+      if( Array.isArray(this.selectedRow) ){
         for(let row of this.selectedRow){
+          if( this.isStandalone ){
             this.model.splice(row, 1)
+          }else if( get(this.schema, 'api.rootApi', false) ){
+            await this.deleteData(this.schema, row) 
+          }
         }
-        
-        this.formopen = false
-        this.$message('Deleted with success') 
       }
+        
+      this.formopen = false
+      this.$message('Deleted with success') 
     },
     saveRow(data){
-      if( this.row.index === null ){
-        this.context.model.push(data)
-        this.$message('Added with success') 
+      if( this.isStandalone ){
+        if( this.row.index === null ){
+          this.context.model.push(data)
+          this.$message('Added with success') 
+        }else{
+          this.context.model[this.row.index] = data;
+          this.$message('Update with success') 
+        }
+      }else if( get(this.schema, 'api.rootApi', false) ){
+        this.saveData(this.active, data)
+            .then((res) => {
+                this.closeForm({ refresh: true })
+                return res
+            })
       }else{
-        this.context.model[this.row.index] = data;
-        this.$message('Update with success') 
+        this.$message('No Edit action selected: Local/Server') 
       }
     },
     forceRerender() {

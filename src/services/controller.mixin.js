@@ -80,11 +80,18 @@ export default {
           return Promise.reject(e)
         }) 
     },
-    deleteData(data){
+    deleteData(schema, data){
       //this.active.api = Object.assign(this.active.api, ...this.request); 
       this.$store.commit('set', ['loading', true])
-      return deleteData(this.active, data)
-          .then(() => this.$store.commit('set', ['loading', false]))
+      return deleteData(schema, data)
+          .then((data) => {
+              this.$store.commit('set', ['loading', false])
+              return data;
+          })
+          .catch(e => {
+            this.$message( get(e, 'response.data.message', e.message ) )
+            return Promise.reject(e)
+          }) 
     },  
     forceRerender() {
       console.debug('called rerender')

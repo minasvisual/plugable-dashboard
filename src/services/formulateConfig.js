@@ -13,6 +13,8 @@ import FormulateJson from '../views/crud/formulate/json'
 import FormulateGrid from '../views/crud/formulate/grid'
 import FormulateObject from '../views/crud/formulate/object'
 import FormulateImageText from '../views/crud/formulate/image-text'
+// Default input replacement
+import FormulateSelect from '../views/crud/formulate/select'
 
 Vue.component('MyFormulateAutocomplete', FormulateAutocomplete)
 Vue.component('FormulateWysiwyg', FormulateWysiwyg)
@@ -25,9 +27,14 @@ Vue.component('FormulateJson', FormulateJson)
 Vue.component('FormulateGrid', FormulateGrid)
 Vue.component('FormulateObject', FormulateObject)
 Vue.component('FormulateImageText', FormulateImageText)
+Vue.component('FormulateSelect', FormulateSelect)
 
 export default {
     library: {
+      select: {
+        classification: 'select',
+        component: 'FormulateSelect'
+      },
       autocomplete: {
         classification: 'text',
         component: 'MyFormulateAutocomplete'
@@ -64,8 +71,8 @@ export default {
         component: 'FormulateWysiwyg'
       },
       dynamicSelect: {
-        classification: 'text',
-        component: 'FormulateDynamicSelect'
+        classification: 'select',
+        component: 'FormulateSelect'
       },
       grid: {
         classification: 'array',

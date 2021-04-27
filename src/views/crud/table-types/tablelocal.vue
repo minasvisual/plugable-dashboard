@@ -9,9 +9,9 @@
                 <CIcon name="cil-trash" />
             </CButton>
           </span>
-          <CButton @click="fetchData({type:'pageChange'})">
+          <!-- <CButton @click="fetchData({type:'pageChange'})">
             <CIcon name="cil-reload" />
-          </CButton>
+          </CButton> -->
           <CButton @click="onCreate">
             <CIcon name="cil-plus" />
           </CButton>
@@ -31,7 +31,8 @@
         </el-col>
       </el-row>
     </div>
-    <data-tables  
+    <data-tables 
+        v-if="renderComponent"
         :data="data.rows" 
         :table-props="tableProps"
         :pagination-props="{ pageSizes: [10, 20, 50, 100] }" 
@@ -95,6 +96,7 @@ export default {
   },
   data(){
     return{
+      renderComponent: false,
       loading: false,
       layout: null,
       queryInfo: {},
@@ -131,7 +133,7 @@ export default {
       default: {}
     },
     resource:{
-      type: Array,
+      type: [Array, Object, String],
       default: () => []
     }
   },
@@ -166,8 +168,9 @@ export default {
   },
   mounted(){
       this.layout = 'local'
-      this.data = { rows: this.resource, total: this.resource.length }
+      this.data = { rows: (this.resource || []), total: (  Array.isArray(this.resource) ? this.resource.length : 0 ) }
       this.loading = false
+      this.renderComponent = true
   }
 }
 </script>

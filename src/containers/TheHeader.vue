@@ -25,7 +25,7 @@
         </CHeaderNavLink>
       </CHeaderNavItem>
       <CHeaderNavItem class="px-3">
-        <CHeaderNavLink to="/docs">
+        <CHeaderNavLink to="/theme/docs">
           Docs
         </CHeaderNavLink>
       </CHeaderNavItem>
