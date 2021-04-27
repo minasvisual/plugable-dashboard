@@ -11,6 +11,8 @@
       :resource="resource"
       @actions:create="onCreate"
       @actions:edit="onEdit"
+      @actions:delete="onDelete"
+      @actions:deleteBatch="bulkDelete" 
     >
     </Table>
  

@@ -29,6 +29,8 @@
                   :schema="schema"
                   @actions:create="actions('FORM_CREATE', $event)"
                   @actions:edit="actions('FORM_EDIT', $event)"
+                  @actions:delete="actions('FORM_DELETE', $event)"
+                  @actions:deleteBatch="actions('FORM_DELETEBATCH', $event)" 
                 />
 
                 <CModal
@@ -140,7 +142,7 @@ export default {
             this.reloadData()
           })
       }else if(action == 'FORM_DELETEBATCH'){
-          let proms = data && data.map(i => this.deleteData(row))
+          let proms = data && data.map(i => this.deleteData(i))
           
           Promise.all(proms)
               .catch( err => this.$message(err.message, 'danger'))

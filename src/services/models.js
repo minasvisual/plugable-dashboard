@@ -112,7 +112,7 @@ export const saveData = async (model, data, config={}) => {
   return request(url, options)
 }
 
-export const deleteData = async (model, data) => {
+export const deleteData = async (model, data, config={}) => {
   let { api } = model;
 
   if( !data[(model.primaryKey || 'id')] ) return Promise.reject('Id not found')

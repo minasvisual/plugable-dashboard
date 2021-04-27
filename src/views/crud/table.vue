@@ -7,6 +7,8 @@
         :resource="resource"
         @actions:create="$emit('actions:create', $event)"
         @actions:edit="$emit('actions:edit', $event)" 
+        @actions:delete="$emit('actions:delete', $event)" 
+        @actions:deleteBatch="$emit('actions:deleteBatch', $event)" 
     />
     <TableServer v-else-if="layout == 'server' && schema.api.rootApi" 
         ref="tables" 
@@ -14,6 +16,8 @@
         :resource="resource" 
         @actions:create="$emit('actions:create', $event)"
         @actions:edit="$emit('actions:edit', $event)" 
+        @actions:delete="$emit('actions:delete', $event)" 
+        @actions:deleteBatch="$emit('actions:deleteBatch', $event)" 
     />
     <p v-else class="text-center"><small>Missing rootApi (Server Crud) or bypassGetData (Sub object Crud) property</small></p>
 
