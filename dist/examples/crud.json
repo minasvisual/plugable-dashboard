@@ -52,6 +52,9 @@
           "name": "gender",
           "label": "Gender",
           "type": "select",
+          "config": {
+            "grid": true
+          },
           "options": [
             {
               "value": "male",

@@ -13,6 +13,12 @@
           "resource":"crud_advanced.json",
           "label": "CRUD Advanced Example"
         }
+      },
+      "widgets":{
+        "table":{
+          "resource":"widget1.json",
+          "label": "Table Test"
+        }
       }
     }
 ]

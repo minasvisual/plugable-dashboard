@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueFormulateExtended from 'vue-formulate-extended'
 import { request } from '../services/models'
+import { formatDate } from '../services/helpers'
 
 import FormulateAutocomplete from '../views/crud/formulate/autocomplete'
 import FormulateWysiwyg from '../views/crud/formulate/wysiwyg'
@@ -28,6 +29,29 @@ Vue.component('FormulateGrid', FormulateGrid)
 Vue.component('FormulateObject', FormulateObject)
 Vue.component('FormulateImageText', FormulateImageText)
 Vue.component('FormulateSelect', FormulateSelect)
+
+// Our first plugin
+function TypesHookPlugin (instance) {
+  // Add a new validation rule
+  instance.extend({
+    hooks: {
+      model: [
+        {
+          handler(value, { context = {} }) {
+            if( context.type == 'switch' )
+              return value === true
+            if( value && context.type.includes('date') && value.includes('Z') ){ 
+              let format = ( context.type == 'date' ? 'YYYY-MM-DD': 'YYYY-MM-DD\\Thh:mm:ss' )
+              console.log('entreou em data')
+              return formatDate(value, format, null, (context.attributes.utc || true))
+            } 
+            return value
+          }
+        }
+      ]
+    }
+  })
+}
 
 export default {
     library: {
@@ -84,6 +108,7 @@ export default {
       }
     },
     plugins: [
+      TypesHookPlugin ,
       VueFormulateExtended({
         features: {
           formEvents: true, // by-default

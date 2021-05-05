@@ -23,7 +23,7 @@ export default {
     }
   },
   beforeMount(){
-    this.$store.dispatch('isLogged')
+    this.isLogged() 
   }
 }
 </script>

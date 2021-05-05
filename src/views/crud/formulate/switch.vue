@@ -3,14 +3,32 @@
     :class="`formulate-input-element formulate-input-element--${context.type}`"
     :data-type="context.type"
   >
-    <CSwitch
-      @update:checked="toggle"
-      v-bind="context.attributes"
-      :checked="context.model === true"
+    <FormulateSlot
+      name="prefix"
+      :context="context"
+    >
+      <component
+        :is="context.slotComponents.prefix"
+        v-if="context.slotComponents.prefix"
+        :context="context"
+      />
+    </FormulateSlot>
+    <c-switch
+      @update:checked="toogle"
+      :checked="context.model == true"
       color="info"
       variant="3d" 
-    />
-    
+    /> 
+    <FormulateSlot
+      name="suffix"
+      :context="context"
+    >
+      <component
+        :is="context.slotComponents.suffix"
+        v-if="context.slotComponents.suffix"
+        :context="context"
+      />
+    </FormulateSlot>
   </div>
 </template>
 
@@ -22,13 +40,8 @@ export default {
       required: true
     },
   },
-  computed: {
-    model () {
-      return this.context.model
-    },
-  },
   methods:{
-    toggle(data){
+    toogle(data){
       this.context.model = data
     }
   }

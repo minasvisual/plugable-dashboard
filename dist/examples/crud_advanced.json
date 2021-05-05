@@ -54,7 +54,7 @@
         {
           "name": "dynamicselect",
           "label": "Dynamic Select",
-          "type": "dynamicSelect",
+          "type": "select",
           "options": [],
           "attributes": {
             "url": "/examples/advanced_data.json",
@@ -232,11 +232,7 @@
     {
       "name": "wysiwyg",
       "label": "Wysiwyg",
-      "type": "wysiwyg",
-      "config": {
-        "grid": true,
-        "type": "html"
-      }
+      "type": "wysiwyg"
     },
     {
       "name": "tags",

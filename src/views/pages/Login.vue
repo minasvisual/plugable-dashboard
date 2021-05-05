@@ -69,8 +69,6 @@
 </template>
 
 <script>
-import AuthMixin from '../../services/auth.mixin'
-import { mapState } from 'vuex'
 export default {
   name: 'Login',
   data() {

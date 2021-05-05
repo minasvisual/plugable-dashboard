@@ -22,9 +22,15 @@ export default  {
         //     }, 
         //     { immediate: true }
         // )
+        console.log(this.$route)
     }, 
     computed:{
         auth(){ return this.$store.state.auth.dash || {} },
         hasAuth(){ return process.env.VUE_APP_LOGIN === 'true' }
+    },
+    methods:{
+        async isLogged(){
+            await this.$store.dispatch('isLogged', {})
+        }
     }
 }

@@ -21,7 +21,6 @@
 import { loadProjects } from '../services/models'
 import { getLocalStorage, saveSettings } from '../services/helpers'
 import { get, find, some } from 'lodash'
-import AuthMixin from '../services/auth.mixin'
 
 import TheSidebar from './TheSidebar'
 import TheHeader from './TheHeader'
@@ -29,17 +28,23 @@ import TheFooter from './TheFooter'
 
 export default {
   name: 'TheContainer',
-  mixins:[AuthMixin],
   components: {
     TheSidebar,
     TheHeader,
     TheFooter
   },
+  computed:{
+      auth(){ return this.$store.state.auth.dash || {} },
+      hasAuth(){ return process.env.VUE_APP_LOGIN === 'true' }
+  },
   async beforeMount(){
     this.$store.commit('set', ['loading', true])
     let { current } = getLocalStorage('settings') || {}
 
-    await loadProjects().then( (data) => {
+    await loadProjects({ cache:{ ignoreCache: true }}).then( (data) => {
+        if( !Array.isArray(data) )
+          throw "Error to parse JSON"
+
         this.$store.commit('set', ['projects', data])
 
         if( !current ){
@@ -49,7 +54,7 @@ export default {
 
         this.$store.commit('set', ['currentProject', find(data, ['code', current]) ])
     }).catch( e => {
-      this.$message('Erro to load projects')
+      this.$message( e.message || 'Erro to load projects')
     }).then(() => {
       this.$store.commit('set', ['loading', false])
     })

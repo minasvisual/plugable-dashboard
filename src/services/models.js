@@ -1,7 +1,7 @@
 import { get, has } from 'lodash'
-import axios from 'axios'
 import { setup } from 'axios-cache-adapter'
 import { interpolate, queryString } from './helpers'
+import Store from '../store'
 
 // Create `axios-cache-adapter` instance
 const api = setup({
@@ -30,6 +30,24 @@ api.interceptors.request.use(
   }
 )
 
+api.interceptors.response.use(
+  (success) => {
+    return success
+  },
+  (error) => {
+    if ( error.response.status === 401 ) {
+      Store.dispatch("logout")
+    }
+
+   // return Error object with Promise
+   return Promise.reject(error);
+  },
+  function (error) {
+    return Promise.reject(error);
+  }
+)
+
+
 export const request = (query, options={}, wrap=true) => {
   return api({ url: query,  ...options }).then((res) => {
     console.debug('Cached request', res.request.fromCache !== true)
@@ -48,7 +66,7 @@ export const loadProjects = async (opts) => {
 }
 
 export const getData = async (model, data={}, config={}) => { 
-  let { api } = model;
+  let { api = {} } = model;
   let url = ''
   let isRow = has(data, `[${model.primaryKey || 'id'}]`)
   let options = {
@@ -56,7 +74,7 @@ export const getData = async (model, data={}, config={}) => {
     ...config
   }
 
-  let query = queryString(api.params, (api.rootApi.includes('?') ? '&':'?'), data)
+  let query = queryString(api.params, ( api.rootApi.includes('?') ? '&':'?'), data)
 
   if( isRow )
     url = `${api.rootApi}${api.urlGetById || '/{id}{query}'}`

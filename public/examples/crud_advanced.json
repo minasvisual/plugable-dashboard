@@ -232,11 +232,7 @@
     {
       "name": "wysiwyg",
       "label": "Wysiwyg",
-      "type": "wysiwyg",
-      "config": {
-        "grid": true,
-        "type": "html"
-      }
+      "type": "wysiwyg"
     },
     {
       "name": "tags",

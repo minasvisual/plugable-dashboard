@@ -2,12 +2,12 @@ import { has, sortBy, get } from 'lodash'
 import moment from 'moment'
 
 export const formatModel = (columns=[], data) => {
-    columns.map(i => {
-        if( data[i.prop] && ['date'].includes(i.type) ){ 
-            let format = ( i.type == 'date' ? 'YYYY-MM-DD': 'YYYY-MM-DD\\Thh:mm:ss' )
-            data[i.prop] = formatDate(data[i.prop], format, null, true)
-        } 
-    })
+    // columns.map(i => {
+    //     if( data[i.prop] && ['date'].includes(i.type) ){ 
+    //         let format = ( i.type == 'date' ? 'YYYY-MM-DD': 'YYYY-MM-DD\\Thh:mm:ss' )
+    //         data[i.prop] = formatDate(data[i.prop], format, null, true)
+    //     } 
+    // })
     return data
 }
 
@@ -61,6 +61,7 @@ export const filterParams = (api, queryInfo) => {
 
     return {...api, params};
 }
+
 
 export const schemaColumns = (properties) => {
     let columns = []

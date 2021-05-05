@@ -1,4 +1,5 @@
 <template>
+  <section>
     <div class="form-loader w-100 text-center" v-if="loader">
       <CSpinner color="info"/>
     </div>
@@ -27,11 +28,12 @@
       </CButton>
     </div>
     </FormulateForm>
+  </section>
 </template>
 
 <script>
 import { get } from 'lodash'
-import { schemaColumns, formatDate, formatModel } from '../../services/helpers'
+import { schemaColumns, prepareForm, formatModel } from '../../services/helpers'
 import ControllerMixin from '../../services/controller.mixin'
 
 export default {
@@ -84,7 +86,7 @@ export default {
           if( !this.data || Object.keys( this.data ).length == 0 ) return Promise.resolve({})
 
           return this.getData(this.schema, this.data)
-      }
+      },
     },
 }
 </script>

@@ -39,6 +39,7 @@
                         @model:saved="submitHandler"
                       /> 
                   </CTab>
+
                   <CTab title="Table" v-if="active"> 
                     <Table 
                       ref="tables" 
@@ -48,6 +49,19 @@
                       @actions:edit="actionsTable('FORM_EDIT', $event)"
                     />
                     <span v-else>Login required</span>
+                  </CTab>
+
+                  <CTab title="Widget"> 
+                    <div class="mt-4 d-flex justify-content-between" > 
+                      <select v-model="widgetSource">
+                        <option :value="''">Select to set schema</option>
+                        <option v-for="(row, k) of widgets" :key="k" :value="row" v-text="row.label"></option>
+                      </select>
+                      <CButton type="button" @click="$refs.widget.loadWidget({ cache: {ignoreCache: true} })">
+                          <CIcon name="cil-reload" /> Reload Widget
+                      </CButton>
+                    </div>
+                    <Widget ref="widget" v-if="widget.api" :schema="widget" />
                   </CTab>
                   
                 </CTabs>
@@ -60,6 +74,7 @@
               <option value="model">Model</option>
               <option value="row">Form values</option>
               <option value="result">Result</option>
+              <option value="widget">widget</option>
             </select>
             <CButton type="button" @click="newJson(jsonEditorData)"><CIcon name="cil-plus" /> New {{ jsonEditorData }}</CButton>
 
@@ -68,6 +83,7 @@
             <VJsoneditor v-else-if="jsonEditorData == 'model'" v-model="active" height="100%" :options="{mode: 'code'}" ></VJsoneditor>
             <VJsoneditor v-else-if="jsonEditorData == 'row'" v-model="row" height="100%" :options="{mode: 'code'}" ></VJsoneditor>
             <VJsoneditor v-else-if="jsonEditorData == 'result'" v-model="submit" height="100%" :options="{mode: 'code'}" ></VJsoneditor>
+            <VJsoneditor v-else-if="jsonEditorData == 'widget'" v-model="widget" height="100%" :options="{mode: 'code'}" ></VJsoneditor>
           </CCol>
         </CRow>
         
@@ -96,13 +112,14 @@ import VJsoneditor from 'v-jsoneditor'
 import Auth from '../crud/auth'
 import Table from '../crud/table'
 import Forms from '../crud/formulate'
+import Widget from '../widgets/base'
 
 import NewProject from './playgrounds/NewProject'
 import NewModel from './playgrounds/NewModel'
 
 export default {
   mixins:[ControllerMixin, SessionMixin],
-  components: { VJsoneditor, Forms, Table, Auth, NewProject, NewModel},
+  components: { VJsoneditor, Forms, Table, Auth, NewProject, NewModel, Widget},
   data(){return{
     render: true,
     jsonEditorData: 'project',
@@ -111,11 +128,18 @@ export default {
     active: null,
     row: { },
     submit: {},
-    addModal: {}
+    addModal: {},
+    widget: {},
+    widgetSource:null,
   }},
   watch:{
     currentProject(newVal, oldVal){
       if( newVal )
+        this.forceRerender()
+    },
+    widgetSource(newVal){
+      if( newVal )
+        this.getWidget(newVal)
         this.forceRerender()
     },
     model(newVal){
@@ -130,6 +154,9 @@ export default {
   computed:{
     models(){
       return Object.values( get(this.currentProject, 'resources', {}) )
+    },
+    widgets(){
+      return Object.values( get(this.currentProject, 'widgets', {}) )
     },
     hasAuth(){ 
       return this.currentProject && !!this.currentProject.auth 
@@ -153,6 +180,14 @@ export default {
           this.$store.commit('set', ['crud', {...this.crud, row: this.row}])
         })
     },
+    getWidget(model){
+      return request(this.currentProject.resources_path + model.resource, { cache:{ ignoreCache: true } })
+        .then((data) => {
+          if( !data.api ) return alert("Model load error")
+
+          this.widget = data
+        })
+    },
     newJson(type){
       this.addModal = { show: true, type }
       this.logged = true
@@ -172,16 +207,14 @@ export default {
     errors(data){
       this.$message(data.message || data)
 
-      console.log('error', data)
+      console.error('Playgrourd error', data)
     },
     reloadProjects(){
       loadProjects({ cache:{ ignoreCache: true } }).then(data => {
         this.$store.commit('set', ['projects', data])
-
       })
     },
     forceRerender(){
-        console.log('changed')
         this.render = false;
         this.$nextTick(() => {
           this.render = true;

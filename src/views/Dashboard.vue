@@ -1,20 +1,6 @@
 <template>
   <div>
     
-    <CRow>
-      <CCol md=2>
-        <CWidgetSimple header="Projects" :text="projects.length.toString()">
-          <CChartLineSimple style="height:40px" border-color="danger"/>
-        </CWidgetSimple>
-      </CCol>
-
-      <CCol md=2 v-for="row of projects" :key="row.code" @click="setProject(row)">
-        <CWidgetSimple :header="row.name" :text="calcResources(row) + ' apis'">
-          <CChartLineSimple style="height:40px" border-color="primary"/>
-        </CWidgetSimple>
-      </CCol>
-    </CRow> 
-
     <CCard>
       <CCardBody>
         <CRow>
@@ -29,9 +15,23 @@
           </CCol>
         </CRow>
       </CCardBody>
-      <CCardFooter>
-      </CCardFooter>
     </CCard>
+
+    <CRow>
+      <CCol md=2>
+        <CWidgetSimple header="Projects" :text="projects.length.toString()">
+          <CChartLineSimple style="height:40px" border-color="danger"/>
+        </CWidgetSimple>
+      </CCol>
+
+      <CCol md=2 v-for="row of projects" :key="row.code" @click="setProject(row)">
+        <CWidgetSimple :header="row.name" :text="calcResources(row) + ' apis'">
+          <CChartLineSimple style="height:40px" border-color="primary"/>
+        </CWidgetSimple>
+      </CCol>
+    </CRow> 
+
+    <Widgets v-if="current" />
 
   </div>
 </template>
@@ -40,11 +40,12 @@
 import { CChartLineSimple, CChartBarSimple } from './charts/index.js'
 import { saveSettings } from '../services/helpers'
 import { get } from 'lodash'
+import Widgets from './widgets/index'
 
 export default {
   name: 'Dashboard',
   components: {
-      CChartLineSimple, CChartBarSimple
+      CChartLineSimple, CChartBarSimple, Widgets
   },
   data () {
     return {
@@ -53,6 +54,9 @@ export default {
   computed: {
     projects(){
       return this.$store.state.projects || []
+    },
+    current(){
+      return this.$store.state.currentProject || {}
     }
   },
   methods:{

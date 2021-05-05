@@ -69,25 +69,28 @@ const actions = {
       return getUserData()
           .then( data => {
               ctx.commit('setAuth', ['dash', {isLogged: true, token, user: data }])
-              Router.push('/dashboard')
+              if( !window.location.includes('dashboard') ) Router.push('/dashboard')
+              return data
           })
           .catch(({response, message, statusCode }) => {
             if( statusCode > 400 && statusCoode < 410 )
-              ctx.commit('setAuth', ['dash', {isLogged: false}])
               ctx.dispatch('logout')
+
+            return { response, message, statusCode }
           })
     }else{
-      ctx.commit('setAuth', ['dash', { isLogged: false }])
       ctx.dispatch('logout')
+      return Promise.reject({isLogged: false})
     }
   },
   logout(ctx){
+    let auth = { isLogged: false }
     let token = localStorage.getItem('dash_session')
     if( token ){   
-        ctx.commit('setAuth', ['dash', { isLogged: false }]) 
         localStorage.removeItem('dash_session')
-        Router.push('/pages/login')
     }
+    ctx.commit('setAuth', ['dash', auth]) 
+    Router.push('/pages/login')
   }
 }
 export default new Vuex.Store({
