@@ -6,8 +6,7 @@
   "wrapperClass": "col-12",
   "class": "bg-transparent text-info",
   "bodyClass": "col-12",
-  "widgets": [
-    {
+  "widgets": {
       "type": "Tiles",
       "source": "json",
       "params": {
@@ -16,8 +15,7 @@
         "group": "Age",
         "action": "count"
       }
-    }
-  ],
+  },
   "api": {
     "rootApi": "/examples/dataset_example.json"
   }

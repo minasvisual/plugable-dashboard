@@ -1,27 +1,26 @@
 <template >
-  <div class="row" v-if="renderComponent && schemas.length > 0">
-      <Widget v-for="(item, k) of schemas" :key="k" :schema="item" />
+  <div class="row" v-if="schemas && schemas.length > 0">
+        <Base v-for="(item, k) of schemas" :key="k" :schema="item" />
   </div>
 </template>
 
 <script>
 import { request } from '../../services/models'
 import Auth from '../crud/auth'
-import Widget from './base'
+import Base from './base'
  
 export default {
   components:{
-    Widget, Auth
+    Base, Auth
   },
   data() {
     return {
-      schemas:[],
-      renderComponent: false
+      schemas:[]
     }
   },
   watch:{
     async current(newProject, oldProject){
-        if( newProject )
+        if( newProject && newProject != oldProject )
           await this.loadWidgets()
     }
   },
@@ -35,6 +34,7 @@ export default {
   },
   methods:{
     async loadWidgets(){
+      if( !this.widgets ) return false;
       for(let row of this.widgets){
         if( row.resource ){
           let data = await request(this.current.resources_path + row.resource )
@@ -43,8 +43,6 @@ export default {
           this.schemas.push(data)
         }
       }
-        
-      this.renderComponent = true
     }
   },
   async mounted(){

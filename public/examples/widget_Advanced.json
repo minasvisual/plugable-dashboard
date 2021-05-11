@@ -5,8 +5,7 @@
   "domain": "lines",
   "wrapperClass": "col-6",
   "class": "card bg-dark text-light",
-  "widgets": [
-    {
+  "widgets": {
       "type": "ChartLine",
       "source": "json",
       "class": "card-body d-flex-inline",
@@ -20,8 +19,7 @@
         "action": "average",
         "class": "bg-light"
       }
-    }
-  ],
+  },
   "api": {
     "rootApi": "/examples/dataset_example.json"
   }

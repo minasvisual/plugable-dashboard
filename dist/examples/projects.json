@@ -15,6 +15,10 @@
         }
       },
       "widgets":{
+        "tiles":{
+          "resource":"widget_tiles.json",
+          "label": "Tiles test"
+        },
         "bar":{
           "resource":"widget_example.json",
           "label": "Bar Chart test"

@@ -1,12 +1,11 @@
 <template> 
   <section v-if="renderComponent" :class="(schema.wrapperClass || 'col-6')">
     <Auth
-      v-if="current && schema" 
-      :project="current" 
-      :schema="schema"
+        v-if="current && schema" 
+        :project="current" 
+        :schema="schema"
     >
       <template v-slot="{ schema }">
-
         <div :class="(schema.class || 'card')">
           <div v-if="schema.title" class="card-header" >
             <strong>{{ schema.title }}</strong>
@@ -17,19 +16,13 @@
               </CButton>
             </div>
           </div>
-          <div :class="(schema.bodyClass || 'card-body')"> 
-            <section v-for="(widget, idx) of attr" :key="idx">
+          <div class='card-body'>  
               <div v-if="widget.prefix" class="prefix" v-html="widget.prefix"></div>
-              <component v-if="pivot" 
-                    :is="(widget.type || 'Table')" 
-                    v-bind="{ pivot: loadPivot(widget), schema, widget}" 
-                    :class="(params.class || '')" 
-              />
+              <component :is="(widget.type || 'Table')" :class="(widget.class || '')" 
+                    v-bind="{ pivot, schema, widget }"  />
               <div v-if="widget.suffix" class="suffix" v-html="widget.suffix"></div>
-            </section>
           </div>
         </div>
-
       </template>
     </Auth>
   </section>
@@ -54,46 +47,37 @@ export default {
   props:{
     schema:{
       type: Object,
-      default: {}
+      default: () => ({})
     }
   },
   data() {
     return { 
-      renderComponent: false,
-      pivot:{},
+      renderComponent: true,
       dataset: [],
+      pivot: {},
       ui: false
     }
   },
   computed:{
     current(){
-      return this.$store.state.currentProject
+      return this.$store.state.currentProject || {}
     },
-    attr(){
-      if( !this.schema.widgets )
-        return []
-
-      if( !Array.isArray(this.schema.widgets) )
-        return [ this.schema.widgets ];
-
-      return this.schema.widgets || []
-    },
-    params(){
-      return this.attr.params || {}
+    widget(){
+      return this.schema.widgets || {}
     }
   },
   methods:{
     loadWidget: async function (ops){ 
       try{
         this.renderComponent = false
-        if( !get(this.schema,'api.rootApi',false) ) return false;
+        if( !get(this.schema, 'api.rootApi', false) ) return false;
 
         await this.loadDataset()
 
-        if( this.attr.length == 0 )
+        if( !get(this.schema, 'widgets', false) )
           return false;
 
-        //this.loadPivot()
+        this.pivot =  this.loadPivot(this.widget)
 
         this.renderComponent = true
       }catch(e){
@@ -122,7 +106,7 @@ export default {
     }
 
   },
-  beforeMount(){
+  mounted(){
     this.loadWidget()
   }
 }

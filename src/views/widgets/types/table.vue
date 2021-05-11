@@ -16,15 +16,15 @@ export default {
   props:{
     schema:{
       type: Object,
-      default: {}
+      default: () => ({})
     },
     widget:{
       type: Object,
-      default:{}
+      default: () => ({})
     },
     pivot:{
       type: Object,
-      default:{}
+      default: () => ({})
     },
   }
 }

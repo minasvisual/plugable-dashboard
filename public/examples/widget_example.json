@@ -3,18 +3,18 @@
   "title": "Table test",
   "primaryKey": "id",
   "domain": "table",
-  "widgets": [
-    {
+  "widgets": {
       "type": "ChartBar",
       "source": "json",
-      "params": { 
-          "rows":["Sex"],  
-          "cols":[],
-          "group":"Sex",
-          "action":"count"
+      "params": {
+        "rows": [
+          "Sex"
+        ],
+        "cols": [],
+        "group": "Age",
+        "action": "average"
       }
-    }
-  ],
+  },
   "api":{
     "rootApi": "/examples/dataset_example.json"
   }
