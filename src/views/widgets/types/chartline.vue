@@ -18,6 +18,10 @@ export default {
       type: Object,
       default: {}
     },
+    widget:{
+      type: Object,
+      default:{}
+    },
     pivot:{
       type: Object,
       default:{}
@@ -30,13 +34,13 @@ export default {
   },
   computed:{
     params(){
-      return this.schema.widget.params || {}
+      return this.widget.params || {}
     },
     datasets(){
       let datasets = []
       this.pivot.data.table.map( (row, k) => {
         if( row.type == 'colHeader' )
-          this.labels = get(this.schema, 'widget.labels', get(row, 'value', []).slice(1).slice(0, -1))
+          this.labels = get(this.widget, 'labels', get(row, 'value', []).slice(1).slice(0, -1))
 
         if( row.type !== 'data' ) return;
 

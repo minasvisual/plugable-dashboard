@@ -22,33 +22,46 @@
         <CRow>
           <CCol lg="7"> 
             <CButton class="float-right" @click="forceRerender"><CIcon name="cil-reload" /> Update View</CButton>
-            <Auth
-                v-if="currentProject && active" 
-                :project="currentProject" 
-                :schema="active"
-                @auth:logged="auth"
-                @auth:failed="errors"
-            >
-              <template v-slot="{ schema }">
+          
                 <CTabs variant="pills" :active-tab="0"> 
                   <CTab title="Form" v-if="active">
-                      <Forms 
-                        v-if="schema.properties && render"
-                        :schema="schema"
-                        :data="row"
-                        @model:saved="submitHandler"
-                      /> 
+                      <Auth
+                          v-if="currentProject && active" 
+                          :project="currentProject" 
+                          :schema="active"
+                          @auth:logged="auth"
+                          @auth:failed="errors"
+                      >
+                        <template v-slot="{ schema }">
+                          <Forms 
+                            v-if="schema.properties && render"
+                            :schema="schema"
+                            :data="row"
+                            @model:saved="submitHandler"
+                          /> 
+                        </template>
+                      </Auth>        
                   </CTab>
 
                   <CTab title="Table" v-if="active"> 
-                    <Table 
-                      ref="tables" 
-                      v-if="schema.api && render"
-                      :schema="schema"
-                      @actions:create="actionsTable('FORM_CREATE', $event)"
-                      @actions:edit="actionsTable('FORM_EDIT', $event)"
-                    />
-                    <span v-else>Login required</span>
+                     <Auth
+                          v-if="currentProject && active" 
+                          :project="currentProject" 
+                          :schema="active"
+                          @auth:logged="auth"
+                          @auth:failed="errors"
+                      >
+                        <template v-slot="{ schema }">
+                          <Table 
+                            ref="tables" 
+                            v-if="schema.api && render"
+                            :schema="schema"
+                            @actions:create="actionsTable('FORM_CREATE', $event)"
+                            @actions:edit="actionsTable('FORM_EDIT', $event)"
+                          />
+                          <span v-else>Login required</span>
+                        </template>
+                     </Auth>
                   </CTab>
 
                   <CTab title="Widget"> 
@@ -65,8 +78,6 @@
                   </CTab>
                   
                 </CTabs>
-              </template>
-            </Auth>        
           </CCol>
           <CCol lg="5" style="min-height: 500px">
             <select v-model="jsonEditorData">

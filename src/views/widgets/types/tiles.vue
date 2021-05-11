@@ -1,18 +1,18 @@
 <template >
-      <CChartBar
-          style="min-height:200px"
-          :datasets="this.datasets"
-          :labels="labels"
-          :options="{ maintainAspectRatio: false }"
-      /> 
+  <section v-if="pivot.data.table" class="row">
+    <CWidgetSimple v-for="(tile, i) of datasets" :key="i" :header="tile.label" :text="tile.data.toString()" class="col">
+      <CChartLineSimple style="height:50px" border-color="info" />
+    </CWidgetSimple>
+  </section>
 </template>
 
-
 <script>
-import { get } from 'lodash'
-import { CChartBar } from '@coreui/vue-chartjs'
+import { range, get } from 'lodash'
+import { CChartLineSimple, CChartBarSimple } from '../../charts/index'
 export default {
-  components:{ CChartBar },
+  components:{
+    CChartLineSimple, CChartBarSimple
+  },
   props:{
     schema:{
       type: Object,
@@ -20,7 +20,7 @@ export default {
     },
     widget:{
       type: Object,
-      default: {}
+      default:{}
     },
     pivot:{
       type: Object,
@@ -45,9 +45,9 @@ export default {
         if( row.type !== 'data' ) return;
 
         datasets.push({
-          data: get(row, 'value', []).slice(1).slice(0, -1),
+          data: get(row, `value[${k}]`, null),
           label: get(row, 'value[0]', ''),
-          backgroundColor: this.params.color || `#${this.getColors()}`
+          backgroundColor: get(this.params, `color[${datasets.length}]`) || `#${this.getColors()}`
         })
       })
 

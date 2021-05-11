@@ -1,0 +1,24 @@
+{
+  "type": "object",
+  "title": false,
+  "primaryKey": "id",
+  "domain": "table",
+  "wrapperClass": "col-12",
+  "class": "bg-transparent text-info",
+  "bodyClass": "col-12",
+  "widgets": [
+    {
+      "type": "Tiles",
+      "source": "json",
+      "params": {
+        "rows": [],
+        "cols": [ "Hair" ],
+        "group": "Age",
+        "action": "count"
+      }
+    }
+  ],
+  "api": {
+    "rootApi": "/examples/dataset_example.json"
+  }
+}

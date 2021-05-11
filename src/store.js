@@ -45,13 +45,14 @@ const getters = {
 }
 
 const actions = {
-  login (ctx, { username, password }) {
+  login (ctx, { username, password, remember }) {
       return request( 
         process.env.VUE_APP_LOGIN_URL , {
           method: 'POST',
           data: { 
             [process.env.VUE_APP_LOGIN_USER_FIELD]: username, 
-            [process.env.VUE_APP_LOGIN_PASS_FIELD]: password
+            [process.env.VUE_APP_LOGIN_PASS_FIELD]: password,
+            remember
           }
         }
       ).then( data => {
