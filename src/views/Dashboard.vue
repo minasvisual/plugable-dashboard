@@ -4,32 +4,28 @@
     <CCard>
       <CCardBody>
         <CRow>
-          <CCol sm="5">
+          <CCol xs="12" sm="4">
             <h4 id="traffic" class="card-title mb-0">Welcome</h4>
             <div class="small text-muted">{{  new Date() }} </div>
           </CCol>
-          <CCol sm="7" class="d-none d-md-block">
-            <CButton color="primary" class="float-right">
-              <CIcon name="cil-cloud-download"/>
-            </CButton>
+          <CCol xs=12 sm="8" class="d-flex">
+            <CRow class="w-100">
+              <CCol sm=6 md=4 lg=3 style="border-left: 1px solid darkblue">
+                <h6>Dashboard use</h6>
+                <p >{{ projects.length.toString() }} Projects</p>
+              </CCol>   
+              <CCol sm=6 md=3 style="border-left: 1px solid darkblue" 
+                    v-for="row of projects" :key="row.code" @click="setProject(row)">
+                <h6>{{ row.name }}</h6>
+                <p>{{ calcResources(row) + ' apis' }}</p>
+              </CCol>  
+            </CRow>
           </CCol>
         </CRow>
       </CCardBody>
     </CCard>
 
-    <CRow>
-      <CCol md=2>
-        <CWidgetSimple header="Projects" :text="projects.length.toString()">
-          <CChartLineSimple style="height:40px" border-color="danger"/>
-        </CWidgetSimple>
-      </CCol>
-
-      <CCol md=2 v-for="row of projects" :key="row.code" @click="setProject(row)">
-        <CWidgetSimple :header="row.name" :text="calcResources(row) + ' apis'">
-          <CChartLineSimple style="height:40px" border-color="primary"/>
-        </CWidgetSimple>
-      </CCol>
-    </CRow> 
+   
 
     <Widgets v-if="current" />
 

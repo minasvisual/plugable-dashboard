@@ -18,6 +18,10 @@ export default {
       type: Object,
       default: {}
     },
+    widget:{
+      type: Object,
+      default:{}
+    },
     pivot:{
       type: Object,
       default:{}
@@ -30,7 +34,7 @@ export default {
   },
   computed:{
     params(){
-      return this.schema.widget.params || {}
+      return this.widget.params || {}
     },
     datasets(){
       let datasets = []

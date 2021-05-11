@@ -1,3 +1,5 @@
+![Screenshot](logo.png)
+
 # Under Construction. Collaborate!
 
 ## Plugable Dashboard Api
@@ -45,7 +47,7 @@
 - features
 	- [ ] form submit hooks (flows)
 	- [ ] filemanager grid
-	- [ ] project widgets 
+	- [X] project widgets 
 	- [ ] dashboard flows ( schema i/o data subsequent)
 	- [ ] Cache schema
 

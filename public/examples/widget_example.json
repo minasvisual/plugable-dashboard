@@ -3,7 +3,8 @@
   "title": "Table test",
   "primaryKey": "id",
   "domain": "table",
-  "widget": {
+  "widgets": [
+    {
       "type": "ChartBar",
       "source": "json",
       "params": { 
@@ -12,7 +13,8 @@
           "group":"Sex",
           "action":"count"
       }
-  },
+    }
+  ],
   "api":{
     "rootApi": "/examples/dataset_example.json"
   }

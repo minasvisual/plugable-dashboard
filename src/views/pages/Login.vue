@@ -24,6 +24,13 @@
                     type="password"
                     validation="required|min:6,length"
                   />
+
+                  <FormulateInput
+                    name="remember"
+                    label="Remember"
+                    type="checkbox"
+                    :boleano="true"
+                  />
                   <CRow>
                     <CCol col="6" class="text-left">
                       <FormulateInput
@@ -50,12 +57,13 @@
               body-wrapper
             >
               <CCardBody>
-                <h2>Sign up</h2>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                <h2>Pluggable Dashboard</h2>
+                <p>Easy data management</p>
                 <CButton
                   color="light"
                   variant="outline"
                   size="lg"
+                  class="d-none"
                 >
                   Register Now!
                 </CButton>

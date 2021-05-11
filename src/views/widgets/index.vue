@@ -38,7 +38,7 @@ export default {
       for(let row of this.widgets){
         if( row.resource ){
           let data = await request(this.current.resources_path + row.resource )
-          if( !data.widget ) return this.$message("Error to load widget resource");
+          if( !data.widgets ) return this.$message("Error to load widget resource");
 
           this.schemas.push(data)
         }
