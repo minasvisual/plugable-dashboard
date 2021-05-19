@@ -27,8 +27,8 @@
 import { get, has, debounce } from 'lodash'
 
 import TableMixin from '../../services/table.mixin'
-import TableServer from './table-types/tableserver'
-import Tablelocal from './table-types/tablelocal.vue';
+import TableServer from './table-types/TableRemote'
+import Tablelocal from './table-types/TableLocale';
 
 export default {
   name:"Table",

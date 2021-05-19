@@ -35,7 +35,7 @@ api.interceptors.response.use(
     return success
   },
   (error) => {
-    if ( error.response.status === 401 ) {
+    if ( get(error, 'response.status') === 401 ) {
       Store.dispatch("logout")
     }
 
