@@ -8,7 +8,7 @@
         <p>Documentation and examples for Bootstrap typography,
           including global settings, headings, body text, lists, and more.</p>
 
-       <CTabs variant="pills" :vertical="{ navs: 'col-12 col-md-2 col-lg-3', content: 'col-12 col-md-10 col-lg-9' }">
+       <CTabs variant="pills" >
               <CTab active>
                 <template slot="title">
                   <CIcon name="cil-calculator"/> Core UI Docs
@@ -17,7 +17,13 @@
               </CTab>
               <CTab>
                 <template slot="title">
-                  <CIcon name="cil-basket"/> Vue Formulate + Forms Schema
+                  <CIcon name="cil-chart-pie"/> Configuration
+                </template>
+                  <DocsSettings />
+              </CTab>
+              <CTab>
+                <template slot="title">
+                  <CIcon name="cil-basket"/> Formulate + Custom fields
                 </template>
                 <DocsFormulate />
               </CTab>
@@ -29,9 +35,9 @@
               </CTab>
               <CTab>
                 <template slot="title">
-                  <CIcon name="cil-chart-pie"/> Configuration
+                  <CIcon name="cil-chart-pie"/> Widgets
                 </template>
-                  <DocsSettings />
+                <DocsWidgets />
               </CTab>
               <CTab>
                 <template slot="title">
@@ -52,12 +58,14 @@
 import DocsSettings from './docs/docs-settings'
 import DocsFormulate from './docs/docs-formulate'
 import DocsDatatables from './docs/docs-datatables'
+import DocsWidgets from './docs/docs-widgets'
 
 export default {
   components: {
     DocsSettings,
     DocsFormulate,
     DocsDatatables,
+    DocsWidgets,
   },
   data () {
     return {

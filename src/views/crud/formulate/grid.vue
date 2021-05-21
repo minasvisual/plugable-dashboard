@@ -113,14 +113,14 @@ export default {
 
         if( index !== null ){
           this.model.splice(index, 1)
-          this.$message('Deleted with success') 
+          this.$message && this.$message('Deleted with success') 
         }
       }else if( get(this.schema, 'api.rootApi', false) ){
         this.deleteData(this.schema, row).then(() => {
-          this.$message('Deleted with success') 
+          this.$message && this.$message('Deleted with success') 
         })
       }else{
-        this.$message('No Deleted action selected: Local/Server') 
+        this.$message && this.$message('No Deleted action selected: Local/Server') 
       }
     },
     handleSelectionChange(val) {
@@ -139,16 +139,16 @@ export default {
       }
         
       this.formopen = false
-      this.$message('Deleted with success') 
+      this.$message && this.$message('Deleted with success') 
     },
     saveRow(data){
       if( this.isStandalone ){
         if( this.row.index === null ){
           this.context.model.push(data)
-          this.$message('Added with success') 
+          this.$message && this.$message('Added with success') 
         }else{
           this.context.model[this.row.index] = data;
-          this.$message('Update with success') 
+          this.$message && this.$message('Update with success') 
         }
       }else if( get(this.schema, 'api.rootApi', false) ){
         this.saveData(this.active, data)
@@ -157,7 +157,7 @@ export default {
                 return res
             })
       }else{
-        this.$message('No Edit action selected: Local/Server') 
+        this.$message && this.$message('No Edit action selected: Local/Server') 
       }
     },
     forceRerender() {
@@ -184,7 +184,8 @@ export default {
     },
     async loadSubmodel(modelPath){
        let url = this.currentProject.resources_path + modelPath
-      return await this.loadModelByUrl(url).catch(err => this.$message(`Error to load submodel: ${err.message}`))
+      return await this.loadModelByUrl(url)
+        .catch(err => this.$message && this.$message(`Error to load submodel: ${err.message}`))
     },
     transformSchema(schema){
       schema.api = Object.assign( get(schema, 'api', {}), this.request) 

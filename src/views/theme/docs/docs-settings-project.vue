@@ -1,8 +1,8 @@
 <template>
 <div>
         <pre>
-    [
-        {                                                        //required | Project config
+[
+    {                                                           //required | Project config
         "code": "modelslug",
         "name": "Model Label",
         "url": "https://project-url.com",
@@ -15,6 +15,12 @@
             "roles":{
                 "resource": "roles_schema.json",
                 "label": "Roles"
+            }
+        },
+        "widgets":{                                             // optional | Dashboard Widgets
+            "tiles":{
+                "resource":"widget_tiles.json",                 // Schema Json url/path (inside $resources_path folder)
+                "label": "Tiles test"                           // Card Title
             }
         },
                                                                 // optional | Project authentication api
@@ -37,8 +43,8 @@
                 "role": "level"
             }
         },
-        }
-    ]
+    }
+]
     </pre>    
 </div>
 </template>

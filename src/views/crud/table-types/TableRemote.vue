@@ -1,25 +1,45 @@
 <template>
-  <CCardBody>
+  <section>
     <CDataTable
       :items="(data.rows || [])"
       :fields="titles"
       :columnFilter='{ external: true, lazy: true }'
       :sorter='{ external: true, resetable: true }'
-      :tableFilter='{ lazy: true }'
-      items-per-page-select
       :items-per-page="perPage"
       :clickableRows="true"
+      cleaner
       hover
+      size="sm"
       @update:sorter-value="(qr) => fetchQueryInfo('sort', qr)" 
       @update:column-filter-value="(qr) => fetchQueryInfo('filter', qr)" 
-      @pagination-change="(qr) => fetchQueryInfo('sizeChange', qr)" 
-      
     >
 
-      <template #selected-header="{item}">
-        <td :class="['td-selection']">
-           <CInputCheckbox type="checkbox" inline @update:checked="selectionAll()" style="padding:0; margin:0;" />
-        </td>
+      <template #over-table >
+        <section class="row py-2">
+          <div class="col-7 d-flex ">
+            <span v-if="selectedRow.length > 0" class="selectedActions">
+              <label class="m-0">Selected: {{ selectedRow.length }} </label> 
+              <CButton @click="bulkDelete">
+                  <CIcon name="cil-trash" />
+              </CButton>
+            </span>
+            <CButton @click="fetchData({type:'pageChange'})">
+              <CIcon name="cil-reload" />
+            </CButton>
+            <CButton @click="onCreate">
+              <CIcon name="cil-plus" />
+            </CButton>
+          </div>
+          <div class="col-5 d-flex justify-content-end align-items-center">
+            <span>Limit: </span>
+            <CSelect :options="showPerPage" v-model="perPage" class="m-0 ml-2"
+                    @update:value="() => fetchQueryInfo('pageSize', perPage)" />
+          </div>
+        </section>
+      </template>
+
+      <template #selected-header="{item}"> 
+           <CInputCheckbox type="checkbox" inline @update:checked="selectionAll()" style="padding:0; margin:0;" /> 
       </template>
       
       <template v-for="cell of titles" #[cell.key]="{item, index}">
@@ -30,7 +50,7 @@
 
       <template #selected="{item}">
         <td :class="['td-selection']">
-           <CInputCheckbox type="checkbox" :checked="isSelected(item)" @update:checked="handleSelectionChange(item)" />
+           <CInputCheckbox type="checkbox" :checked="isSelected(item)" @update:checked="selectionChange(item)" />
         </td>
       </template>
 
@@ -58,13 +78,14 @@
       <template #under-table>
           <CPagination
             :activePage.sync="currentPage"
-            :pages="(data.total || 1) / perPage"
+            :pages="calcPages(data.total, perPage)"
+            size='sm'
             align="center"
             @update:activePage="(qr) => fetchQueryInfo('page', qr)"
           />
       </template>
     </CDataTable>
-  </CCardBody>
+  </section>
 </template>
 
 <script>  
@@ -74,20 +95,6 @@ import { getData } from "../../../services/models";
 
 import TableMixin from '../../../services/table.mixin'
 import CellTypes from './index'
-
-// const fields = [
-//   { key: 'username', _style:'min-width:200px' },
-//   'registered',
-//   { key: 'role', _style:'min-width:100px;' },
-//   { key: 'status', _style:'min-width:100px;' },
-//   { 
-//     key: 'show_details', 
-//     label: '', 
-//     _style: 'width:1%', 
-//     sorter: false, 
-//     filter: false
-//   }
-// ]
 
 export default {
   name:"TableServer2",
@@ -100,7 +107,8 @@ export default {
     return {
       currentPage: 1,
       perPage: 5,
-      queryInfo: { type: "init", page: this.perPage },
+      showPerPage: [5, 15, 25, 50, 100], 
+      queryInfo: { type: "init", page: 1 },
       data: {},
       details: [],
       selectedRow: [],
@@ -128,7 +136,7 @@ export default {
 
           this.loading = true
           this.data = await getData(this.schema, { ...queryInfo, data: this.resource })
-          console.log('response data', this.data)
+          this.perPage = (this.data.rows && this.data.rows.length) || this.perPage
         }
         this.loading = false
         return true;
@@ -149,23 +157,6 @@ export default {
       if( confirm('Are you sure to delete?') ) 
           this.$emit('actions:delete', row)
     },
-    isSelected(val) {
-      return this.selectedRow.findIndex(i => isEqual(i, val) ) >= 0
-    },
-    selectionAll(){
-      if( this.selectedRow.length == this.data.rows.length )
-        this.selectedRow = []
-      else
-        this.selectedRow = this.data.rows
-    },
-    selectionChange(val, index) {
-      console.log(val, index)
-      let key = this.selectedRow.findIndex(i => isEqual(i, val) )
-      if( key >= 0 )   
-        this.selectedRow.splice(key, 1)
-      else
-        this.selectedRow.push(val)
-    },
     async bulkDelete() {
       if( confirm(`Are you sure to delete ${this.selectedRow.length} rows?`) ){
           this.$emit('actions:deleteBatch', this.selectedRow)
@@ -185,24 +176,6 @@ export default {
       this.collapseDuration = 300
       this.$nextTick(() => { this.collapseDuration = 0})
     },
-    fetchQueryInfo(type, data){
-      this.queryInfo = {}
-      console.log(type, data)
-      if( type == 'sort' ){
-        this.queryInfo = { type, prop: data.column, order: data.asc ? 'asc':'desc' }
-      }
-      if( type == 'filter' ){
-        this.queryInfo = { type, filters: Object.keys(data).map((key) => ({ prop: key, value: data[key] })) }
-      }
-      if( type == 'page' ){
-        this.queryInfo = { type, page: data }
-      }
-      if( type == 'pageSize' ){
-        this.queryInfo = { type, pageSize: data }
-      }
-      
-      this.fetchData(this.queryInfo)
-    }
   },
   mounted(){
       this.fetchData(this.queryInfo)

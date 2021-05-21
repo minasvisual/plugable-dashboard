@@ -179,5 +179,8 @@ export default {
       padding: 0px 0;
     }
   }
+  .card-body, .card-header{
+    padding: 5px;
+  }
 }
 </style>

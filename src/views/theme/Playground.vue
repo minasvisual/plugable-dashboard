@@ -52,7 +52,7 @@
                           @auth:failed="errors"
                       >
                         <template v-slot="{ schema }">
-                          <TableLocale 
+                          <Table 
                             ref="tables" 
                             v-if="schema.api && render"
                             :schema="schema"
@@ -122,7 +122,6 @@ import { get, debounce, find } from 'lodash'
 import VJsoneditor from 'v-jsoneditor'
 import Auth from '../crud/auth'
 import Table from '../crud/table'
-import TableLocale from '../crud/table-types/TableLocale'
 import Forms from '../crud/formulate'
 import Widget from '../widgets/base'
 
@@ -131,7 +130,7 @@ import NewModel from './playgrounds/NewModel'
 
 export default {
   mixins:[ControllerMixin, SessionMixin],
-  components: { VJsoneditor, Forms, Table, Auth, NewProject, NewModel, Widget, TableLocale},
+  components: { VJsoneditor, Forms, Table, Auth, NewProject, NewModel, Widget},
   data(){return{
     render: true,
     jsonEditorData: 'project',

@@ -1,24 +1,42 @@
 <template>
-    <div>
-        <p>
-            <h4># Formulate Input Types: <a href="https://vueformulate.com/guide/inputs/"  target="_blank">(see docs here)</a></h4>
-            <li>Button</li>
-            <li>Box</li>
-            <li>File</li>
-            <li>Group</li>
-            <li>Select</li>
-            <li>Slider</li>
-            <li>Text</li>
-            <li>Textarea</li>
-        </p>
-        <p>
-            <h4># Formulate Extended features available: 
+    <div class="pt-3">
+        <div class="row">
+            <h4 class="col-12">
+                # Formulate Input Types: 
+                <a href="https://vueformulate.com/guide/forms/generating-forms/#schemas"  target="_blank">(see docs here) </a>
+            </h4>
+           <div class="col-12 col-md-4">
+                <p>Default available types</p>
+                <li>Button</li>
+                <li>Box</li> 
+                <li>Group</li> 
+                <li>Slider</li>
+                <li>Text</li>
+                <li>Textarea</li>
+           </div>
+           <div class="col-12 col-md-8">
+                 <VJsoneditor v-model="inputDefault"
+                    :options="{ mode: 'view', mainMenuBar: false, navigationBar: false, statusBar: false }"
+                    height="auto" 
+                ></VJsoneditor>
+           </div>
+        </div>
+        <div class="row">
+            <h4 class="col-12"> # Formulate Extended features available: 
                 <a href="https://www.npmjs.com/package/vue-formulate-extended"  target="_blank">(See docs Here)</a>
             </h4>
-            <li>Events</li>
-            <li>Masks</li>
-            <li>Number enforcing</li>
-        </p>
+           <div class="col-12 col-md-4">
+                <li>Events</li>
+                <li>Masks</li>
+                <li>Number enforcing</li>
+           </div>
+           <div class="col-12 col-md-8">
+                <VJsoneditor v-model="maskDemo"
+                    :options="{ mode: 'preview', mainMenuBar: false, navigationBar: false, statusBar: false }"
+                    height="auto" 
+                ></VJsoneditor>
+           </div>
+        </div>
         <p>
             <h4># Pluggable dashboard additional custom fields</h4>
             <div class="table-responsive">
@@ -26,54 +44,102 @@
                 <table class="table table-dashed">
                     <tr>
                         <td>Type</td>
-                        <td>Params</td>
-                        <td>Description</td>
+                        <td>
+                            Params 
+                            <small>* = required</small>
+                        </td>
                         <td>example</td>
                     </tr>
-                    <tr>
-                        <td>autocomplete</td>
-                        <td>
+
+                    <InputDoc view="preview" v-for="row of inputTypes" :row="row" />
+          
+                </table>
+                
+                <p>
+                    <h4>Html Styled Component</h4>
+                    <p>You can add html wrappers and use global components as a formulate property. Example: 
+                    <VJsoneditor v-model="compDemo"
+                        :options="{ mode: 'preview', mainMenuBar: false, navigationBar: false, statusBar: false }"
+                        height="auto" 
+                    ></VJsoneditor>
+                    </p>
+                    <p>
+                        You can define a sub Crud using a schema or loading a new schema, overwriting schema properties, like:
+                        <VJsoneditor v-model="subgrid"
+                            :options="{ mode: 'preview', mainMenuBar: false, navigationBar: false, statusBar: false }"
+                            height="auto" 
+                        ></VJsoneditor>
+                    </p>
+                </p>
+            </div>
+        </p>
+    </div>
+</template>
+
+<script> 
+import VJsoneditor from 'v-jsoneditor'
+import { autocomplete, select, grid, image, objJson, inputDefault, maskDemo } from './mocks'
+import InputDoc from './views/InputDoc'
+export default {
+    components: {
+        VJsoneditor,
+        InputDoc
+    },
+    data() {
+        return {  
+            inputDefault,
+            maskDemo,
+            compDemo:  {
+                "component": "h4",
+                "children": "My big title"
+            },
+            subgrid: {
+                "component": "Crud",
+                "context":{
+                    "schema": "object schema or filename (only in the same project), ex: roles.json",
+                    "overwrite":{
+                        "api":{
+                            "params": { 
+                                "filter": "'user_id,eq,{data.id}' //Comment: data is active form values" 
+                            }
+                        }
+                    }
+                }
+            },
+            inputTypes:[
+                {
+                    type: "autocomplete",
+                    desc: "Receive array of objects, like select field: ex: { value:1, label:'John' }",
+                    fields: `<p>remote: boolean</p>
                             <p>options: array/object</p>
-                        </td>
-                        <td>
-                            Receive array of objects, like select field: ex: { value:1, label:'John' }
-                        </td>
-                        <td> 
-                            <pre>
-                                {
-                                    "name": "autocomplete",
-                                    "label": "Autocomplete",
-                                    "type": "autocomplete", 
-                                    "options": [
-                                        { "value": 1, "label": "Jon Doe"  }
-                                    ]
-                                }
-                            </pre>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>code</td>
-                        <td>
-                            <p>N/A</p>
-                        </td>
-                        <td>
-                            Use Vue Prism Editor to show js/css/lang code 
-                            <a href="https://github.com/koca/vue-prism-editor" target="_blank">(See docs here)</a>
-                        </td>
-                        <td>
-                            <pre>
-                                {
-                                    "name": "code",
-                                    "label": "Code",
-                                    "type": "code"
-                                }
-                            </pre>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>select</td>
-                        <td>
-                            <ul>
+                            <p>attributes: array/object
+                                <ul>
+                                    <li>fieldLabel: string - response row index of label field (to remote data)</li>
+                                    <li>fieldValue: string - response row index of value field (to remote data)</li>
+                                </ul>
+                            </p>
+                            <p>schema: object
+                                <ul>
+                                    <li>api: object - required - schema api object, required pagination filters to remote search </li> 
+                                </ul>
+                            </p>`,
+                    json: autocomplete
+                },
+                {
+                    type: "code",
+                    desc: ` Use Vue Prism Editor to show js/css/lang code 
+                                <a href="https://github.com/koca/vue-prism-editor" target="_blank">(See docs here)</a>`,
+                    fields: ``,
+                    json: {
+                        'name': 'code',
+                        'label': 'Code',
+                        'type': 'code'
+                    }
+                },
+                {
+                    type: "select",
+                    desc: `Native select + Make a http request to get select options.`,
+                    fields: `<ul>
                                 <li>options: array|object - Default options</li>
                                 <li>
                                     attributes: object 
@@ -85,88 +151,37 @@
                                         <li>requestOptions: object - request headers,params,querystring config (like api)</li>
                                     </ul>
                                 </li>
-                            </ul>
-                        </td>
-                        <td>
-                            Native select + Make a http request to get select options.  
-                        </td>
-                        <td>
-                            <pre>
-                                {
-                                    "name": "dynamicselect",
-                                    "label": "Dynamic Select",
-                                    "type": "select",
-                                    "options": [],
-                                    "attributes":{
-                                        "url": "/examples/advanced_data.json",
-                                        "fieldLabel": "name",
-                                        "fieldValue": "id",
-                                        "wrapData": "users",
-                                        "requestOptions":{
-                                            "headers": { "app-key": "..." }
-                                        }
-                                    }
-                                }
-                            </pre>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>grid</td>
-                        <td>
-                            <ul>
+                            </ul>`,
+                    json: select
+                },
+                {
+                    type: "grid",
+                    desc: `Create a nested collection crud form on same form (thinking to use with NoSQL collections)`,
+                    fields: `<ul>
                                 <p>schema: object - Nested schema object</p>
                                 <li>
-                                    properties: array of formulate/grid properties 
+                                    properties *: array of formulate/grid properties 
                                 </li>
-                            </ul>
-                        </td>
-                        <td>
-                            Create a nested collection crud form on same form (thinking to use with NoSQL collections)
-                        </td>
-                        <td>
-                            <pre>
-                                {
-                                    "name": "grid",
-                                    "label": "Grid",
-                                    "type": "grid",
-                                    "schema": {
-                                        "api": {
-                                            "bypassGetData": true // required to local array edit
-                                            "rootApi": "http://..." // required if is relation crud edit
-                                        },
-                                        "properties":[
-                                            { 
-                                                "name": "name", 
-                                                "label": "name" 
-                                            }
-                                        ]
-                                    }
-                                },
-                            </pre>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>imageText</td>
-                        <td>
-                           N/A
-                        </td>
-                        <td>
-                            Simple url text field with image preview (when filled)
-                        </td>
-                        <td>
-                            <pre>
-                                {
-                                    "name": "image",
-                                    "label": "Image Text",
-                                    "type": "imageText"
-                                }
-                            </pre>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>image</td>
-                        <td>
-                           <ul>
+                                <li>
+                                    <span>api: remote requests config </span>
+                                    <ul>
+                                        <li> bypassGetData: true, // required to local array edition</li>
+                                        <li> rootApi: "http://..." // required if is relation crud edition</li>
+                                    </ul>
+                                </li>
+                            </ul>`,
+                    json: grid
+                },
+                {
+                    type: "imageText",
+                    desc: "Simple url text field with image preview (when filled)",
+                    fields: "",
+                    json: this.imageText
+                },
+                {
+                    type: "image",
+                    desc: "Formulate file upload implementation",
+                    fields: ` <ul>
                                 <li>uploadUrl: string - Url to make a binary upload</li>
                                 <li>validation: string - validation mime types</li>
                                 <li>accept: string - file prompt accept mime types</li>,
@@ -175,167 +190,66 @@
                                         <li>fieldValue: string - response data url wrap</li>
                                     </ul>
                                 </li>
-                           </ul>
-                        </td>
-                        <td>
-                            Formulate file upload implementation
-                        </td>
-                        <td>
-                            <pre>
-                                {
-                                    "name": "image",
-                                    "label": "Image with upload",
-                                    "type": "image",
-                                    "uploadUrl": "/examples/advanced_data.json",
-                                    "validation":"mime:application/pdf",
-                                    "accept": "application/pdf",
-                                    "options":{
-                                        "fieldValue": "upload"
-                                    }
-                                }
-                            </pre>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>json</td>
-                        <td>
-                           <p>parse: boolean - parse json response data </p>
-                        </td>
-                        <td>
-                            Json editor/viewer implementation of Vue Json editor
-                            <a href="https://github.com/yansenlei/VJsoneditor" target="_blank">(See VJsonEditor docs)</a>
-                        </td>
-                        <td>
-                            <pre>
-                               {
-                                    "name": "json",
-                                    "label": "Json view",
-                                    "type": "json",
-                                    "parse": true
-                                }
-                            </pre>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>object</td>
-                        <td>
-                           <p>name: string - object index name</p>
-                           <p>options: array - nested formulate inputs</p>
-                        </td>
-                        <td>
-                            Used to update sub objects with nested form schema (thinking to use with NoSQL)
-                        </td>
-                        <td>
-                            <pre>
-                                {
-                                    "name": "address",
-                                    "type": "object",
-                                    "options": [
-                                        {
-                                            "name": "street",
-                                            "label": "Street"
-                                        }
-                                    ]
-                                }
-                            </pre>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>switch</td>
-                        <td>
-                           N/A
-                        </td>
-                        <td>
-                            Switch boolean data true/false friendly
-                        </td>
-                        <td>
-                            <pre>
-                                {
-                                    "name": "switch",
-                                    "label": "Switch",
-                                    "type": "switch"
-                                }
-                            </pre>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>tags</td>
-                        <td>
-                            <p>
+                           </ul>`,
+                    json: image
+                },
+                {
+                    type: "json",
+                    desc: `Json editor/viewer implementation of Vue Json editor
+                            <a href="https://github.com/yansenlei/VJsoneditor" target="_blank">(See VJsonEditor docs)</a>`,
+                    fields: `<p>parse: boolean - parse json response data </p>`,
+                    json: {
+                        "name": "json",
+                        "label": "Json view",
+                        "type": "json",
+                        "parse": true
+                    }
+                },
+                {
+                    type: "object",
+                    desc: `Used to update sub objects with nested form schema (thinking to use with NoSQL)`,
+                    fields: ` <p>name: string - object index name</p>
+                           <p>options: array - nested formulate inputs</p>`,
+                    json: objJson
+                }, 
+                {
+                    type: "switch",
+                    desc: `Switch boolean data true/false friendly`,
+                    fields: ``,
+                    json: {
+                        "name": "accepted",
+                        "label": "Accept terms",
+                        "type": "switch"
+                    }
+                },
+                {
+                    type: "tags",
+                    desc: `Array|json tags field, to manage array data on input/output form`,
+                    fields: `<p>
                                 attributes.output: string - output type when form submited (json|object)
-                            </p>
-                        </td>
-                        <td>
-                            Array|json tags field, to manage array data on input/output form
-                        </td>
-                        <td>
-                            <pre>
-                               {
-                                    "name": "tags",
-                                    "label": "Tags",
-                                    "type": "tags",
-                                    "attributes":{
-                                        "output": "json"
-                                    }
-                                } 
-                            </pre>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>wysiwyg</td>
-                        <td>
-                           N/A
-                        </td>
-                        <td>
-                            Open content on HTML editor (Vue Quill) to be formated friendly.
-                            <a href="https://github.com/CroudTech/vue-quill" target="_blank">(See Vue quill docs)</a>
-                        </td>
-                        <td>
-                            <pre>
-                                {
-                                    "name": "wysiwyg",
-                                    "label": "Wysiwyg editor",
-                                    "type": "wysiwyg"
-                                }
-                            </pre>
-                        </td>
-                    </tr>
-                    
-                </table>
-                
-                <p>
-                    <h4>Html Styled Component</h4>
-                    <p>You can add html wrappers and use global components as a formulate property. Example: 
-                        <pre>
-                            {
-                                "component": "h4",
-                                "children": "My big title"
-                            }
-                        </pre>
-                    </p>
-                    <p>
-                        You can define a sub Crud using a schema or loading a new schema, overwriting schema properties, like:
-                         <pre>
-                            {
-                                "component": "Crud",
-                                "context":{
-                                    "schema": "object schema or filename (only in the same project), ex: roles.json",
-                                    "overwrite":{
-                                        "api":{
-                                            "params": { 
-                                                "filter": "user_id,eq,{data.id}" // data is active form values
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        </pre>
-                    </p>
-                </p>
-            </div>
-        </p>
-    </div>
-</template>
-
-<script> 
+                            </p>`,
+                    json: {
+                        "name": "tags",
+                        "label": "Tags",
+                        "type": "tags",
+                        "attributes":{
+                            "output": "json"
+                        }
+                    } 
+                },
+                {
+                    type: "wysiwyg",
+                    desc: `  Open content on HTML editor (Vue Quill) to be formated friendly.
+                            <a href="https://github.com/CroudTech/vue-quill" target="_blank">(See Vue quill docs)</a>`,
+                    fields: ``,
+                    json:   {
+                        "name": "content",
+                        "label": "Post content",
+                        "type": "wysiwyg"
+                    }
+                },
+            ]
+        }
+    },
+}
 </script>

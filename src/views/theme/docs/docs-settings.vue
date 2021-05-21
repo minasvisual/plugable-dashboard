@@ -1,5 +1,5 @@
 <template>
-<div>
+<div class="mt-3">
 <CTabs>
     <CTab title="Dashboard Configuration (Pre Build)" active>
         <DocsSettingsDashboard />
@@ -10,6 +10,9 @@
     <CTab title="Schema Json Configuration">
         <DocsSettingsSchema />
     </CTab>
+    <CTab title="Widget Json Configuration">
+        <DocsSettingsWidgets />
+    </CTab>
 </CTabs>
 </div>
 </template>
@@ -18,11 +21,13 @@
 import DocsSettingsDashboard from './docs-settings-dashboard'
 import DocsSettingsProject from './docs-settings-project'
 import DocsSettingsSchema from './docs-settings-schema'
+import DocsSettingsWidgets from './docs-settings-widget'
 export default {
     components:{
         DocsSettingsDashboard,
         DocsSettingsProject,
-        DocsSettingsSchema
+        DocsSettingsSchema,
+        DocsSettingsWidgets
     }
 }
 </script>

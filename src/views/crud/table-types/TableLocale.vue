@@ -1,21 +1,41 @@
 <template>
-  <CCardBody v-if="renderComponent">
+  <section v-if="renderComponent">
     <CDataTable
       :items="data.rows"
       :fields="titles"
       column-filter
-      table-filter
-      items-per-page-select
       :items-per-page="perPage"
       hover
       sorter
-      pagination
+      :pagination="{ align: 'center', size: 'sm' }"
+      size="sm"
     >
 
-      <template #selected-header>
-        <td :class="['td-selection']">
-           <CInputCheckbox type="checkbox" inline @update:checked="selectionAll()" style="padding:0; margin:0;" />
-        </td>
+      <template #over-table >
+        <section class="row py-2">
+          <div class="col-7 d-flex ">
+            <span v-if="selectedRow.length > 0" class="selectedActions">
+              <label class="m-0">Selected: {{ selectedRow.length }} </label> 
+              <CButton @click="bulkDelete">
+                  <CIcon name="cil-trash" />
+              </CButton>
+            </span>
+            <CButton @click="forceReload">
+              <CIcon name="cil-reload" />
+            </CButton>
+            <CButton @click="onCreate">
+              <CIcon name="cil-plus" />
+            </CButton>
+          </div> 
+          <div class="col-5 d-flex justify-content-end align-items-center">
+            <span>Limit: </span>
+            <CSelect :options="showPerPage" class="m-0 ml-2" :value.sync="perPage" />
+          </div>
+        </section>
+      </template>
+
+      <template #selected-header> 
+        <CInputCheckbox type="checkbox" inline @update:checked="selectionAll()" style="padding:0; margin:0;" />
       </template>
       
       <template v-for="cell of titles" #[cell.key]="{item, index}">
@@ -26,7 +46,7 @@
 
       <template #selected="{item}">
         <td :class="['td-selection']">
-           <CInputCheckbox type="checkbox" :checked="isSelected(item)" @update:checked="handleSelectionChange(item)" />
+           <CInputCheckbox type="checkbox" :checked="isSelected(item)" @update:checked="selectionChange(item)" />
         </td>
       </template>
 
@@ -52,7 +72,7 @@
       </template>
 
     </CDataTable>
-  </CCardBody>
+  </section>
 </template>
 
 <script>  
@@ -61,24 +81,10 @@ import { get, has, debounce, isEqual, filter } from 'lodash'
 import TableMixin from '../../../services/table.mixin'
 import CellTypes from './index'
 
-// const fields = [
-//   { key: 'username', _style:'min-width:200px' },
-//   'registered',
-//   { key: 'role', _style:'min-width:100px;' },
-//   { key: 'status', _style:'min-width:100px;' },
-//   { 
-//     key: 'show_details', 
-//     label: '', 
-//     _style: 'width:1%', 
-//     sorter: false, 
-//     filter: false
-//   }
-// ]
-
 export default {
   name:"TableLocale",
   mixins:[TableMixin],
-   rops:{
+  props:{
     schema: {
       type:Object,
       default: {}
@@ -93,8 +99,9 @@ export default {
   },
   data () {
     return {
+      currentPage: 1,
       perPage: 5,
-      data: {},
+      showPerPage: [5, 15, 25, 50, 100], 
       details: [],
       selectedRow: [],
       collapseDuration: 0,
@@ -105,6 +112,9 @@ export default {
     titles(){
       return has(this.schema, 'properties') ? this.schemaColumns([ ...this.schema.properties ]) : []
     },
+    data(){
+      return { rows: (this.resource || []), total: (  Array.isArray(this.resource) ? this.resource.length : 0 ) }
+    }
   },
   methods: {
     resetGrid(){
@@ -120,39 +130,30 @@ export default {
     onDelete(row){
       if( confirm('Are you sure to delete?') ) 
           this.$emit('actions:delete', row)
-    },
-    isSelected(val) {
-      return this.selectedRow.findIndex(i => isEqual(i, val) ) >= 0
-    },
-    selectionAll(){
-      if( this.selectedRow.length == this.data.rows.length )
-        this.selectedRow = []
-      else
-        this.selectedRow = this.data.rows
-    },
-    selectionChange(val, index) {
-      console.log(val, index)
-      let key = this.selectedRow.findIndex(i => isEqual(i, val) )
-      if( key >= 0 )   
-        this.selectedRow.splice(key, 1)
-      else
-        this.selectedRow.push(val)
-    },
+    }, 
     async bulkDelete() {
       if( confirm(`Are you sure to delete ${this.selectedRow.length} rows?`) ){
           this.$emit('actions:deleteBatch', this.selectedRow)
       }
     },
-     
+    forceReload(){
+      console.debug('reloading')
+      this.renderComponent = false;
+      this.$nextTick(() => {
+        this.renderComponent = true
+      })
+    },
     toggleDetails (item) {
       this.$set(this.items[item.id], '_toggled', !item._toggled)
       this.collapseDuration = 300
       this.$nextTick(() => { this.collapseDuration = 0})
     },
-   
+    logger(v){
+      console.log('change ', v)
+    }
   },
   mounted(){
-      this.data = { rows: (this.resource || []), total: (  Array.isArray(this.resource) ? this.resource.length : 0 ) }
+      
       this.renderComponent = true
   }
 }

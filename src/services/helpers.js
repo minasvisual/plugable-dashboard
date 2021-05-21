@@ -41,9 +41,9 @@ export const queryString = (params, join, data) => {
     return rtn
 }
 
-export const filterParams = (api, queryInfo) => {
+export const filterParams = (api, queryInfo) => { 
     let { page, pageSize, sort, filters } = queryInfo || {}
-    let { params, pagination } = api || {}
+    let { params = {}, pagination = {} } = api || {}
     if( page && has(pagination, 'pageField') )
         params[ pagination.pageField || 'page' ] = page
     if( pageSize && has(pagination, 'limitField') )
@@ -58,7 +58,7 @@ export const filterParams = (api, queryInfo) => {
         params[ filterField ] = interpolate( (pagination.filterExp || '{prop},like,%{value}%') , filters[0])
     else if( has(pagination, 'filterField') )
         delete params[ filterField ]
-
+ 
     return {...api, params};
 }
 

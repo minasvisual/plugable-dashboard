@@ -1,26 +1,27 @@
 <template>
   <section class="table-section" v-if="renderComponent">
-    
-    <Tablelocal  v-if="layout == 'local'"
-        ref="tables" 
-        :schema="schema" 
-        :resource="data"
-        @actions:create="$emit('actions:create', $event)"
-        @actions:edit="$emit('actions:edit', $event)" 
-        @actions:delete="$emit('actions:delete', $event)" 
-        @actions:deleteBatch="$emit('actions:deleteBatch', $event)" 
-    />
-    <TableServer v-else-if="layout == 'server' && schema.api.rootApi" 
-        ref="tables" 
-        :schema="schema" 
-        :resource="resource" 
-        @actions:create="$emit('actions:create', $event)"
-        @actions:edit="$emit('actions:edit', $event)" 
-        @actions:delete="$emit('actions:delete', $event)" 
-        @actions:deleteBatch="$emit('actions:deleteBatch', $event)" 
-    />
-    <p v-else class="text-center"><small>Missing rootApi (Server Crud) or bypassGetData (Sub object Crud) property</small></p>
+    <keep-alive>
+      <Tablelocal  v-if="layout == 'local'"
+          ref="tables" 
+          :schema="schema" 
+          :resource="resource"
+          @actions:create="$emit('actions:create', $event)"
+          @actions:edit="$emit('actions:edit', $event)" 
+          @actions:delete="$emit('actions:delete', $event)" 
+          @actions:deleteBatch="$emit('actions:deleteBatch', $event)" 
+      />
+      <TableServer v-else-if="layout == 'server' && schema.api.rootApi" 
+          ref="tables" 
+          :schema="schema" 
+          :resource="resource" 
+          @actions:create="$emit('actions:create', $event)"
+          @actions:edit="$emit('actions:edit', $event)" 
+          @actions:delete="$emit('actions:delete', $event)" 
+          @actions:deleteBatch="$emit('actions:deleteBatch', $event)" 
+      />
+      <p v-else class="text-center"><small>Missing rootApi (Server Crud) or bypassGetData (Sub object Crud) property</small></p>
 
+    </keep-alive>
   </section>
 </template>
 <script>
@@ -53,7 +54,7 @@ export default {
     boot(){   
       if( get(this.schema, 'api.bypassGetData', false) ){
         this.layout = 'local' 
-        if( !Array.isArray(this.resource) ) this.data = []
+        if( !Array.isArray(this.resource) ) this.resource = []
       }else if( get(this.schema, 'api.rootApi', false) ) {
         this.layout = 'server' 
       }else{
@@ -69,23 +70,9 @@ export default {
 </script>
 
 <style lang="scss">
-@media (max-width: 728px){
-  .el-table-column--selection{
-    width: 15px; 
-  }
-  .el-table th > .cell{
-    white-space: nowrap !important;
-    flex-wrap: nowrap !important;
-  }
-  .pagination-wrap{
-    .el-pagination__jump{
-      display: none !important;
-    }
-    .el-pager{
-      .number:not(.active){
-        display:none !important;
-      }
-    }
-  }
+.table thead tr th {
+  	white-space: nowrap
+}
+@media (max-width: 728px){ 
 }
 </style>
