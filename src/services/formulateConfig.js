@@ -33,6 +33,7 @@ Vue.component('FormulateSelect', FormulateSelect)
 // Our first plugin
 function TypesHookPlugin (instance) {
   // Add a new validation rule
+
   instance.extend({
     hooks: {
       model: [

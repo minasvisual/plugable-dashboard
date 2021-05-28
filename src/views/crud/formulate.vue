@@ -62,19 +62,7 @@ export default {
       }
     },
     mounted(){
-      ( this.isStandalone ? Promise.resolve(this.data) : this.getRow() ).then( (data) => {
-            this.form =  this.schema.properties
-            this.columns = schemaColumns(this.schema.properties)
-            data = formatModel(this.columns, data)
-            
-            this.model = data
-            this.loader = false
-        }).catch((err) => {
-          console.debug('Form mounted error', err)
-          this.$message(err.message, 'danger')
-            
-          this.loader = false
-        })
+      this.init()
     },
     methods: {
       async submit (data) {
@@ -87,6 +75,21 @@ export default {
 
           return this.getData(this.schema, this.data)
       },
+      init(){
+         ( this.isStandalone ? Promise.resolve(this.data) : this.getRow() ).then( (data) => {
+              this.form =  this.schema.properties
+              this.columns = schemaColumns(this.schema.properties)
+              data = formatModel(this.columns, data)
+              
+              this.model = data
+              this.loader = false
+          }).catch((err) => {
+            console.debug('Form mounted error', err)
+            alert(err.message )
+              
+            this.loader = false
+          })
+      }
     },
 }
 </script>

@@ -19,7 +19,9 @@ api.interceptors.request.use(
     if( !config.headers[( process.env.VUE_APP_LOGIN_TOKEN_HEADER || 'access-token')] ){
       const token = localStorage.getItem('dash_session')
       if (process.env.VUE_APP_LOGIN == 'true' && token) {
-        config.headers[( process.env.VUE_APP_LOGIN_TOKEN_HEADER || 'access-token')] = token;
+        let headerName = ( process.env.VUE_APP_LOGIN_TOKEN_HEADER || 'access-token')
+        let headerValue = interpolate(( process.env.VUE_APP_LOGIN_TOKEN_HEADER_EXPRESSION || '{token}'), {token})
+        config.headers[ headerName ] = headerValue;
       }
     }
 
@@ -34,11 +36,9 @@ api.interceptors.response.use(
   (success) => {
     return success
   },
-  (error) => {
-    if ( get(error, 'response.status') === 401 ) {
-      Store.dispatch("logout")
-    }
-
+  (error) => { 
+    Store.dispatch("requestFail", error)
+    
    // return Error object with Promise
    return Promise.reject(error);
   },

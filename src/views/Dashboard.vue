@@ -10,11 +10,11 @@
           </CCol>
           <CCol xs=12 sm="8" class="d-flex">
             <CRow class="w-100">
-              <CCol sm=6 md=4 lg=3 style="border-left: 1px solid darkblue">
+              <CCol sm=6 md=4 lg=3 style="border-left: 1px solid darkblue; margin-bottom: 10px ">
                 <h6>Dashboard use</h6>
                 <p >{{ projects.length.toString() }} Projects</p>
               </CCol>   
-              <CCol sm=6 md=3 style="border-left: 1px solid darkblue" 
+              <CCol sm=6 md=3 style="border-left: 1px solid darkblue; margin-bottom: 10px" 
                     v-for="row of projects" :key="row.code" @click="setProject(row)">
                 <h6>{{ row.name }}</h6>
                 <p>{{ calcResources(row) + ' apis' }}</p>
@@ -27,7 +27,7 @@
 
    
 
-    <Widgets v-if="current" />
+    <Widgets v-if="current && renderWidgets" />
 
   </div>
 </template>
@@ -45,6 +45,17 @@ export default {
   },
   data () {
     return {
+      renderWidgets: true
+    }
+  },
+  watch:{
+    '$store.state.currentProject': function( newVal ){
+      if( newVal ){
+        this.renderWidgets = false
+        this.$nextTick(() => {
+          this.renderWidgets = true
+        })
+      }
     }
   },
   computed: {
@@ -63,7 +74,7 @@ export default {
       this.$store.commit('set', ['currentProject', proj])
       
       saveSettings({current: get(proj, 'code', null)})
-    }
+    },
   }
 }
 </script>

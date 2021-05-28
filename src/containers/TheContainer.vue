@@ -38,7 +38,7 @@ export default {
       hasAuth(){ return process.env.VUE_APP_LOGIN === 'true' }
   },
   async beforeMount(){
-    this.$store.commit('set', ['loading', true])
+    this.$store.commit('setLoader', ['global', true])
     let { current } = getLocalStorage('settings') || {}
 
     await loadProjects({ cache:{ ignoreCache: true }}).then( (data) => {
@@ -55,8 +55,8 @@ export default {
         this.$store.commit('set', ['currentProject', find(data, ['code', current]) ])
     }).catch( e => {
       this.$message( e.message || 'Erro to load projects')
-    }).then(() => {
-      this.$store.commit('set', ['loading', false])
+    }).finally(() => {
+      this.$store.commit('setLoader', ['global', false])
     })
   }
 }

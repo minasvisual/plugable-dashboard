@@ -1,6 +1,6 @@
 <template>
   <section>
-    <CModal :show.sync="loader" :closeOnBackdrop="false" size="sm" addContentClasses="loader" :centered="true">
+    <CModal :show.sync="loader.global" :closeOnBackdrop="false" size="sm" addContentClasses="loader" :centered="true">
       <template #header-wrapper><span></span></template>
       <template #footer-wrapper><span></span></template>
       <template #body-wrapper>
@@ -12,15 +12,15 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import AuthMixin from './services/auth.mixin'
 export default {
   name: 'App',
   mixins: [AuthMixin],
   computed:{
-    loader:{ 
-      get(){ return this.$store.state.loading || false },
-      set(value){ this.$store.commit('set', ['loading', value]) }
-    }
+    ...mapState({
+      loader: (state) => state.loading
+    })
   },
   beforeMount(){
     this.isLogged() 

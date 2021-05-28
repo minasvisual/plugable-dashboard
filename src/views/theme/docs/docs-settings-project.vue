@@ -5,8 +5,8 @@
     {                                                           //required | Project config
         "code": "modelslug",
         "name": "Model Label",
-        "url": "https://project-url.com",
-        "resources_path": "/models/",                           //Base path or base URL of Json Models folder
+        "url": "https://project-url.com",                       // Base URL for api (used to control session requests )
+        "resources_path": "/models/",                           // Base path or base URL of Json Models folder
         "resources": {                                          // Project crud endpoints schema
             "users": {                                          // !IMPORTANT: object index match url target
                 "resource": "users_schema.json",                // Schema Json url/path
@@ -35,6 +35,7 @@
             "request_mode": "header",                       	// How to send token between requests | opts: header/query | Default header
             "request_token": "access-token",                    // Token field name | Default access-token
             "request_token_expression": "Bearer {token}",       // Token request value expression to be interpolated | Default {token}		
+            "request_expiration_status": 401,                   // Token expiration status code to be changed authentication status on CRUD
             "logged_url": "https://project-url.com/api/user",	// Url to How to get logged user data  
             "logged_model": {                                   // User response DTO
                 "id": "_id",                                    // Ex: { id: 1, fullname: 'John doe', email: 'email@email.com', level: 'admin' }

@@ -11,7 +11,8 @@
     VUE_APP_LOGIN_USER_FIELD=email					// Username field
     VUE_APP_LOGIN_PASS_FIELD=password				// Password field
     VUE_APP_LOGIN_TOKEN_PATH=token					// Response token path in data object
-    VUE_APP_LOGIN_TOKEN_HEADER=access-token			// Request token header JWT 
+    VUE_APP_LOGIN_TOKEN_HEADER=access-token			// Request token header name JWT ex. authorization, token, access-token
+    VUE_APP_LOGIN_TOKEN_HEADER_EXPRESSION           // Request Token header value schema: ex. 'Bearer {token}', default '{token}'
     VUE_APP_LOGGED_URL=https://project.com/auth/logged	// Get logged user data url
     </pre>    
         

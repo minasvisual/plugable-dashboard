@@ -29,7 +29,7 @@ export default {
             has(this.$route, "params.model") &&
             has(this.currentProject, `resources[${this.$route.params.model}]`)
           ) {
-            this.$store.commit('set', ['loading', true])
+            this.$store.commit('setLoader', ['model', true])
             this.loading = true
             let url = this.currentProject.resources_path + get( this.currentProject, `resources[${this.$route.params.model}.resource]`)
 
@@ -43,7 +43,7 @@ export default {
                 if( this.renderComponent === true ) this.forceRerender()
                 else this.renderComponent = true;
                 
-                this.$store.commit('set', ['loading', false])
+                this.$store.commit('setLoader', ['model', false])
                 return data;
             })
           } else {
@@ -52,7 +52,7 @@ export default {
           }
       }catch(err){
         console.error('Catch load model', err)
-        this.$store.commit('set', ['loading', false])
+        this.$store.commit('setLoader', ['model',  false])
         this.loading = false;
         this.renderComponent = false
         this.$message("Error to load Model " + this.$route.params.model +" : "+ err.message);
@@ -69,6 +69,7 @@ export default {
       return getData(schema, options)
     },
     saveData(schema, data){
+      this.$store.commit('setLoader', ['form', true])
       return saveData(schema, data)
         .then((res) => {
             this.$message('Saved with success') 
@@ -78,20 +79,23 @@ export default {
         .catch(e => {
           this.$message( get(e, 'response.data.message', e.message ) )
           return Promise.reject(e)
-        }) 
+        }).finally(() => {
+          this.$store.commit('setLoader', ['form', false])
+        })
     },
     deleteData(schema, data){
       //this.active.api = Object.assign(this.active.api, ...this.request); 
-      this.$store.commit('set', ['loading', true])
+      this.$store.commit('setLoader', ['table', true])
       return deleteData(schema, data)
-          .then((data) => {
-              this.$store.commit('set', ['loading', false])
+          .then((data) => { 
               return data;
           })
-          .catch(e => {
+          .catch(e => { 
             this.$message( get(e, 'response.data.message', e.message ) )
             return Promise.reject(e)
-          }) 
+          }).finally(() =>{
+            this.$store.commit('setLoader', ['table', false])
+          })
     },  
     forceRerender() {
       console.debug('called rerender')
@@ -105,7 +109,8 @@ export default {
       this.$message(data.message || data);
       console.error("error", data);
       
-      this.$store.commit('set', ['loading', false])
+      this.$store.commit('setLoader', ['form', false])
+      this.$store.commit('setLoader', ['table', false])
     },
     // Standalone grid
   },

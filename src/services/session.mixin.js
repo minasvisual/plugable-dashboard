@@ -35,9 +35,9 @@ export default {
                           [get(this.config, 'field_secret', 'password')]: secret,
                           [get(this.config, 'field_remember', 'remember')]: remember,
                         },
-                        headers:{
-                          [get(this.config, 'request_token', 'access-token')]: ''
-                        }
+                        //headers:{
+                          //[get(this.config, 'request_token', 'access-token')]: ''
+                        //}
                       }, false )
                 .then((res) => {
                   let token = this.storageToken(res)

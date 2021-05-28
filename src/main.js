@@ -12,6 +12,7 @@ import VueFormulate from '@braid/vue-formulate'
 import FormulateConfig  from './services/formulateConfig'
 import VJsoneditor from 'v-jsoneditor'
 import VueQuill from 'vue-quill'
+import DashPlugin from './services/plugin'
 
 import Crud from './views/crud/formulate/grid'
 
@@ -22,6 +23,7 @@ Vue.component('Crud', Crud)
 
 Vue.use(VueQuill) 
 Vue.use(CoreuiVue) 
+Vue.use(DashPlugin) 
 
 Vue.use(VJsoneditor)
 Vue.filter('formatDate', formatDate)

@@ -25,7 +25,7 @@ export default {
       validateQueryInfo(queryInfo){
           if( !queryInfo || typeof queryInfo !== 'object' ) return false;
           
-          if( ['sizeChange', 'size', 'pageChange', 'sort', 'filter', 'page', 'init'].includes(queryInfo.type) ){
+          if( ['sizeChange', 'pageSize', 'size', 'pageChange', 'sort', 'filter', 'page', 'init'].includes(queryInfo.type) ){
               if( queryInfo.type == 'filter' &&  !get(queryInfo, 'filters[0].prop')  )
                   return false;
           }else{
@@ -77,5 +77,13 @@ export default {
           else
           this.selectedRow.push(val)
       },
+      optionfy(arr, label, key){
+        return arr.map(i => ({ label: i[label], key: i[key] }) )
+      },
+      optionfyObject(arr, label, key){
+        let obj = {}
+        arr.map(i => obj[ i[key] ] = i[label]  )
+        return obj
+      }
     }
 }

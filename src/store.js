@@ -12,7 +12,7 @@ const state = {
   projects:[],
   currentProject: {},
   auth:{},
-  loading: false,
+  loading: {},
   cache:{},
   crud:{}
 }
@@ -32,6 +32,10 @@ const mutations = {
   setAuth (state, [session, value]) {
     console.log('setauth called', state.auth[session], value)
     return state.auth[session] = value
+  },
+  setLoader (state, [session, value]) {
+    console.log('setLoader called', session, value)
+    return state.loading[session] = value
   }
 }
 
@@ -92,6 +96,18 @@ const actions = {
     }
     ctx.commit('setAuth', ['dash', auth]) 
     Router.push('/pages/login')
+  },
+  requestFail(ctx, { response }){
+    let current = ctx.state.currentProject || {}
+    console.log('request fail', response)
+    if( get(response, 'config.url', '').includes(current.url) ){
+      if( response.status == get(current, 'auth.request_expiration_status') || response.data.includes("expired") )
+        ctx.dispatch('setAuth', [ current.code, {logged: false} ])
+    }
+    else if( get(response, 'config.url', '').includes( process.env.VUE_APP_LOGGED_URL ) ){
+      ctx.dispatch('logout')
+    }
+
   }
 }
 export default new Vuex.Store({

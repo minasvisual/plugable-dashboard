@@ -1,66 +1,68 @@
 <template>
   <CRow>
     <CCol col>
-      <CCard>
-        <CCardHeader>
-          <strong>{{ currentProject.name }} | {{ active.title }}</strong>
-          
-          <div class="card-header-actions" >
-            <span v-if="session">Logged as {{  session.user.name ? session.user.name: 'anonimous' }} | </span>
-            <CButton size="sm" class="card-header-action"  @click="loadModel({ cache:{ ignoreCache: true } })"> 
-              <CIcon name="cil-reload" /> Model
-            </CButton>
-          </div>
-        </CCardHeader>
-        <CCardBody >
-          <section v-if="renderComponent">
-            <Auth
-                :project="currentProject" 
-                :schema="active"
-                @auth:logged="auth"
-                @auth:failed="errors"
-                
-            >
-              <template v-slot="{ schema }">
-                
-                <Table 
-                  ref="tables" 
-                  v-if="schema.api"
-                  :schema="schema"
-                  @actions:create="actions('FORM_CREATE', $event)"
-                  @actions:edit="actions('FORM_EDIT', $event)"
-                  @actions:delete="actions('FORM_DELETE', $event)"
-                  @actions:deleteBatch="actions('FORM_DELETEBATCH', $event)" 
-                />
+      <Loading target="model">
+        <CCard>
+          <CCardHeader>
+            <strong>{{ currentProject.name }} | {{ active.title }}</strong>
+            
+            <div class="card-header-actions d-flex justify-content-between" >
+              <span v-if="session">Logged as {{  session.user.name ? session.user.name: 'anonimous' }} | </span>
+              <FormulateInput type="select" :outer-class="['card-header-action p-0 m-0 mr-2']" input-class="p-1"  :options="views" v-model="layout" />  
+              <CButton size="sm" class="card-header-action d-flex"  @click="loadModel({ cache:{ ignoreCache: true } })"> 
+                <CIcon name="cil-reload" /> Model
+              </CButton>
+            </div>
+          </CCardHeader>
+          <CCardBody >
+            <section v-if="renderComponent">
+              <Auth
+                  :project="currentProject" 
+                  :schema="active"
+                  @auth:logged="auth"
+                  @auth:failed="errors"
+                  
+              >
+                <template v-slot="{ schema }">
+                  
+                  <Table 
+                    ref="tables" 
+                    v-if="schema.api"
+                    :schema="schema"
+                    :layout="layout"
+                    @actions:create="actions('FORM_CREATE', $event)"
+                    @actions:edit="actions('FORM_EDIT', $event)"
+                    @actions:delete="actions('FORM_DELETE', $event)"
+                    @actions:deleteBatch="actions('FORM_DELETEBATCH', $event)" 
+                  />
 
-                <CModal
-                  :title="formTitle"
-                  :show.sync="formopen"
-                  size="lg"
-                  :closeOnBackdrop="false"
-                >
-                    <Forms 
-                      v-if="formopen"
-                      :formopen="formopen"
-                      :schema="schema" 
-                      :data="row"
-                      @model:saved="formHook"
-                      @close="closeForm"
-                    /> 
-                    <template slot="footer"><span></span></template>
-                </CModal>
+                  <CModal
+                    :title="formTitle"
+                    :show.sync="formopen"
+                    size="lg"
+                    :closeOnBackdrop="false"
+                  >
+                      <Forms 
+                        v-if="formopen"
+                        :formopen="formopen"
+                        :schema="schema" 
+                        :data="row"
+                        @model:saved="formHook"
+                        @close="closeForm"
+                      /> 
+                      <template slot="footer"><span></span></template>
+                  </CModal>
 
-              </template>
-            </Auth>
-          </section>
-          <h4 v-else class="text-center">
-            <CSpinner color="info"/>
-          </h4>
-        </CCardBody>
-    </CCard>
+                </template>
+              </Auth>
+            </section>
+            <h4 v-else class="text-center">
+              <CSpinner color="info"/>
+            </h4>
+          </CCardBody>
+      </CCard>
+    </Loading>
   </CCol>
-    
-
 </CRow>
 </template>
 
@@ -72,6 +74,7 @@ import SessionMixin from '../../services/session.mixin'
 import Auth from './auth'
 import Table from './table'
 import Forms  from './formulate'
+import Loading  from '../../containers/Loading'
 
 export default {
   name: 'Base',
@@ -79,7 +82,8 @@ export default {
   components:{
     Auth,
     Table,
-    Forms
+    Forms,
+    Loading
   },
   data(){
     return{
@@ -87,6 +91,11 @@ export default {
       row:{},
       formopen:false,
       formLogin:true, 
+      layout: 'table',
+      views:{
+        'table': 'Table' ,
+        'card': 'Card View',
+      }
     }
   },
   watch: {

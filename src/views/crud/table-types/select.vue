@@ -1,10 +1,11 @@
 <template>
     <CSelect
-        readonly
+        class="table-select"
         v-if="renderComponent"
         v-model="data"
         :options="(cell.options || [])"
         size="sm"
+        :disabled="true"
     />
 </template>
 
@@ -62,3 +63,14 @@ export default {
   }
 }
 </script>
+
+<style lang="css">
+.table-select select{
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  text-indent: 1px;
+  text-overflow: '';
+  border: none  !important;
+  background-color: transparent !important;
+}
+</style>
