@@ -11,7 +11,7 @@ export default {
       return this.project.auth || null 
     },
     hasAuth() {
-      return has(this.currentProject, 'auth');
+      return has(this.currentProject, 'auth') || get(this.schema, 'auth');
     },
     showCrud() {
       return (!this.hasAuth || (this.hasAuth && this.logged))

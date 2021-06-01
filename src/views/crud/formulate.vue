@@ -58,7 +58,7 @@ export default {
         return get(this.schema, 'primaryKey', 'id')
       },
       isStandalone(){
-        return get(this.schema, 'api.bypassGetByid', false) || !get(this.schema, 'api.rootApi', false)//|| get(this.schema, 'api.bypassGetData', false)
+        return get(this.schema, 'type') == 'form' || get(this.schema, 'api.bypassGetByid', false) || !get(this.schema, 'api.rootApi', false)//|| get(this.schema, 'api.bypassGetData', false)
       }
     },
     mounted(){
@@ -80,12 +80,11 @@ export default {
               this.form =  this.schema.properties
               this.columns = schemaColumns(this.schema.properties)
               data = formatModel(this.columns, data)
-              
+              console.log(data)
               this.model = data
               this.loader = false
           }).catch((err) => {
-            console.debug('Form mounted error', err)
-            alert(err.message )
+            this.$alert('Form mounted error', err) 
               
             this.loader = false
           })

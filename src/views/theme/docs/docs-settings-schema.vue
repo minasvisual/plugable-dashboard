@@ -2,7 +2,7 @@
   <div>
     <pre>
 {
-    "type": "object",
+    "type": "grid",                             // View type opts: grid|form - default: grid - optional
     "title": "Users",                           // Schema title visible to user
     "domain": "users",                          // Schema slug visible on url
     "primaryKey": "id",                         // Collection primary key (default: id)

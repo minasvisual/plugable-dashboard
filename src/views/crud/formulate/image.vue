@@ -15,10 +15,13 @@
 </template>
 
 <script>
-import { request } from '../../../services/models'
-import { get } from 'lodash'
+import InputMixin from '../../../services/input.mixin'
+import { request, saveData } from '../../../services/models'
+import { get, set } from 'lodash'
 
 export default {
+  name: "InputImage",
+  mixins:[InputMixin],
   props: {
     context: {
       type: Object,
@@ -31,30 +34,25 @@ export default {
       uploading: false,
       files: []
     }
-  },
-  computed: {
-    model () {
-      return this.context.model
-    }
-  },
+  }, 
   methods: {
     async uploadFile () {
       // ... perform upload
       this.uploading = true;
       let file = this.$refs.file.files[0]
+      let { attributes, schema } = this.context.attributes 
       
       const formData = new FormData()
       formData.append('file', file)
       this.context.model = URL.createObjectURL(file);
 
-      console.log(file)
-
-      return await request( 
-          this.context.uploadUrl, 
-          {
-            method: this.context.method || 'post',
-            data: formData,
-          }
+      if( this.context.uploadUrl )
+        set(schema, 'api.rootApi', this.context.uploadUrl)
+ 
+      //return await request( 
+      saveData(
+          schema,  
+          formData
         )
         .then((data) => {
           if( data )
@@ -68,6 +66,8 @@ export default {
           this.uploading = false
         })
     }
+  },
+  mounted(){
   }
 }
 </script>

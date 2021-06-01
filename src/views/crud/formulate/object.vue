@@ -2,6 +2,7 @@
     <FormulateForm
       v-model="model"
       :schema="context.options"
+      v-bind="context.attributes"
     />
 </template>
 
@@ -25,7 +26,7 @@ export default {
     },
     options(){
       return context.options || []
-    }
+    }, 
   }
 }
 </script>

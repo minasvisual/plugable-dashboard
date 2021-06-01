@@ -115,7 +115,6 @@ export default {
   },
   beforeMount(){
     this.login = false
-      console.log('caled before mount')
   },
   async mounted(){
     try{
@@ -123,7 +122,7 @@ export default {
       if( !this.hasAuth ) return this.login = true 
 
       console.debug('auth process start')
-      let token = sessionStorage.getItem(`${this.project.code}_session`)
+      let token = sessionStorage.getItem(`${this.schema.session || this.project.code}_session`)
       console.debug('token session', token)
 
       this.loading = true;

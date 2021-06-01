@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import Router from './router'
 import { get } from 'lodash'
-import { request, getUserData } from './services/models'
+import { request, getUserData, getAuthHeaders } from './services/models'
 
 Vue.use(Vuex)
 
@@ -71,7 +71,13 @@ const actions = {
   isLogged(ctx){
     let token = localStorage.getItem('dash_session')
     if( token ){
-      return getUserData()
+      let headers = getAuthHeaders({ 
+        "request_mode": process.env.VUE_APP_LOGIN_TOKEN_MODE || 'header',
+        "request_token": process.env.VUE_APP_LOGIN_TOKEN_HEADER || 'access-token',
+        "request_token_expression": process.env.VUE_APP_LOGIN_TOKEN_HEADER_EXPRESSION || '{token}', 
+      }, token)
+
+      return getUserData({ method: 'get', ...headers })
           .then( data => {
               ctx.commit('setAuth', ['dash', {isLogged: true, token, user: data }])
               if( !window.location.includes('dashboard') ) Router.push('/dashboard')
