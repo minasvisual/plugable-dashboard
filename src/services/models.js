@@ -50,15 +50,18 @@ api.interceptors.response.use(
 
 export const getAuthHeaders = (project, token) => {
   let tokenRequest = get(project, 'request_token_expression', '{token}')
+  let headers = process.env.VUE_APP_DEFAULT_HEADERS ? JSON.parse(process.env.VUE_APP_DEFAULT_HEADERS) : {}
   if( get(project, 'request_mode', 'header') == 'query' )
     return { 
       params:{
           [get(project, 'request_token', 'access-token')] : interpolate(tokenRequest, {token})
-      }
+      },
+      headers
     } 
   else if( get(project, 'request_mode', 'header') == 'header' )
     return { 
       headers:{
+        ...headers,
         [get(project, 'request_token', 'access-token')] : interpolate(tokenRequest, {token})
       }
     } 
@@ -69,7 +72,9 @@ export const getAuthHeaders = (project, token) => {
       "request_token_expression": process.env.VUE_APP_LOGIN_TOKEN_HEADER_EXPRESSION || '{token}', 
     }, token) 
   else
-    return {}
+    return {
+      headers
+    }
   
 }
 

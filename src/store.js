@@ -50,6 +50,7 @@ const getters = {
 
 const actions = {
   login (ctx, { username, password, remember }) {
+      let headers = process.env.VUE_APP_DEFAULT_HEADERS ? JSON.parse(process.env.VUE_APP_DEFAULT_HEADERS) : {}
       return request( 
         process.env.VUE_APP_LOGIN_URL , {
           method: 'POST',
@@ -57,7 +58,8 @@ const actions = {
             [process.env.VUE_APP_LOGIN_USER_FIELD]: username, 
             [process.env.VUE_APP_LOGIN_PASS_FIELD]: password,
             remember
-          }
+          },
+          headers
         }
       ).then( data => {
         let token =  get(data, process.env.VUE_APP_LOGIN_TOKEN_PATH, 'access_token' )

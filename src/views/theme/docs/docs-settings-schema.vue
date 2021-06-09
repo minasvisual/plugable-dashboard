@@ -6,7 +6,7 @@
     "title": "Users",                           // Schema title visible to user
     "domain": "users",                          // Schema slug visible on url
     "primaryKey": "id",                         // Collection primary key (default: id)
-    "auth": true,                               // Define auth required before get data (auth config on project json)
+    "auth": true,                               // Define auth required before get data, auth: false bypass header token any
     "properties": [                             // Form/Datatable properties
         {                                       // VueFormulate / Grid table schema
             "name": "id",                       // Data object index
