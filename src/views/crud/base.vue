@@ -1,13 +1,19 @@
 <template>
   <CRow>
-    <CCol col>
-      <Loading target="model">
+    <CCol col class="base"> 
         <CCard>
           <CCardHeader>
             <strong>{{ currentProject.name }} | {{ active.title }}</strong>
             
-            <div class="card-header-actions d-flex justify-content-between" >
-              <span v-if="session">Logged as {{  session.user.name ? session.user.name: 'anonimous' }} | </span>
+            <div class="card-header-actions d-flex justify-content-between" v-if="renderComponent" > 
+              <CDropdown
+                v-if="logged" 
+                color="white"
+                :toggler-text="get(session, 'user.name', 'anonimous')"  
+              >
+                <CDropdownItem disabled></CDropdownItem>
+                <CDropdownItem @click="logout">Logout</CDropdownItem>
+              </CDropdown>  
               <FormulateInput v-if="active.type != 'form'" 
                 type="select" 
                 :outer-class="['card-header-action p-0 m-0 mr-2']" input-class="p-1"  
@@ -21,22 +27,22 @@
           <CCardBody >
             <section v-if="renderComponent">
               <Auth
+                  ref="Auth"
                   :project="currentProject" 
                   :schema="active"
                   @auth:logged="auth"
                   @auth:failed="errors"
-                  
               >
                 <template v-slot="{ schema }"> 
-                  <Form   
-                    v-if="schema.type == 'form'"
-                    :schema="schema"   
-                  />  
-                  <Grid  
-                    v-else
-                    :schema="schema"
-                    :layout="layout" 
-                  /> 
+                    <Form   
+                      v-if="schema.type == 'form'"
+                      :schema="schema"   
+                    />  
+                    <Grid  
+                      v-else
+                      :schema="schema"
+                      :layout="layout" 
+                    />  
                 </template>
               </Auth>
             </section>
@@ -44,8 +50,7 @@
               <CSpinner color="info"/>
             </h4>
           </CCardBody>
-      </CCard>
-    </Loading>
+      </CCard> 
   </CCol>
 </CRow>
 </template>
@@ -57,14 +62,13 @@ import SessionMixin from '../../services/session.mixin'
 
 import Auth from './auth'
 import Grid from './grid' 
-import Form from './form' 
-import Loading  from '../../containers/Loading'
+import Form from './form'
 
 export default {
   name: 'Base',
   mixins:[ControllerMixin, SessionMixin],
   components:{
-    Auth, Grid, Form, Loading
+    Auth, Grid, Form, 
   },
   data(){
     return{
@@ -99,7 +103,7 @@ export default {
   computed:{ 
     crud(){
       return this.$store.state.crud || {}
-    }
+    }, 
   },
   methods:{ 
     closeForm({ refresh }){
@@ -110,16 +114,32 @@ export default {
         this.$store.commit('set', ['crud', {...this.crud, row: null }] )
     }, 
     auth({ request={}, ...data }) {
+      this.logged = true
       console.log('logged base api', request)
       this.active.api = Object.assign(this.active.api, request); 
 
       return request
     }, 
+    logout(){
+      return this.doLogout().then(function(){
+        this.logged = false
+        this.forceRerender()
+      })
+    }
   }
 }
 </script>
 
 <style lang="scss">
+.base{
+  .card-header{
+    .dropdown{
+      button{
+        padding: 0 10px !important;
+      }
+    }
+  }
+}
 @media (max-width: 728px) {
   .c-body .c-main{
     padding-top: .6em;

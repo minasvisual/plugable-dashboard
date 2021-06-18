@@ -84,6 +84,7 @@ export default {
       this.$store.commit('set', ['currentProject', proj])
       
       saveSettings({current: get(proj, 'code', null)})
+      this.$router.push('/dashboard')
     }
   }
 }

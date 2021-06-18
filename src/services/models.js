@@ -1,4 +1,4 @@
-import { get, set, has } from 'lodash'
+import { get, set, has, merge } from 'lodash'
 import { setup } from 'axios-cache-adapter'
 import { interpolate, queryString } from './helpers'
 import Store from '../store'

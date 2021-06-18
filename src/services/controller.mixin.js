@@ -1,6 +1,6 @@
 import { has, get } from "lodash";
 import { loadModel, getData, saveData, deleteData } from "./models";
-import { filterParams } from "./helpers";
+import { filterParams, getErrorMessage } from "./helpers";
 
 export default {
   data(){
@@ -55,7 +55,7 @@ export default {
         this.$store.commit('setLoader', ['model',  false])
         this.loading = false;
         this.renderComponent = false
-        this.$message("Error to load Model " + this.$route.params.model +" : "+ err.message);
+        this.$message("Error to load Model " + this.$route.params.model +" : "+ getErrorMessage(err));
       }
     },
     loadModelByUrl(url, opts){
@@ -77,7 +77,7 @@ export default {
             return res
         }) 
         .catch(e => {
-          this.$message( get(e, 'response.data.message', e.message ) )
+          this.$message( getErrorMessage(e) )
           return Promise.reject(e)
         }).finally(() => {
           this.$store.commit('setLoader', ['form', false])
@@ -91,7 +91,7 @@ export default {
               return data;
           })
           .catch(e => { 
-            this.$message( get(e, 'response.data.message', e.message ) )
+            this.$message( getErrorMessage(e) )
             return Promise.reject(e)
           }).finally(() =>{
             this.$store.commit('setLoader', ['table', false])
@@ -106,12 +106,13 @@ export default {
       });
     },
     errors(data) {
-      this.$message(data.message || data);
+      this.$message( getErrorMessage(data) );
       console.error("error", data);
       
       this.$store.commit('setLoader', ['form', false])
       this.$store.commit('setLoader', ['table', false])
     },
     // Standalone grid
+    get:get
   },
 };

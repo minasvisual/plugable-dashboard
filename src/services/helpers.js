@@ -1,6 +1,24 @@
 import { has, sortBy, get } from 'lodash'
 import moment from 'moment'
 
+export const getErrorMessage = (error) => {
+    if(error){
+        if( get(error, 'code', '') == "ECONNREFUSED" ){
+            return error.message + "( " + get(error, 'config.url') + ")"
+        }
+
+        if( has(error, 'response.data.message') )
+            return get(error, 'response.data.message')
+
+        if( get(error, 'message') )
+            return get(error, 'message')
+
+        if( typeof error == 'string' )
+            return error
+    }
+    return ""
+}
+
 export const formatModel = (columns=[], data) => {
     // columns.map(i => {
     //     if( data[i.prop] && ['date'].includes(i.type) ){ 

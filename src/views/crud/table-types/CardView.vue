@@ -1,6 +1,5 @@
 <template>
-  <section class="card-view ">
-    <Loading target="table">
+  <section class="card-view "> 
       <section class="row py-2">
         <div class="col-12 col-sm-7 d-flex ">
           <span v-if="selectedRow.length > 0" class="selectedActions">
@@ -67,8 +66,7 @@
               @update:activePage="(qr) => fetchQueryInfo('page', qr)"
             />
         </CCol>    
-      </div>
-    </Loading>
+      </div> 
   </section>
 </template>
 
@@ -79,15 +77,14 @@ import { filterParams } from '../../../services/helpers'
 import { getData } from "../../../services/models";
 
 import TableMixin from '../../../services/table.mixin'
-import CellTypes from './index'
-import Loading from '../../../containers/Loading'
+import CellTypes from './index' 
 
 export default {
   name:"CardView",
   mixins:[TableMixin],
   props:['schema','resource'],
   components:{
-    CellTypes, Loading
+    CellTypes,
   },
   data () {
     return {

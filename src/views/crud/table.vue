@@ -1,42 +1,44 @@
 <template>
-  <section class="table-section" v-if="renderComponent">
-    <template v-if="layout == 'table'">
-      <keep-alive>
-        <TableServer v-if="remote" 
-            ref="tables" 
-            :schema="schema" 
-            :resource="data" 
-            @fetchData="fetchData"
-            @actions:create="$emit('actions:create', $event)"
-            @actions:edit="$emit('actions:edit', $event)" 
-            @actions:delete="$emit('actions:delete', $event)" 
-            @actions:deleteBatch="$emit('actions:deleteBatch', $event)" 
-        />
-        <Tablelocal v-else-if="!remote"
-            ref="tables" 
-            :schema="schema" 
-            :resource="resource"
-            @actions:create="$emit('actions:create', $event)"
-            @actions:edit="$emit('actions:edit', $event)" 
-            @actions:delete="$emit('actions:delete', $event)" 
-            @actions:deleteBatch="$emit('actions:deleteBatch', $event)" 
-        />
-        <p v-else class="text-center"><small>
-          Missing rootApi (Server Crud) or bypassGetData (Sub object Crud) property</small>
-        </p>
-      </keep-alive>
-    </template>
-  
-    <CardView v-else-if="layout == 'card' && schema.api.rootApi" 
-        ref="tables" 
-        :schema="schema" 
-        :resource="data" 
-        @fetchData="fetchData"
-        @actions:create="$emit('actions:create', $event)"
-        @actions:edit="$emit('actions:edit', $event)" 
-        @actions:delete="$emit('actions:delete', $event)" 
-        @actions:deleteBatch="$emit('actions:deleteBatch', $event)" 
-    /> 
+  <section class="loading-wrap table-section" :class="{ 'active': renderComponent !== true || loader === true }"  >
+      <div class="blackdrop"><CSpinner color="info" /></div>
+
+      <template v-if="layout == 'table' && renderComponent">
+        <keep-alive> 
+            <TableServer v-if="remote" 
+                ref="tables" 
+                :schema="schema" 
+                :resource="data" 
+                @fetchData="fetchData"
+                @actions:create="$emit('actions:create', $event)"
+                @actions:edit="$emit('actions:edit', $event)" 
+                @actions:delete="$emit('actions:delete', $event)" 
+                @actions:deleteBatch="$emit('actions:deleteBatch', $event)" 
+            />
+            <Tablelocal v-else-if="!remote"
+                ref="tables" 
+                :schema="schema" 
+                :resource="resource"
+                @actions:create="$emit('actions:create', $event)"
+                @actions:edit="$emit('actions:edit', $event)" 
+                @actions:delete="$emit('actions:delete', $event)" 
+                @actions:deleteBatch="$emit('actions:deleteBatch', $event)" 
+            />
+            <p v-else class="text-center"><small>
+              Missing rootApi (Server Crud) or bypassGetData (Sub object Crud) property</small>
+            </p> 
+        </keep-alive>
+      </template>
+    
+      <CardView v-else-if="layout == 'card' && schema.api.rootApi && renderComponent"  
+          ref="tables" 
+          :schema="schema" 
+          :resource="data" 
+          @fetchData="fetchData"
+          @actions:create="$emit('actions:create', $event)"
+          @actions:edit="$emit('actions:edit', $event)" 
+          @actions:delete="$emit('actions:delete', $event)" 
+          @actions:deleteBatch="$emit('actions:deleteBatch', $event)" 
+      /> 
   </section>
 </template>
 <script>
@@ -47,7 +49,7 @@ import { getData } from "../../services/models";
 import TableMixin from '../../services/table.mixin'
 import TableServer from './table-types/TableRemote'
 import Tablelocal from './table-types/TableLocale';
-import CardView from './table-types/CardView';
+import CardView from './table-types/CardView'; 
 
 export default {
   name:"Table",
@@ -64,7 +66,8 @@ export default {
     return{
       data: null,
       renderComponent: false,
-      remote: true
+      remote: true,
+      loader: false
     }
   },
   computed:{ 
@@ -72,15 +75,14 @@ export default {
   methods:{ 
     async fetchData(queryInfo){
       //this.$refs.tables.fetchData({ type: "pageChange" });
-      try{
-        console.debug("table fetchData called", queryInfo, this.schema.api.rootApi)
+      try{ 
         
         if( this.validateQueryInfo(queryInfo) ){
           //this.queryInfo = queryInfo
           this.schema.api = filterParams(this.schema.api, { ...queryInfo, data: this.resource }) 
           //this.resetGrid()
 
-          this.$store.commit('setLoader', ['table', true])
+          this.loader = true
           this.data = await getData(this.schema, { ...queryInfo, data: this.resource })
           //this.perPage = (this.data.rows && this.data.rows.length) || this.perPage
         }
@@ -91,8 +93,8 @@ export default {
         //this.$message(err.message, 'danger')
         return false;
       }finally{
-        console.debug('Finally getData tbale')
-        this.$store.commit('setLoader', ['table', false])
+        console.debug('Finally getData tbale') 
+          this.loader = false
       }
     },
     async boot(){   

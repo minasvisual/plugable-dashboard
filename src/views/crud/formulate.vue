@@ -33,7 +33,7 @@
 
 <script>
 import { get } from 'lodash'
-import { schemaColumns, prepareForm, formatModel } from '../../services/helpers'
+import { schemaColumns, prepareForm, formatModel, getErrorMessage } from '../../services/helpers'
 import ControllerMixin from '../../services/controller.mixin'
 
 export default {
@@ -84,7 +84,7 @@ export default {
               this.model = data
               this.loader = false
           }).catch((err) => {
-            this.$alert('Form mounted error', err) 
+            this.$message( getErrorMessage(err) )
               
             this.loader = false
           })

@@ -34,7 +34,7 @@
                 color="success"
                 :disabled="hasErrors"
               >
-                  Save
+                  Send
             </CButton>
           </div>
         </FormulateForm>
@@ -44,7 +44,8 @@
 </template>
 
 <script>
-import { has, get } from 'lodash'
+import { has, get, merge } from 'lodash'
+import { getErrorMessage } from '../../services/helpers'
 import SessionMixin from '../../services/session.mixin'
 
 export default {
@@ -72,6 +73,7 @@ export default {
                   .then(this.success)
                   .catch(this.error)
       }catch(e){
+        this.$message( getErrorMessage(e) )
         this.error(e)
         this.loading = false;
       }
@@ -92,6 +94,7 @@ export default {
                     
     },
     error({ response, message, ...data }){
+      this.$message( getErrorMessage({ response, message, ...data }) )
       console.log('Auth Error', message, response, data)
       this.loading = false;
       
@@ -100,7 +103,6 @@ export default {
     async checkLogged(token){
       try{
         let auth = await this.isLogged(token)
-
         console.debug('checkLogged: isLogged', auth)
         
         this.$emit('auth:logged', auth)
@@ -108,16 +110,27 @@ export default {
         return auth
       }catch(e){
         console.debug('checkLogged failed: token', e)
+        this.$message( getErrorMessage(e) )
         this.login = false;
         return this.$emit('auth:failed', {message: e.message})
       }
     }, 
+    logout(){
+      console.debug("called auth logout")
+      this.loading = true;
+      return this.doLogout().then(() => {
+        this.loading = false;
+        this.login = false;
+      })
+    }
   },
   beforeMount(){
     this.login = false
   },
   async mounted(){
     try{
+      this.schema.api = merge(get(this.currentProject, 'api', {}), this.schema.api)
+
       console.debug('caled mounted auth')
       if( !this.hasAuth ) return this.login = true 
 
@@ -151,6 +164,7 @@ export default {
       this.loading = false;
       console.log('erro mounted auth', e)
       this.$emit('auth:failed', e)
+      this.$message( getErrorMessage(e) )
     } 
   }
 }

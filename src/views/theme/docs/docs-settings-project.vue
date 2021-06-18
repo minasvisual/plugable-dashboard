@@ -23,6 +23,18 @@
                 "label": "Tiles test"                           // Card Title
             }
         },
+                                                                // optional | Project default http requests schema (overwrited by model schema)
+        "api":{                                                 
+            "headers": {                                        // Default headers (send in all project http requests)
+                "app-key": "1234567890" 
+            },
+            "params": {                                         // Default query string params (send in all project http requests)
+                "limit": 5
+            },
+            "pagination": {                                     // Default grid settings (apply in all models)
+                "limitField": "limit"
+            }                                                   // Read Schema json api to more options
+        },
                                                                 // optional | Project authentication api
         "auth": {
             "url_login": "https://project-url.com/api/user",	// Url of login api

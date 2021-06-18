@@ -1,5 +1,5 @@
 import { has, get } from 'lodash'
-import { interpolate } from './helpers'
+import { interpolate, getErrorMessage } from './helpers'
 import { request } from './models'
 
 export default {
@@ -35,18 +35,19 @@ export default {
                           [get(this.config, 'field_secret', 'password')]: secret,
                           [get(this.config, 'field_remember', 'remember')]: remember,
                         },
-                        //headers:{
+                        headers: get(this.project, 'api.headers', {})
+                        //{
                           //[get(this.config, 'request_token', 'access-token')]: ''
                         //}
-                      }, false )
+                      }, { wrap: false } )
                 .then((res) => {
                   let token = this.storageToken(res)
                   let reqAuthData = this.authRequest(token)
 
-                  this.$store.commit('setAuth', [ this.currentProject.code, { request: reqAuthData, logged: true, token }])
+                  this.$store.commit('setAuth', [ this.project.code, { request: reqAuthData, logged: true, token }])
                   return res
                 })
-      }catch(e){
+      }catch(e){ 
         return new Error(e)
       }
     },
@@ -55,8 +56,8 @@ export default {
       if( get(this.config, 'response_mode', 'body') === 'header' ){
         token = headers[ get(this.config, 'response_token', 'access-token') ];
       }else{
-        token = get(data, get(this.config, 'response_token', 'access_token'), 'token')
-      }
+        token = get(data, get(this.config, 'response_token', 'access_token'), null)
+      } 
 
       if( !token ) {
         return new Error ({message: 'token not found', config: this.config, data, headers})
@@ -90,6 +91,7 @@ export default {
       let tokenRequest = get(this.config, 'request_token_expression', '{token}')
       if( get(this.config, 'request_mode', 'header') == 'query' )
         return { 
+          headers: get(this.currentProject, 'api.headers', {}),
           params:{
               [get(this.config, 'request_token', 'access-token')] : interpolate(tokenRequest, {token})
           }
@@ -97,6 +99,7 @@ export default {
       else 
         return {
           headers:{
+            ...get(this.currentProject, 'api.headers', {}),
             [get(this.config, 'request_token', 'access-token')] : interpolate(tokenRequest, {token})
           }
         }
@@ -113,6 +116,13 @@ export default {
       }
 
       return user;
+    },
+    doLogout(){
+      sessionStorage.removeItem(`${this.currentProject.code}_session`)
+      
+      this.$store.commit('setAuth', [ this.currentProject.code, {  logged: false }])
+
+      return Promise.resolve({  logged: false })
     }
   },
 };

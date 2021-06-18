@@ -1,6 +1,5 @@
 <template>
   <section>
-    <Loading target="table">
       <CDataTable
         v-if="grid"
         :items="grid"
@@ -87,27 +86,23 @@
               @update:activePage="(qr) => fetchQueryInfo('page', qr)"
             />
         </template>
-      </CDataTable>
-    </Loading>
+      </CDataTable> 
   </section>
 </template>
 
 <script>  
 import { mapState } from 'vuex'
-import { get, has, debounce, isEqual, filter } from 'lodash'
-import { filterParams } from '../../../services/helpers'
-import { getData } from "../../../services/models";
+import { get, has, debounce, isEqual, filter } from 'lodash' 
 
 import TableMixin from '../../../services/table.mixin'
-import CellTypes from './index'
-import Loading from '../../../containers/Loading'
+import CellTypes from './index' 
 
 export default {
   name:"TableServer2",
   mixins:[TableMixin],
   props:['schema','resource'],
   components:{
-    CellTypes, Loading
+    CellTypes,  
   },
   data () {
     return {
@@ -144,32 +139,7 @@ export default {
     fetchData: debounce(async function(queryInfo){
       this.queryInfo = queryInfo
       this.$emit('fetchData', queryInfo)
-    }
-    // function(queryInfo){
-    //   try{
-    //     console.debug("table fetchData called", queryInfo, this.schema.api.rootApi)
-        
-    //     if( this.validateQueryInfo(queryInfo) ){
-    //       this.queryInfo = queryInfo
-    //       this.schema.api = filterParams(this.schema.api, { ...queryInfo, data: this.resource }) 
-    //       //this.resetGrid()
-
-    //       this.$store.commit('setLoader', ['table', true])
-    //       this.data = await getData(this.schema, { ...queryInfo, data: this.resource })
-    //       this.perPage = (this.data.rows && this.data.rows.length) || this.perPage
-    //     }
-
-    //     return true;
-    //   }catch(err){
-    //     console.log(err)
-    //     this.$message(err.message, 'danger')
-    //     return false;
-    //   }finally{
-    //     console.debug('Finally getData tbale')
-    //     this.$store.commit('setLoader', ['table', false])
-    //   }
-    //}
-    , 1000),
+    }, 1000),
     onCreate() { 
       this.$emit('actions:create', {})
     },
