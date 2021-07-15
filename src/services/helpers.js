@@ -1,5 +1,14 @@
-import { has, sortBy, get } from 'lodash'
+import deepmerge from 'deepmerge'
+import { has, sortBy, get, isNil, isObject, omit } from 'lodash'
 import moment from 'moment'
+
+export const mergeDeep  = (a = {}, b = {}) => {
+    return deepmerge(a, b, {
+        arrayMerge: (d, s) => {
+            return [ ...d, ...s ]
+        }
+    })
+}
 
 export const getErrorMessage = (error) => {
     if(error){
@@ -20,12 +29,30 @@ export const getErrorMessage = (error) => {
 }
 
 export const formatModel = (columns=[], data) => {
-    // columns.map(i => {
-    //     if( data[i.prop] && ['date'].includes(i.type) ){ 
-    //         let format = ( i.type == 'date' ? 'YYYY-MM-DD': 'YYYY-MM-DD\\Thh:mm:ss' )
-    //         data[i.prop] = formatDate(data[i.prop], format, null, true)
-    //     } 
-    // })
+    columns.map(i => {
+        if( data[i.prop] && ['date'].includes(i.type) ){ 
+            let format = ( i.type == 'date' ? 'YYYY-MM-DD': 'YYYY-MM-DD\\Thh:mm:ss' )
+            data[i.prop] = formatDate(data[i.prop], format, null, true)
+        } 
+    })
+    return data
+}
+
+export const formatOutput = (columns=[], data) => {
+    console.debug('formatOutput', data)
+    let extractdata = (col = {}, k) =>  {
+        if( col.children && Array.isArray(col.children) )  col.children.map( i => extractdata(i, k))
+        if( get(col, 'name', false) ){
+            if( col.ignored && data[col.name] ) {
+                console.debug('formatOutput ignored', col)
+                data = omit(data, [col.name]) 
+            }
+        }
+    }
+    columns.map((col, k) => {
+            extractdata(col, k)
+    })
+    console.debug('formatOutput out', data)
     return data
 }
 
@@ -46,7 +73,7 @@ export const interpolate = (string, scope, def) => {
 export const queryString = (params, join, data) => {
     let rtn = ''
     let arrQuery = []
-    if( params && Object.keys(params).length > 0 ){
+    if( isObject(params) && Object.keys(params).length > 0 ){
         Object.keys(params).map(k => {
             if( Array.isArray(params[k]) )
                 params[k].map(i => arrQuery.push([ interpolate(k, data), interpolate(i, data)]) )
@@ -62,11 +89,11 @@ export const queryString = (params, join, data) => {
 export const filterParams = (api, queryInfo) => { 
     let { page, pageSize, sort, filters } = queryInfo || {}
     let { params = {}, pagination = {} } = api || {}
-    if( page && has(pagination, 'pageField') )
+    if( !isNil(page) && has(pagination, 'pageField') )
         params[ pagination.pageField || 'page' ] = page
-    if( pageSize && has(pagination, 'limitField') )
+    if( !isNil(pageSize) && has(pagination, 'limitField') )
         params[ pagination.limitField || 'limit'] = pageSize
-    if( sort && sort.prop && sort.order && has(pagination, 'sortField') && has(pagination, 'sortExp') ){
+    if( sort && !isNil(sort.prop) && !isNil(sort.order) && has(pagination, 'sortField') && has(pagination, 'sortExp') ){
         let pagData = {prop: sort.prop, sort: sort.order == 'ascending'? get(pagination,'sortAscChar','asc'): get(pagination, 'sortDescChar', 'desc')}
         params[ pagination.sortField || 'order' ] = interpolate( get(pagination, 'sortExp', '{prop},{order}'), pagData)
     }
@@ -80,24 +107,30 @@ export const filterParams = (api, queryInfo) => {
     return {...api, params};
 }
 
-
 export const schemaColumns = (properties) => {
-    let columns = []
+    let columns = [ { label: '', key: "selected", filter: false, sorter:false, sort: -1 } ]
     let extractdata = (col = {}, k) =>  {
         if( col.children && Array.isArray(col.children) )  col.children.map( i => extractdata(i, k))
         if( get(col, 'config.grid', false) )
             columns.push({
                 sort: get(col, 'config.sort', k+1),
-                prop: get(col, 'name', col.id),
+                key: get(col, 'name', col.id),
                 label: get(col, 'label', col.id),
                 type: get(col, 'config.type', (col.type || 'text')),
                 action: get(col, 'config.action', (col.attributes || {})),
                 options: get(col, 'options', {}),
+                sorter: get(col, 'config.sorter', true),
+                filter: get(col, 'config.filter', true),
+                _classes: get(col, 'config.classes'),
+                _style: get(col, 'config.styles'),
             })
     }
     properties.map((col, k) => {
             extractdata(col, k)
     })
+
+    columns.push({ label: '', key: 'actions', filter: false, sorter: false })
+
     return sortBy(columns, ['sort'])
 }
 

@@ -5,6 +5,7 @@
       v-if="schema.api"
       :schema="schema"
       :layout="layout"
+      :resource="resource"
       @actions:create="actions('FORM_CREATE', $event)"
       @actions:edit="actions('FORM_EDIT', $event)"
       @actions:delete="actions('FORM_DELETE', $event)"
@@ -31,19 +32,22 @@
 </template>
 
 <script>
-import { has, get, set } from 'lodash'
 import ControllerMixin from '../../services/controller.mixin'
 import SessionMixin from '../../services/session.mixin'
 
 import Table from './table'
 import Forms  from './formulate'
 export default {
+  name: "GridBase",
   mixins:[ControllerMixin, SessionMixin],
   components: { Table, Forms },
   props:{
     schema: {
       type: Object,
-      default: {}
+      default: () => ({})
+    },
+    resource: { 
+      default:() => [] 
     },
     layout:{
       type: String
@@ -92,11 +96,14 @@ export default {
             this.reloadData()
           })
       }else if(action == 'FORM_DELETEBATCH'){
-          let proms = data && data.map(i => this.deleteData(i))
+          let proms = data && data.map(i => this.deleteData(this.schema, i))
           
           Promise.all(proms)
               .catch( err => this.$message(err.message, 'danger'))
-              .then( res => this.$message('All rows delete successfully'))
+              .then( res => {
+                this.$message('All rows delete successfully')
+                this.reloadData()
+              })
       }
     }, 
     async formHook(data){
@@ -110,6 +117,9 @@ export default {
         console.debug('Form submit error', err)
       }
     }
+  },
+  mounted(){
+    console.debug("Iniciado CrudVue", this.schema)
   }
 }
 </script>

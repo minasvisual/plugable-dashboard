@@ -1,6 +1,6 @@
-import { has, get } from "lodash";
+import { has, get, } from "lodash";
 import { loadModel, getData, saveData, deleteData } from "./models";
-import { filterParams, getErrorMessage } from "./helpers";
+import { formatOutput, getErrorMessage, schemaColumns } from "./helpers";
 
 export default {
   data(){
@@ -43,6 +43,7 @@ export default {
                 if( this.renderComponent === true ) this.forceRerender()
                 else this.renderComponent = true;
                 
+                this.$store.commit('setSchema', [this.active.domain, false])
                 this.$store.commit('setLoader', ['model', false])
                 return data;
             })
@@ -70,6 +71,7 @@ export default {
     },
     saveData(schema, data){
       this.$store.commit('setLoader', ['form', true])
+      data = formatOutput(schema.properties, data)
       return saveData(schema, data)
         .then((res) => {
             this.$message('Saved with success') 

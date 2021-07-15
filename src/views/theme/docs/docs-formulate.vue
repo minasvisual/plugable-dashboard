@@ -27,8 +27,19 @@
             </h4>
            <div class="col-12 col-md-4">
                 <li>Events</li>
-                <li>Masks</li>
                 <li>Number enforcing</li>
+           </div>
+           <div class="col-12 col-md-8">
+                <VJsoneditor v-model="extented"
+                    :options="{ mode: 'preview', mainMenuBar: false, navigationBar: false, statusBar: false }"
+                    height="auto" 
+                ></VJsoneditor>
+           </div>
+        </div>
+         <div class="row">
+            <h4 class="col-12"> # Additional attributes/input features:  </h4>
+           <div class="col-12 col-md-4">
+                <li>Mask by IMask ( <a href="https://github.com/uNmAnNeR/imaskjs" target="_blank">See Docs</a> ) </li>
            </div>
            <div class="col-12 col-md-8">
                 <VJsoneditor v-model="maskDemo"
@@ -51,7 +62,7 @@
                         <td>example</td>
                     </tr>
 
-                    <InputDoc view="preview" v-for="row of inputTypes" :row="row" />
+                    <InputDoc view="preview" v-for="row of inputTypes" :row="row" :key="row.type" />
           
                 </table>
                 
@@ -69,6 +80,13 @@
                             :options="{ mode: 'preview', mainMenuBar: false, navigationBar: false, statusBar: false }"
                             height="auto" 
                         ></VJsoneditor>
+                    </p> 
+                    <p>
+                        Create Tabs (with sub CRUDs or not)
+                        <VJsoneditor v-model="tabsExample"
+                            :options="{ mode: 'preview', mainMenuBar: false, navigationBar: false, statusBar: false }"
+                            height="auto" 
+                        ></VJsoneditor>
                     </p>
                 </p>
             </div>
@@ -78,7 +96,7 @@
 
 <script> 
 import VJsoneditor from 'v-jsoneditor'
-import { autocomplete, select, grid, image, objJson, inputDefault, maskDemo } from './mocks'
+import { autocomplete, select, grid, image, objJson, inputDefault, maskDemo, tabsExample } from './mocks'
 import InputDoc from './views/InputDoc'
 export default {
     components: {
@@ -88,6 +106,7 @@ export default {
     data() {
         return {  
             inputDefault,
+            tabsExample,
             maskDemo,
             compDemo:  {
                 "component": "h4",
@@ -253,3 +272,9 @@ export default {
     },
 }
 </script>
+
+<style scoped>
+.row{
+  padding: 10px 0
+}
+</style>

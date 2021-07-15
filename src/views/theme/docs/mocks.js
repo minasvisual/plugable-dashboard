@@ -145,8 +145,60 @@ export const objJson =  {
   ]
 }
 
+export const extented =  {
+  type: "text",
+  name: "name",
+  placeholder: "Type here!",
+  label: "Name", 
+  events: ["input", "blur"]
+}
+
 export const maskDemo = { 
     "name": "zipcode",
     "label": "Zipcode",
-    "vfeMask": "00000-000"
+    "masks": "00000-000"
 }
+
+export const tabsExample = [
+  {
+    "component": "tabs",  
+    "tabs": [
+      {
+        "name": ".tab1",
+        "label": "Tab 1"
+      },
+      {
+        "name": ".tab2",
+        "label": "Tab 2"
+      }
+    ]
+  },
+  {
+    "component": "div",
+    "class": "d-flex tab1",
+    "children": [
+      {
+        "name": "outro",
+        "label": "OUtro"
+      },
+      {
+        "name": "outro 2",
+        "label": "OUtro"
+      }
+    ]
+  },
+  {
+    "component": "div",
+    "class": "d-flex tab2",
+    "children": [
+      {
+        "name": "title",
+        "label": "Title"
+      },
+      {
+        "name": "artist_name",
+        "label": "Artist"
+      }
+    ]
+  }
+]

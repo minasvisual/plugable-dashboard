@@ -61,7 +61,7 @@ import ControllerMixin from '../../services/controller.mixin'
 import SessionMixin from '../../services/session.mixin'
 
 import Auth from './auth'
-import Grid from './grid' 
+import Grid from './crud' 
 import Form from './form'
 
 export default {

@@ -210,6 +210,22 @@
         }
       }
     },
+
+    {
+      "component": "b",
+      "children": "Independent Form Crud"
+    },
+    {
+      "component": "Crud",
+      "context":{
+        "schema": "form_standalone.json",
+        "overwrite":{
+          "api":{
+            "urlGetById": "/{data.id}"
+          }
+        }
+      }
+    },
     {
       "name": "address",
       "type": "object",

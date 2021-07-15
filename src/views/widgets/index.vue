@@ -1,20 +1,26 @@
 <template >
-  <div class="row" v-if="schemas && schemas.length > 0">
-        <Base v-for="(item, k) of schemas" :key="k" :schema="item" />
-  </div>
+  <Loading target="widgets">
+    <p v-if="error" class="text-center">{{ error }}</p> 
+    <div class="row" v-if="schemas && schemas.length > 0">
+      <Base v-for="(item, k) of schemas" :key="k" :schema="item" />
+    </div>
+  </Loading>
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import { request } from '../../services/models'
-import Auth from '../crud/auth'
+import { getErrorMessage } from '../../services/helpers'
 import Base from './base'
- 
+import Loading from '../../containers/Loading.vue'
+
 export default {
   components:{
-    Base, Auth
+    Base, Loading
   },
   data() {
     return {
+      error: null,
       schemas:[]
     }
   },
@@ -24,7 +30,10 @@ export default {
           await this.loadWidgets()
     }
   },
-  computed:{
+  computed:{ 
+    ...mapState({
+      loading: state => state.loading
+    }),
     current(){
       return this.$store.state.currentProject || {}
     },
@@ -34,19 +43,31 @@ export default {
   },
   methods:{
     async loadWidgets(){
-      if( !this.widgets ) return false;
-      for(let row of this.widgets){
-        if( row.resource ){
-          let data = await request(this.current.resources_path + row.resource )
-          if( !data.widgets ) return this.$message("Error to load widget resource");
+      try{
+        if( !this.widgets ) return false;
+        
+        this.$store.commit('setLoader', ['widgets', true])
+        for(let row of this.widgets){
+          if( row.resource ){
+            let data = await request(this.current.resources_path + row.resource )
+            if( !data.widgets ) return this.$message("Error to load widget resource");
 
-          this.schemas.push(data)
+            this.schemas.push(data)
+          }
         }
+      }catch(e){
+        this.error = getErrorMessage(e)
+      }finally{
+        this.$store.commit('setLoader', ['widgets', false])
       }
     }
   },
   async mounted(){
-    await this.loadWidgets()
+    try{
+      await this.loadWidgets()
+    }catch(e){
+      this.error = getErrorMessage(e)
+    }
   }
 }
 </script>

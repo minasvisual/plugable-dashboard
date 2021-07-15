@@ -52,14 +52,17 @@
                           @auth:failed="errors"
                       >
                         <template v-slot="{ schema }">
+                           <Form   
+                              v-if="schema.api && render && schema.type == 'form'"
+                              :schema="schema"   
+                            />  
                           <Table 
                             ref="tables" 
-                            v-if="schema.api && render"
+                            v-else-if="schema.api && render"
                             :schema="schema"
                             @actions:create="actionsTable('FORM_CREATE', $event)"
                             @actions:edit="actionsTable('FORM_EDIT', $event)"
-                          />
-                          <span v-else>Login required</span>
+                          /> 
                         </template>
                      </Auth>
                   </CTab>
@@ -123,6 +126,7 @@ import VJsoneditor from 'v-jsoneditor'
 import Auth from '../crud/auth'
 import Table from '../crud/table'
 import Forms from '../crud/formulate'
+import Form from '../crud/form'
 import Widget from '../widgets/base'
 
 import NewProject from './playgrounds/NewProject'
@@ -130,7 +134,7 @@ import NewModel from './playgrounds/NewModel'
 
 export default {
   mixins:[ControllerMixin, SessionMixin],
-  components: { VJsoneditor, Forms, Table, Auth, NewProject, NewModel, Widget},
+  components: { VJsoneditor, Forms, Table, Auth, NewProject, NewModel, Widget, Form },
   data(){return{
     render: true,
     jsonEditorData: 'project',

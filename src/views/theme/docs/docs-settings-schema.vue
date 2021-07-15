@@ -5,6 +5,15 @@
     "type": "grid",                             // View type opts: grid|form - default: grid - optional
     "title": "Users",                           // Schema title visible to user
     "domain": "users",                          // Schema slug visible on url
+//
+//Optional 
+//
+    "canCreate": "true"                         // DEfault true | if false, remove create (plus) button
+    "canEdit": "true"                           // DEfault true | if false, remove edit row button
+    "canDelete": "true"                         // DEfault true | if false, remove delete row button
+//
+// END Optional
+//
     "primaryKey": "id",                         // Collection primary key (default: id)
     "auth": true,                               // Define auth required before get data, auth: false bypass header token any
     "properties": [                             // Form/Datatable properties
@@ -14,6 +23,9 @@
             "config":{                          // Table grid config
                 "grid": true,                   // Visible in grid
                 "sort": 0                       // Sort order in grid
+                "sorter": false                 // Disable column Sorter grid
+                "filter": false                 // Disable filter search in grid
+                "actions": {}                   // cell type options |  see on each cell type schema
             }                                   // Docs link: https://vueformulate.com/guide/inputs/
         } 
     ],
@@ -31,13 +43,13 @@
         "methodGetById": "GET",                     // Get One by id method (def: GET)
         "methodPost": "POST",                       // Create method (def: POST)
         "methodPatch": "PUT",                       // Update method (def: PUT)
-        "methodDelete": "GET",                      // Delete method (def: DELETE)
+        "methodDelete": "DELETE",                   // Delete method (def: DELETE)
         "bypassGetData": false                      // Use data from props intead api http request
         "bypassGetByid": true,                      // Use table row click instead GetById request (def: false)
         "wrapData": "rows",                         // Response object array data field (ex: { rows: [...] } means 'rows')
         "totalData": "count",                       // Count data field | if not exists used data.length by def
         "wrapDataById": "data",                     // Wrap the GetOne Response (ex: { data: {...} } means 'data')  
-        "pagination": {                             // Query string settings
+        "pagination": {                             // Query string settings | false = disabled pagination and filters
             "pageField": "page",                    // pagination field
             "limitField": "limit",                  // Data count limit field  
             "sortField": "order",                   // Sort field

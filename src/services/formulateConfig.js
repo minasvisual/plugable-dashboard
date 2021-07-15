@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueFormulateExtended from 'vue-formulate-extended'
-import { request } from '../services/models'
+import IMask from 'imask'
+
 import { formatDate } from '../services/helpers'
 
 import FormulateAutocomplete from '../views/crud/formulate/autocomplete'
@@ -16,6 +17,12 @@ import FormulateObject from '../views/crud/formulate/object'
 import FormulateImageText from '../views/crud/formulate/image-text'
 // Default input replacement
 import FormulateSelect from '../views/crud/formulate/select'
+
+// Global components
+import Tabs from '../views/crud/formulate/tabs'
+
+Vue.component('Crud', FormulateGrid)
+Vue.component('Tabs', Tabs)
 
 Vue.component('MyFormulateAutocomplete', FormulateAutocomplete)
 Vue.component('FormulateWysiwyg', FormulateWysiwyg)
@@ -36,7 +43,18 @@ function TypesHookPlugin (instance) {
 
   instance.extend({
     hooks: {
+      // schema:[
+      //   {
+      //     handler(data, data1) {
+      //       console.log(data, data1)
+
+
+      //       return data
+      //     }
+      //   }
+      // ],
       model: [
+        //INPUT format
         {
           handler(value, { context = {} }) {
             if( context.type == 'switch' )
@@ -48,7 +66,22 @@ function TypesHookPlugin (instance) {
             } 
             return value
           }
-        }
+        },
+        // masks 
+        {
+          handler(value, { context }) {
+            const hasMask = 'masks' in context.attributes || 'masks' in context.attributes
+            if (context.classification === 'text' && hasMask) {
+              const options = context.attributes['masks'] || context.attributes.masks
+              const maskOptions = typeof options === 'object' && options.mask ? options : { mask: options }
+              const masked = IMask.createMask(maskOptions)
+              const resolved = masked.resolve(value)
+              return resolved
+            } else {
+              return value
+            }
+          },
+        },
       ]
     }
   })
@@ -101,7 +134,7 @@ export default {
       },
       grid: {
         classification: 'array',
-        component: 'FormulateGrid'
+        component: 'Crud'
       },
       object: {
         classification: 'object',
@@ -110,12 +143,12 @@ export default {
     },
     plugins: [
       TypesHookPlugin ,
-      VueFormulateExtended({
-        features: {
-          formEvents: true, // by-default
-          textMask: true, // by-default
-          enforceNumber: true, // by-default
-        },
-      }),
+      // VueFormulateExtended({
+      //   features: {
+      //     formEvents: true, // by-default
+      //     textMask: true, // by-default
+      //     enforceNumber: true, // by-default
+      //   },
+      // }),
     ],
 }

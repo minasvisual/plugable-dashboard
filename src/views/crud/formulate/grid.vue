@@ -3,50 +3,39 @@
     :class="`formulate-input-element formulate-input-element--${context.type}`"
     :data-type="context.type"
     v-if="renderComponent"
-  > 
-    <Table
-      ref="tables" 
-      v-if="schema.api"
-      :schema="schema"
-      :resource="resource"
-      @actions:create="onCreate"
-      @actions:edit="onEdit"
-      @actions:delete="onDelete"
-      @actions:deleteBatch="bulkDelete" 
-    >
-    </Table>
- 
-    <CModal
-      :title="'Edit row'"
-      :show.sync="formopen"
-      :closeOnBackdrop="false"
-    >
-      <Form
-          ref="forms" 
-          v-if="formopen"
-          :formopen="formopen"
-          :schema="schema" 
-          :data="(row.data || {})"
-          @model:saved="submit"
-          @close="closeForm"
-        /> 
-  
-        <template slot="footer"><span></span></template>
-    </CModal>
+  >  
+      <FormBase
+        v-if="schema.type == 'form'"
+        :schema="schema"
+        :resource="resource"
+      />  
+      <Widget
+        v-else-if="schema.type == 'widget'"
+        :schema="schema"
+      />  
+      <Grid  
+        v-else
+        :schema="schema"
+        :resource="resource"
+      />  
   </div>
 </template>
 
 <script>
-import { get, has, findIndex, merge } from 'lodash'
+import { get,  merge } from 'lodash'
+import { mergeDeep } from '../../../services/helpers'
 import ControllerMixin from '../../../services/controller.mixin'
 
-import Table from '../table'
-import Form from '../formulate'
+// import Table from '../table'
+// import Form from '../formulate'
+import FormBase from '../form'
+import Grid from '../crud'
+import Widget from '../../widgets/base'
 
 export default {
   mixins: [ControllerMixin],
   components:{
-    Table, Form
+    Grid, FormBase, Widget
   },
   props: {
     context: {
@@ -57,9 +46,7 @@ export default {
   data () {
     return {
         schema: {},
-        renderComponent: false,
-        formopen: false,
-        row: null,
+        renderComponent: false, 
         resource:[]
     }
   },
@@ -69,8 +56,12 @@ export default {
           return this.context.model 
       },
       set(value){
+        if(value)
           this.context.model = value
       }
+    },
+    name(){
+      return this.context.name
     },
     schemaProp(){
       return get(this.context, 'schema', get(this.context, 'attributes.schema', {}))
@@ -82,132 +73,41 @@ export default {
       return this.$store.state.crud.row || {}
     }
   },
-  methods: {
-    closeForm({ refresh }){
-      if( refresh ) this.forceRerender()
-
-      this.row = { index:null, data:{} }
-      this.formopen = false
-    },
-    onCreate() { 
-      this.row = { index:null, data:{} }
-      this.formopen = true
-    },
-    onEdit(data){
-      let index = null
-      let primaryKey = get(this.schema, 'primaryKey', 'id')
-      
-      if( this.isStandalone && Array.isArray(this.resource)) {
-        index = findIndex(this.resource, [primaryKey, data[primaryKey]])
-      }
-
-      this.row = { index, data }
-      this.formopen = true
-    },
-    onDelete(row){
-      let index = null
-      let primaryKey = get(this.schema, 'primaryKey', 'id')
-      
-      if( this.isStandalone && Array.isArray(this.resource)) {
-        index = findIndex(this.resource, [primaryKey, row[primaryKey]])
-
-        if( index !== null ){
-          this.model.splice(index, 1)
-          this.$message && this.$message('Deleted with success') 
-        }
-      }else if( get(this.schema, 'api.rootApi', false) ){
-        this.deleteData(this.schema, row).then(() => {
-          this.$message && this.$message('Deleted with success') 
-        })
-      }else{
-        this.$message && this.$message('No Deleted action selected: Local/Server') 
-      }
-    },
-    handleSelectionChange(val) {
-      console.log(val)
-      this.selectedRow = val
-    },
-    async bulkDelete() {
-      if( Array.isArray(this.selectedRow) ){
-        for(let row of this.selectedRow){
-          if( this.isStandalone ){
-            this.model.splice(row, 1)
-          }else if( get(this.schema, 'api.rootApi', false) ){
-            await this.deleteData(this.schema, row) 
-          }
-        }
-      }
-        
-      this.formopen = false
-      this.$message && this.$message('Deleted with success') 
-    },
-    saveRow(data){
-      if( this.isStandalone ){
-        if( this.row.index === null ){
-          this.context.model.push(data)
-          this.$message && this.$message('Added with success') 
-        }else{
-          this.context.model[this.row.index] = data;
-          this.$message && this.$message('Update with success') 
-        }
-      }else if( get(this.schema, 'api.rootApi', false) ){
-        this.saveData(this.active, data)
-            .then((res) => {
-                this.closeForm({ refresh: true })
-                return res
-            })
-      }else{
-        this.$message && this.$message('No Edit action selected: Local/Server') 
-      }
-    },
-    forceRerender() {
-      this.renderComponent = false;
-
-      this.$nextTick(() => {
-        // Add the component back in
-        this.renderComponent = true;
-      });
-    },
-    async submit(data){
-      if( this.isStandalone ){
-        this.saveRow(data)
-      }else{
-        this.$refs.forms.loader = true
-        await this.saveData(this.schema, data).then(({data}) => {
-            console.debug('Sucess saved', data)
-        })
-        this.$refs.forms.loader = true
-      }
-      this.row = { index:null, data:{} }
-      this.formopen = false
-      this.forceRerender()
-    },
+  methods: { 
     async loadSubmodel(modelPath){
        let url = this.currentProject.resources_path + modelPath
       return await this.loadModelByUrl(url)
         .catch(err => this.$message && this.$message(`Error to load submodel: ${err.message}`))
     },
     transformSchema(schema){
-      schema.api = Object.assign( get(schema, 'api', {}), this.request) 
+      schema.api = mergeDeep( get(schema, 'api', {}), this.request) 
 
+      if( get(schema, 'api.bypassGetData', false) )
+          this.resource = this.formValues[this.name]
+      else
+          this.resource = this.formValues
+
+      schema.api.resource = this.resource
+          
       return schema
     }
   },
-  async mounted(){
+  async beforeMount(){
+    this.renderComponent = false
+
     if( typeof this.schemaProp == 'string' ){ 
-      let loadedSchema = await this.loadSubmodel(this.schemaProp)
-      console.debug('loaded model', loadedSchema, this.context.overwrite )
-      this.schema = this.transformSchema( merge( loadedSchema, (this.context.overwrite || {})) )
+      var loadedSchema = await this.loadSubmodel(this.schemaProp)
+      loadedSchema = mergeDeep(loadedSchema, this.context.overwrite)
+ 
+      this.schema = this.transformSchema( loadedSchema ) 
     }else{
-      this.schema = this.transformSchema( this.schemaProp ) 
+      this.schema = mergeDeep(this.transformSchema( this.schemaProp ), this.context.overwrite) 
     }
 
-    if( get(this.schema, 'api.bypassGetData', false) )
-        this.resource = this.model
-    else
-        this.resource = this.formValues
+    // if( this.schema.type == 'form' )
+    //   await this.loadForm()
 
     this.renderComponent = true
-  },
+  }
 }
 </script>

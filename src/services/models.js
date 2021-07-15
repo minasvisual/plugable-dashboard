@@ -1,4 +1,4 @@
-import { get, set, has, merge } from 'lodash'
+import { get, set, has, isNil, isEmpty } from 'lodash'
 import { setup } from 'axios-cache-adapter'
 import { interpolate, queryString } from './helpers'
 import Store from '../store'
@@ -47,6 +47,10 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 )
+
+export const getUserData = async (opts = { method: 'GET' }) => {
+  return request( process.env.VUE_APP_LOGGED_URL , opts )
+}
 
 export const getAuthHeaders = (project, token) => {
   let tokenRequest = get(project, 'request_token_expression', '{token}')
@@ -108,10 +112,12 @@ export const loadProjects = async (opts) => {
 
 export const getData = async (model, data={}, config={}) => { 
   let { api = {} } = model;
+  if( api.resource && isEmpty(data.data) ) data.data = api.resource
+
   let url = ''
   let isRow = has(data, `[${model.primaryKey || 'id'}]`) || model.type == 'form'
   let options = {
-    method: ( isRow ? (api.methodGetById || 'GET') : (api.methodGet || 'GET') ),
+    method: ( isRow ? ( isNil(api.methodGetById) ? 'GET':api.methodGetById) : (isNil(api.methodGet) ? 'GET':api.methodGet) ),
     ...config
   } 
   let sessionConfig = {
@@ -121,23 +127,23 @@ export const getData = async (model, data={}, config={}) => {
   let query = queryString(api.params, ( api.rootApi.includes('?') ? '&':'?'), data)
 
   if( isRow )
-    url = `${api.rootApi}${api.urlGetById || '/{id}{query}'}`
+    url = `${api.rootApi}${ isNil(api.urlGetById) ? '/{id}{query}': api.urlGetById }`
   else
-    url = `${api.rootApi}${api.urlGet || '{query}'}`
+    url = `${api.rootApi}${ isNil(api.urlGet) ? '{query}': api.urlGet }`
 
   if( api.headers )
     options['headers'] = api.headers
   
   url = interpolate(url, {...data, query })
   
-  console.debug('get data', url, options)
+  console.debug('get data', url, options, sessionConfig)
   return request(url, options, sessionConfig)
       .then( data => {  
         if( isRow ){
-          return ( model.api.wrapDataById ? get(data, model.api.wrapDataById, data): data)
+          return ( !isNil(api.wrapDataById) ? get(data, api.wrapDataById, data): data)
         }else{
-          let rows = ( model.api.wrapData ? get(data, model.api.wrapData, data): data)
-          let total = ( model.api.totalData ? get(data, model.api.totalData, rows.length): rows.length )
+          let rows = ( !isNil(api.wrapData) ? get(data, api.wrapData, data): data)
+          let total = ( !isNil(api.totalData) ? get(data, api.totalData, rows.length): rows.length )
 
           if( !Array.isArray(rows) ) rows = [rows]
           if( typeof total !== 'number' ) total = rows.length
@@ -152,9 +158,11 @@ export const getData = async (model, data={}, config={}) => {
 
 export const getDataObject = async (model, data={}, config={}) => { 
   let { api = {} } = model;
+  if( api.resource && isEmpty(data.data) ) data.data = api.resource
+
   let url = ''
   let options = {
-    method:  api.methodGet || 'GET',
+    method:  isNil(api.methodGet) ? 'GET': api.methodGet,
     ...config
   } 
   let sessionConfig = {
@@ -163,35 +171,41 @@ export const getDataObject = async (model, data={}, config={}) => {
 
   let query = queryString(api.params, ( api.rootApi.includes('?') ? '&':'?'), data)
  
-  url = `${api.rootApi}${api.urlGet || '{query}'}`
+  url = `${api.rootApi}${ isNil(api.urlGet) ? '{query}':api.urlGet }`
 
   if( api.headers )
     options['headers'] = api.headers
   
   url = interpolate(url, {...data, query })
   
-  console.debug('get data object', url, options)
+  console.debug('get data object', url, options, sessionConfig)
   return request(url, options, sessionConfig)
       .then( data => {   
-        return ( model.api.wrapData ? get(data, model.api.wrapData, data): data) 
+        return ( !isNil(api.wrapData) ? get(data, api.wrapData, data): data) 
       })
 }
 
 export const saveData = async (model, data, config={}) => { 
-  let { api = {} } = model;
+  let { api = {} } = model; 
+  let resource = api.resource || {}
   let url = ''
-  let method = data[(model.primaryKey || 'id')] ? (api.methodPatch || "PUT") : (api.methodPost || "POST");
-  let query = interpolate( queryString(api.params, (api.rootApi.includes('?') ? '&':'?')),  api.params)
+  let primaryKey = (isNil(model.primaryKey) ? 'id':model.primaryKey)
+  let method = data[primaryKey] ? (isNil(api.methodPatch) ? "PUT":api.methodPatch) : (isNil(api.methodPost) ? "POST":api.methodPost);
+  let query = interpolate( 
+    queryString(api.params, (api.rootApi.includes('?') ? '&':'?')),  
+    { ...data, data: resource }
+  )
   let sessionConfig = {
     session: model.auth
   }
  
-  if( data[(model.primaryKey || 'id')] )
-    url = `${api.rootApi}${api.urlPatch || '/{id}'}`
+  if( has(data, primaryKey) )
+    url = `${api.rootApi}${ isNil(api.urlPatch) ? '/{id}':api.urlPatch }`
   else
-    url = `${api.rootApi}${api.urlPost || ''}`
+    url = `${api.rootApi}${ isNil(api.urlPost) ? '': api.urlPost}`
 
-  url = interpolate(url, {...data, query})
+  console.log("saveData interpolate date", url, {...data, query}, api.resource)
+  url = interpolate(url, {...data, query, data: resource})
 
   let options = {
     method,
@@ -206,16 +220,22 @@ export const saveData = async (model, data, config={}) => {
 
 export const deleteData = async (model, data, config={}) => {
   let { api } = model;
+  if( api.resource && isEmpty(data.data) ) data.data = api.resource
+  
+  let primaryKey = (model.primaryKey || 'id')
 
-  if( !data[(model.primaryKey || 'id')] ) return Promise.reject('Id not found')
+  if( !has(data, primaryKey) ) return Promise.reject('Id not found')
 
   let sessionConfig = {
     session: model.auth
   }
   
-  let method = (api.methodDelete || "DELETE")
-  let query = interpolate( queryString(api.params, (api.rootApi.includes('?') ? '&':'?')),  api.params)
-  let url = `${api.rootApi}${api.urlDelete || '/{id}'}`
+  let method = ( isNil(api.methodDelete) ? "DELETE":api.methodDelete )
+  let query = interpolate( 
+    queryString(api.params, (api.rootApi.includes('?') ? '&':'?')),  
+    data
+  )
+  let url = `${api.rootApi}${ isNil(api.urlDelete) ? '/{id}':api.urlDelete }`
     
   url = interpolate(url, {...data, query})
 
@@ -227,8 +247,4 @@ export const deleteData = async (model, data, config={}) => {
     options['headers'] = api.headers
   
   return request(url, options, sessionConfig)
-}
-
-export const getUserData = async (opts = { method: 'GET' }) => {
-  return request( process.env.VUE_APP_LOGGED_URL , options )
 }

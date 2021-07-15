@@ -4,6 +4,7 @@
     :data-type="context.type"
   >
     <quill 
+      ref="quill"
       v-model="context.model"
       :output="model"
       v-bind="context.attributes"
@@ -13,8 +14,12 @@
   </div>
 </template>
 
-<script>
-export default {
+<script> 
+import Quill from 'quill'
+import htmlEditButton from "quill-html-edit-button";
+Quill.register("modules/htmlEditButton", htmlEditButton);
+
+export default { 
   props: {
     context: {
       type: Object,
@@ -28,6 +33,7 @@ export default {
         },
         config: {
           modules: {
+            htmlEditButton: {},
             toolbar: [
               ['bold', 'italic', 'underline', 'strike'],        
               [{ 'list': 'ordered'}, { 'list': 'bullet' }],
@@ -37,8 +43,8 @@ export default {
               [{ 'font': [] }],
               [{ 'align': [] }],
 
-              ['clean','code-block']                
-            ]
+              ['clean','code-block'],
+            ],
           },
           placeholder: 'Compose an epic...',
         }, 
@@ -48,7 +54,9 @@ export default {
     model () {
       return this.context.model
     }
-  }, 
+  },
+  mounted(){
+  }
 }
 </script>
 

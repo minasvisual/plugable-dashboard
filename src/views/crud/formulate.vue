@@ -80,7 +80,7 @@ export default {
               this.form =  this.schema.properties
               this.columns = schemaColumns(this.schema.properties)
               data = formatModel(this.columns, data)
-              console.log(data)
+              console.debug(data)
               this.model = data
               this.loader = false
           }).catch((err) => {

@@ -20,22 +20,18 @@
 
 <script>
 import { has, get, set } from 'lodash'
-import ControllerMixin from '../../services/controller.mixin'
-import SessionMixin from '../../services/session.mixin'
+import ControllerMixin from '../../../services/controller.mixin'
+import SessionMixin from '../../../services/session.mixin'
  
-import Forms  from './formulate'
+import Forms  from '../formulate'
 export default {
-  name: "FormBase",
   mixins:[ControllerMixin, SessionMixin],
   components: { Forms },
   props:{
-    schema: {
+    context: {
       type: Object,
       default: () => ({})
-    },
-    layout:{
-      type: String
-    },
+    }
   }, 
   data(){
     return{ 
@@ -47,9 +43,9 @@ export default {
     formTitle(){ 
       return this.row && this.row.id ? `Update ${this.schema.title} | ID: ${this.row.id}`: `New ${this.schema.title}`
     },
-    crud(){
-      return this.$store.state.crud || {}
-    }
+    formValues(){
+      return this.$store.state.crud.row || {}
+    },
   },
   methods:{
     loadForm(){

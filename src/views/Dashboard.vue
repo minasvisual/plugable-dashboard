@@ -25,7 +25,6 @@
       </CCardBody>
     </CCard>
 
-   
 
     <Widgets v-if="current && renderWidgets" />
 

@@ -34,7 +34,7 @@
                         <td>example</td>
                     </tr>
 
-                    <InputDoc view="preview" v-for="row of tableTypes" :row="row" />
+                    <InputDoc view="preview" v-for="row of tableTypes" :row="row" :key="row.type" />
      
                 </table>
                 

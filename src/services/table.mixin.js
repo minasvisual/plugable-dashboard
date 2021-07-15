@@ -1,4 +1,5 @@
 import { get, has, debounce, sortBy, round, isEqual } from 'lodash'
+import { schemaColumns  } from './helpers'
 
 export default {
     computed: {
@@ -8,7 +9,7 @@ export default {
       fetchQueryInfo(type, data){
         this.queryInfo = { type }
         if( type == 'sort' ){
-          this.queryInfo.sort = { prop: data.column, order: data.asc ? 'asc':'desc' }
+          this.queryInfo.sort = { prop: data.column, order: data.asc === true ? 'ascending':'descending' }
         }
         if( type == 'filter' ){
           this.queryInfo.filters = Object.keys(data).map((key) => ({ prop: key, value: data[key] }))
@@ -35,26 +36,28 @@ export default {
           return true
       },
       schemaColumns(properties){
-          let columns = [ { label: '', key: "selected", filter: false, sorter:false, sort: -1 } ]
-          let extractdata = (col = {}, k) =>  {
-              if( col.children && Array.isArray(col.children) )  col.children.map( i => extractdata(i, k))
-              if( get(col, 'config.grid', false) )
-                  columns.push({
-                      sort: get(col, 'config.sort', k+1),
-                      key: get(col, 'name', col.id),
-                      label: get(col, 'label', col.id),
-                      type: get(col, 'config.type', (col.type || 'text')),
-                      action: get(col, 'config.action', (col.attributes || {})),
-                      options: get(col, 'options', {}),
-                  })
-          }
-          properties.map((col, k) => {
-                  extractdata(col, k)
-          })
+          // let columns = [ { label: '', key: "selected", filter: false, sorter:false, sort: -1 } ]
+          // let extractdata = (col = {}, k) =>  {
+          //     if( col.children && Array.isArray(col.children) )  col.children.map( i => extractdata(i, k))
+          //     if( get(col, 'config.grid', false) )
+          //         columns.push({
+          //             sort: get(col, 'config.sort', k+1),
+          //             key: get(col, 'name', col.id),
+          //             label: get(col, 'label', col.id),
+          //             type: get(col, 'config.type', (col.type || 'text')),
+          //             action: get(col, 'config.action', (col.attributes || {})),
+          //             options: get(col, 'options', {}),
+          //             sorter: get(col, 'config.sorter', true),
+          //             filter: get(col, 'config.filter', true),
+          //         })
+          // }
+          // properties.map((col, k) => {
+          //         extractdata(col, k)
+          // })
 
-          columns.push({ label: '', key: 'actions', filter: false, sorter: false })
+          // columns.push({ label: '', key: 'actions', filter: false, sorter: false })
 
-          return sortBy(columns, ['sort'])
+          return schemaColumns(properties) //sortBy(columns, ['sort'])
       },
       calcPages(totalRows, perPage){
           let count = (totalRows || 1) / perPage
@@ -84,6 +87,9 @@ export default {
         let obj = {}
         arr.map(i => obj[ i[key] ] = i[label]  )
         return obj
+      },
+      can(schema, attr){
+        return get(schema, attr, true)
       }
     }
 }

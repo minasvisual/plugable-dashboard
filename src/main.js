@@ -13,14 +13,13 @@ import FormulateConfig  from './services/formulateConfig'
 import VJsoneditor from 'v-jsoneditor'
 import VueQuill from 'vue-quill'
 import DashPlugin from './services/plugin'
+import VueCompositionAPI from '@vue/composition-api'
 
-import Crud from './views/crud/formulate/grid'
 
 Vue.config.performance = true
 
 
-Vue.component('Crud', Crud)
-
+Vue.use(VueCompositionAPI)
 Vue.use(VueQuill) 
 Vue.use(CoreuiVue) 
 Vue.use(DashPlugin) 
@@ -30,6 +29,7 @@ Vue.filter('formatDate', formatDate)
 // register your component with Vue
 
 Vue.use(VueFormulate, FormulateConfig)
+
 
 Vue.prototype.$log = console.log.bind(console) 
 

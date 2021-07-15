@@ -1,31 +1,20 @@
 <template>
-  <section class="loading-wrap" :class="{ 'active': loader === true }">
-     {{ target }} {{ loader }}
+  <section class="loading-wrap" :class="{ 'active': loading[target] }">
      <div class="blackdrop"><CSpinner color="info" /></div>
      <slot />
   </section>
 </template>
 
-<script>
-import { get } from 'lodash'
+<script> 
 import { mapState } from 'vuex'
 export default {
   props:['target'],
-  data(){return{
-    loader: false
+  data(){return{ 
   }},
   computed:{
-    ...mapState(['loading'])
-  },
-  beforeMount(){
-    this.$watch(
-      `loading`, 
-      function(newVal, oldVal){
-        console.log('Mudou loading', newVal, oldVal) 
-        this.loader = newVal[this.target]  
-      }, 
-      { immediate: true, deep: true }
-    )
+    ...mapState({
+      loading: state => state.loading
+    })
   }
 }
 </script>

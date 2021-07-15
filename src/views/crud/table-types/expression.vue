@@ -7,10 +7,10 @@ import { interpolate } from '../../../services/helpers'
 import { get } from 'lodash'
 
 export default {
-    props:['data', 'cell'],
+    props:['data', 'cell', 'row'],
     computed:{ 
         expression(){ 
-            return interpolate( get(this.cell, 'action.template', '{data}'), {data: this.data, cell: this.cell} ) 
+            return interpolate( get(this.cell, 'action.template', '{data}'), {data: this.data, cell: this.cell, row: this.row} ) 
         }
     }
 }

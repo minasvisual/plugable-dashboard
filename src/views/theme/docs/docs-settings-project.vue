@@ -39,6 +39,7 @@
         "auth": {
             "url_login": "https://project-url.com/api/user",	// Url of login api
             "url_method": "post",                               // Login http method  | Default POST
+            "use_system_auth": true,                            // Use system authentication to validate requests
             "field_username": "user_id",                        // Username field to be send | Defaut email
             "field_secret": "access_token",                     // Password/Secret field  | Default password
             "field_remember": "remember",                       // Remember field to permanent login (if exists) | Default remember

@@ -5,55 +5,14 @@
 ## Plugable Dashboard Api
 
 #### Roadmap
-
-- Forms
-    - [ ] form wizard component
-    - [ ] dont submit field option
-    - [ ] input methods predefined (lodash features)
-  
- - Form Types
-    - [X] Switch || type=switch
-    - [X] Code || type=code
-    - [X] Json || type=json
-    - [x] Image Preview || type=image 
-    - [X] File Upload
-    - [X] Select Dynamic remote options | type=dynamicSelect (multiple=true)
-    - [X] List Array (tags) || type=tags
-    - [X] Subgrid array ||  type=grid + api.bypassGetData
-    - [X] Sub object field  || type=object options=[ {chidrean schema} ]
-    - [ ] 1:1 Nested forms || type=object + api.rootApi url
-    - [X] 1:N Nested grid || type=grid + api.rootApi url 	 
-    - [ ] location input component
-    - [ ] autocomplete remote search
-    - [ ] modal grid search input
-
-
-- Grid
-	- [X] Pagination
-	- [ ] grid actions (on change select, buttons to flows)
-	- Mask || vfeMask: "+33 \\02 00 00 00 00 00"
-	
-- Grid types
-  - [X] Image zoom
-  - [ ] link
-  - [X] Switch
-  - [X] Array
-  - [X] Select
-  - [X] HTML 
-  - [X] Sub object fields
-  - [X] Interpolate Expression
-  - [ ] Grid Card Preview
-	
-- features
-	- [ ] form submit hooks (flows)
-	- [ ] filemanager grid
-	- [X] project widgets 
-	- [ ] dashboard flows ( schema i/o data subsequent)
-	- [ ] Cache schema
+ - https://github.com/minasvisual/pluggable-dashboard/issues/1
 
 ## SECURITY ALERT
 
 Don't use this dashboard online, or if you use, protect folder by password access. Pluggable dashboard its designed to use with ElectronJS, locally and safe from  web attacks.
+
+## DEMO (no login required)
+ - https://pluggable-dashboard.vercel.app/
 
 ### Installation
 

@@ -3,18 +3,22 @@ import Vuex from 'vuex'
 import Router from './router'
 import { get } from 'lodash'
 import { request, getUserData, getAuthHeaders } from './services/models'
+import { getLocalStorage } from './services/helpers'
 
 Vue.use(Vuex)
 
+let settings = getLocalStorage('settings') || {}
+
 const state = {
-  sidebarShow: 'responsive',
-  sidebarMinimize: true,
+  sidebarShow: get(settings, 'sidebarShow', 'responsive'),
+  sidebarMinimize: get(settings, 'sidebarMinimize', 'true') === 'true',
   projects:[],
   currentProject: {},
   auth:{},
   loading: {},
   cache:{},
-  crud:{}
+  crud:{},
+  schemas:{},
 }
 
 const mutations = {
@@ -27,15 +31,21 @@ const mutations = {
     state.sidebarShow = sidebarClosed ? true : 'responsive'
   },
   set (state, [variable, value]) {
-    return state[variable] = value
+    state[variable] =  value
+    return state = { ...state }
   },
   setAuth (state, [session, value]) {
-    console.log('setauth called', state.auth[session], value)
-    return state.auth[session] = value
+    state.auth[session] = value
+    return state = {...state, auth: state.auth}
+  },
+  setSchema (state, [data, value]) {
+    state.schemas[data] = value
+    return state = {...state, schemas: state.schemas}
   },
   setLoader (state, [session, value]) {
     console.log('setLoader called', session, value)
-    return state.loading[session] = value
+    state.loading[session] = value
+    return state = { ...state, loading: state.loading }
   }
 }
 
@@ -85,13 +95,15 @@ const actions = {
               if( !window.location.includes('dashboard') ) Router.push('/dashboard')
               return data
           })
-          .catch(({response, message, statusCode }) => {
-            if( statusCode > 400 && statusCoode < 410 )
+          .catch(({response: { status }, message }) => {
+            
+            if( status > 400 && status < 410 )
               ctx.dispatch('logout')
 
-            return { response, message, statusCode }
+            return { message, status }
           })
     }else{
+      
       ctx.dispatch('logout')
       return Promise.reject({isLogged: false})
     }
@@ -99,6 +111,7 @@ const actions = {
   logout(ctx){
     let auth = { isLogged: false }
     let token = localStorage.getItem('dash_session')
+    console.log("dispatched logout", token)
     if( token ){   
         localStorage.removeItem('dash_session')
     }
@@ -109,11 +122,15 @@ const actions = {
     let current = ctx.state.currentProject || {}
     console.log('request fail', response)
     if( get(response, 'config.url', '').includes(current.url) ){
+      console.log(current)
       if( response.status == get(current, 'auth.request_expiration_status') || response.data.includes("expired") )
         ctx.dispatch('setAuth', [ current.code, {logged: false} ])
+      else if( get(current, 'auth.use_system_auth') ){
+        ctx.dispatch('logout')
+      }
     }
     else if( get(response, 'config.url', '').includes( process.env.VUE_APP_LOGGED_URL ) ){
-      ctx.dispatch('logout')
+      ctx.dispatch('logout', { logged: false })
     }
 
   }

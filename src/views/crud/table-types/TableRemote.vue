@@ -4,11 +4,10 @@
         v-if="grid"
         :items="grid"
         :fields="titles"
-        :columnFilter='{ external: true, lazy: true }'
+        :columnFilter='{ external: true, lazy: false, resetable: true }'
         :sorter='{ external: true, resetable: true }'
         :items-per-page="perPage"
         :clickableRows="true"
-        cleaner
         hover
         :loading="loading"
         size="sm"
@@ -28,7 +27,7 @@
               <CButton @click="fetchQueryInfo('pageChange', {})">
                 <CIcon name="cil-reload" />
               </CButton>
-              <CButton @click="onCreate">
+              <CButton @click="onCreate" v-if="can(schema, 'canCreate')">
                 <CIcon name="cil-plus" />
               </CButton>
             </div>
@@ -44,8 +43,8 @@
             <CInputCheckbox type="checkbox" inline @update:checked="selectionAll()" style="padding:0; margin:0;" /> 
         </template>
         
-        <template v-for="cell of titles" #[cell.key]="{item, index}">
-          <td :class="['td-'+cell.key]">
+        <template v-for="cell of titles" #[cell.key]="{item, index}" >
+          <td :class="['td-'+cell.key]" :key="cell.key">
             <CellTypes :cell="cell" :data="item" />
           </td>
         </template>
@@ -59,10 +58,10 @@
         <template #actions="{item, index}">
           <td :class="['td-actions']">
               <section class="d-flex text-right">
-                <CButton  class="card-header-action mr-3"  @click="onEdit(item)"> 
+                <CButton  class="card-header-action mr-3"  @click="onEdit(item)" v-if="can(schema, 'canEdit')"> 
                   <CIcon name="cil-pencil" />
                 </CButton>
-                <CButton   class="card-header-action"  @click="onDelete(item)"> 
+                <CButton   class="card-header-action"  @click="onDelete(item)"  v-if="can(schema, 'canDelete')"> 
                   <CIcon name="cil-trash" />
                 </CButton>
               </section>
@@ -79,6 +78,7 @@
 
         <template #under-table>
             <CPagination
+              v-if="schema.api.pagination !== false && totals > 0"
               :activePage.sync="currentPage"
               :pages="calcPages(totals, perPage)"
               size='sm'
