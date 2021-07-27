@@ -77,8 +77,8 @@
 
 <script>
 import { get } from 'lodash'
-import { request } from '../../../services/models'
-import { interpolate } from '../../../services/helpers'
+import { request, getData, loadModel } from '../../../services/models'
+import { interpolate, mergeDeep } from '../../../services/helpers'
 
 export default {
   name: 'FormulateInputSelect',
@@ -117,6 +117,9 @@ export default {
     }, 
     placeholder(){
       return this.loading ? 'Loading...' : 'Select One'
+    },
+    formValues(){
+      return this.$store.state.crud.row || {}
     }
   },
   methods:{ 
@@ -127,43 +130,52 @@ export default {
         this.renderComponent = true;
       });
     },
-    async getOptions({ url, requestOptions={}, fieldLabel, fieldValue, wrapData=null }){
-      try{
-        
-        if( url ){
+    convertAttributesToSchema(attr){
+      return {
+        rootApi: get(attr, 'url'),
+        wrapData: get(attr, 'wrapData'),
+        fieldLabel: get(attr, 'fieldLabel'),
+        fieldValue: get(attr, 'fieldValue'),
+        ...get(attr, 'requestOptions', {})
+      }
+    },
+    async getOptions({ rootApi, fieldLabel, fieldValue, ...data }){
+      try{ 
+        if( rootApi ){
           this.loading = true;
-          requestOptions = Object.assign(requestOptions, this.request)
-          let urlNew = interpolate(url, { data: this.context.model })
-          let data = await request( urlNew, { method:'get', ...requestOptions })
+          data = mergeDeep(data, this.request)
+          rootApi = interpolate(rootApi, { data: this.context.model })
+          let { rows } = await getData({ api: { ...data, rootApi, resource: this.formValues } }, { data: this.context.model }) 
 
-          if( wrapData )
-            data = get(data, wrapData, data)
-
-         console.log('chamou getOptions', data )
-
-         this.options = data && data.map((i, k) => ({ 
+         this.options = rows && rows.map((i, k) => ({ 
               label: get(i, fieldLabel, i.toString()), 
               value: get(i, fieldValue, k)
             }) 
           )
           
-         console.log('chamou getOptions', this.options )
-          
           this.loading = false;
-          
           this.forceRerender()
         }
       }catch(e){
-          alert('Erro to get data from '+ url)
+          alert('Erro to get data from '+ rootApi)
           console.log('Erro select input', e)
       }
     }
   },
-  created(){
+  async mounted(){
     this.options = this.context.options
-    let { attributes } = this.context.attributes
 
-    this.getOptions(attributes || {})
+    let { attributes, schema = {} } = this.context.attributes
+    if( schema && typeof schema  == 'string' )
+      schema = await loadModel( this.currentProject.resources_path + schema).then( data =>  { 
+         if( !data || !data.api ) throw { message: "Api fail" } 
+         return data
+      }).catch( () => ({}) )
+
+    if( attributes && attributes.url )
+      attributes = this.convertAttributesToSchema(attributes)
+
+    this.getOptions({ ...schema.api, ...attributes })
   },
 }
 </script>

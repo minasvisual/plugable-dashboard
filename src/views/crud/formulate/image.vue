@@ -16,8 +16,9 @@
 
 <script>
 import InputMixin from '../../../services/input.mixin'
-import { request, saveData } from '../../../services/models'
+import { saveData } from '../../../services/models'
 import { get, set } from 'lodash'
+import { mergeDeep } from '../../../services/helpers'
 
 export default {
   name: "InputImage",
@@ -35,12 +36,20 @@ export default {
       files: []
     }
   }, 
+  computed: { 
+    currentProject(){
+      return this.$store.state.currentProject || null
+    }, 
+    request(){
+      return get(this.$store, `state.auth.${this.currentProject.code}.request`, {})
+    }
+  },
   methods: {
     async uploadFile () {
       // ... perform upload
       this.uploading = true;
       let file = this.$refs.file.files[0]
-      let { attributes, schema } = this.context.attributes 
+      let {  schema } = this.context.attributes 
       
       const formData = new FormData()
       formData.append('file', file)
@@ -48,6 +57,8 @@ export default {
 
       if( this.context.uploadUrl )
         set(schema, 'api.rootApi', this.context.uploadUrl)
+
+      schema.api = mergeDeep(schema.api, this.request)
  
       //return await request( 
       saveData(

@@ -101,7 +101,12 @@ export const request = (query, options={}, config = {}) => {
 }
 
 export const loadModel = async (url, options) => {
-   return await request(url, options)
+   return await request(url, options).then( res => {
+      console.log("Load model ", res)
+      if( !res.api ) throw { message: "Model Load error" }
+
+      return res
+   })
 }
 
 export const loadProjects = async (opts) => {

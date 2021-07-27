@@ -96,7 +96,7 @@
 
 <script> 
 import VJsoneditor from 'v-jsoneditor'
-import { autocomplete, select, grid, image, objJson, inputDefault, maskDemo, tabsExample } from './mocks'
+import { autocomplete, select, grid, image, objJson, inputDefault, maskDemo, tabsExample, extented } from './mocks'
 import InputDoc from './views/InputDoc'
 export default {
     components: {
@@ -108,6 +108,7 @@ export default {
             inputDefault,
             tabsExample,
             maskDemo,
+            extented,
             compDemo:  {
                 "component": "h4",
                 "children": "My big title"
@@ -129,7 +130,7 @@ export default {
                 {
                     type: "autocomplete",
                     desc: "Receive array of objects, like select field: ex: { value:1, label:'John' }",
-                    fields: `<p>remote: boolean</p>
+                    fields: `<p>remote: boolean (allow remote search)</p>
                             <p>options: array/object</p>
                             <p>attributes: array/object
                                 <ul>
@@ -137,7 +138,7 @@ export default {
                                     <li>fieldValue: string - response row index of value field (to remote data)</li>
                                 </ul>
                             </p>
-                            <p>schema: object
+                            <p>schema: object|string (model file)
                                 <ul>
                                     <li>api: object - required - schema api object, required pagination filters to remote search </li> 
                                 </ul>
@@ -162,12 +163,14 @@ export default {
                                 <li>options: array|object - Default options</li>
                                 <li>
                                     attributes: object 
-                                    <ul>
-                                        <li>url: string - URL of items (Can use {data} to interpolate row)</li>
-                                        <li>wrapData: string - response object|array wrap</li>
+                                    <ul> 
                                         <li>fieldLabel: string - response row index of label field</li>
-                                        <li>fieldValue: string - response row index of value field</li>
-                                        <li>requestOptions: object - request headers,params,querystring config (like api)</li>
+                                        <li>fieldValue: string - response row index of value field</li> 
+                                    </ul>
+                                </li>
+                                <li>schema: object|string (model file)
+                                    <ul>
+                                        <li>api: object - required - schema api object, required pagination filters to remote search </li> 
                                     </ul>
                                 </li>
                             </ul>`,

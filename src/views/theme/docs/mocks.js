@@ -71,11 +71,15 @@ export const autocomplete = {
   "options": [
       { "value": 1, "label": "Jon Doe"  }
   ],
+  "attributes":{
+    "fieldLabel": "name",
+    "fieldValue": "id",
+    "remote": true
+  },
   "schema": {
-      "api": {
-      "rootApi": "https://hotelis.online/ets/artists",
-      "wrapData": "rows",
-      "totalData": "count",
+    "api": {
+      "rootApi": "/examples/advanced_data.json",
+      "wrapData": "users", 
       "pagination": {
           "filterField": "filter",
           "filterExp": "{prop},like,%{value}%"
@@ -84,7 +88,7 @@ export const autocomplete = {
           "limit": 15,
           "filter": "id,like,%1840%"
       }
-      }
+    }
   },
 }
 

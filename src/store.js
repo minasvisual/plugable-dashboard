@@ -95,9 +95,9 @@ const actions = {
               if( !window.location.includes('dashboard') ) Router.push('/dashboard')
               return data
           })
-          .catch(({response: { status }, message }) => {
+          .catch(({response, message }) => {
             
-            if( status > 400 && status < 410 )
+            if( response && response.status > 400 && response.status < 410 )
               ctx.dispatch('logout')
 
             return { message, status }

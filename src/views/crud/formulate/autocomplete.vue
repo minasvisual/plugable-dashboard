@@ -13,13 +13,13 @@
       type="text"
       placeholder="enter search.."
       v-model="search"
-      v-bind="context.attributes"
-      autocomplete="no"
+      v-bind="context.attributes" 
       @keydown.enter.prevent="choose(selection)"
       @keydown.down.prevent="increment"
       @keydown.up.prevent="decrement"
       @blur="context.blurHandler"
       @keydown="findData"
+      autocomplete="off"
     >
     <ul
       v-if="filteredOptions.length"
@@ -40,8 +40,8 @@
 
 <script>
 import { get, debounce } from 'lodash'
-import { getData } from '../../../services/models'
-import { interpolate, filterParams } from '../../../services/helpers'
+import { getData, loadModel } from '../../../services/models'
+import { filterParams, mergeDeep } from '../../../services/helpers'
 export default {
   props: {
     context: {
@@ -84,11 +84,13 @@ export default {
         }
       }
       return []
+    },
+    formValues(){
+      return this.$store.state.crud.row || {}
     }
   },
   methods: {
-    choose(selected){
-      console.log('selected', selected)
+    choose(selected){ 
       this.context.model = selected.value
       this.search = selected.label
       this.selectedIndex = this.options.findIndex(i => i.value == selected.value)
@@ -129,6 +131,7 @@ export default {
       await this.getOptions(schema)
     }, 500),
     async initRemote(){
+      if(  !this.attributes.remote ) return false;
       let { attributes, schema } = this.context.attributes 
       if( !this.context.model || !this.attributes.remote || !attributes.fieldValue ) return false;
 
@@ -146,7 +149,8 @@ export default {
         
         if( api.rootApi && fieldLabel && fieldValue ){
           this.loading = true;
-          schema.api = Object.assign(schema.api, this.request)
+          schema.api = mergeDeep(schema.api, this.request)
+          schema.api = mergeDeep(schema.api, { resource: this.formValues})
           let data = await getData( schema, { data: this.search  })
 
           this.options = (data.rows || data).map((i, k) => ({ 
@@ -165,17 +169,26 @@ export default {
     }
   },
   async mounted(){
+    let { schema } = this.context.attributes 
+    
+    if( schema && typeof schema  == 'string' )
+      this.context.attributes.schema = await loadModel( this.currentProject.resources_path + schema).then( data =>  { 
+         if( !data || !data.api ) throw { message: "Api fail" } 
+         return data
+      }).catch( () => ({}) )
+ 
+    if(schema)
+      await this.getOptions(this.context.attributes.schema)
+
     if( this.context.model ){
-      await this.initRemote()
-      this.choose( this.options.find((i) => i.value == this.context.model ) )
+      await this.initRemote() 
+      let option = this.options.find((i) => i.value == this.context.model )
+      if( option )
+        this.choose( option )
     }
   },
-  created(){
-    this.options = this.context.options || []
-    let { schema } = this.context.attributes
-    
-    if( !this.context.model )
-      this.getOptions(schema || {})
+  async created(){
+    this.options = this.context.options || [] 
   }
 }
 </script>
