@@ -193,6 +193,8 @@ export default {
 
           this.active = data
           this.$store.commit('set', ['crud', {...this.crud, row: this.row}])
+          
+          this.loadActions()
         })
     },
     getWidget(model){
@@ -238,7 +240,19 @@ export default {
     submitHandler(data){
       this.submit = data
       this.$message('Data saved in result on json viewer')
+    },
+    loadActions(){
+      this.$bus.$on(`${this.active.domain}:save`, this.submitHandler);
+      this.$bus.$on(`${this.active.domain}:delete`, this.submitHandler);
+    },
+    destroyActions(){
+      this.$bus.$off(`${this.active.domain}:save`, this.submitHandler);
+      this.$bus.$off(`${this.active.domain}:delete`, this.submitHandler);
     }
-  }
+  },
+   
+  beforeDestroy() {
+    this.destroyActions()
+  },
 }
 </script>

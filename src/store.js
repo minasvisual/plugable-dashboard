@@ -43,7 +43,6 @@ const mutations = {
     return state = {...state, schemas: state.schemas}
   },
   setLoader (state, [session, value]) {
-    console.log('setLoader called', session, value)
     state.loading[session] = value
     return state = { ...state, loading: state.loading }
   }

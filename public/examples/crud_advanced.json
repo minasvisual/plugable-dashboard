@@ -19,7 +19,7 @@
       "config": {
         "grid": true,
         "sort": 1,
-        "type": "action",
+        "type": "link",
         "action": {
           "handler": "https://google.com",
           "target": "_blank",
@@ -38,7 +38,12 @@
           "config": {
             "grid": true,
             "sort": 1,
-            "type": "select"
+            "type": "action",
+            "action":{
+              "handler": "advanced:save",
+              "type": "select",
+              "source": "field"
+            }
           },
           "options": [
             {

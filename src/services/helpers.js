@@ -115,10 +115,11 @@ export const schemaColumns = (properties) => {
             columns.push({
                 sort: get(col, 'config.sort', k+1),
                 key: get(col, 'name', col.id),
-                label: get(col, 'label', col.id),
+                label: get(col, 'config.label', (col.label || col.id)),
                 type: get(col, 'config.type', (col.type || 'text')),
-                action: get(col, 'config.action', (col.attributes || {})),
+                action: Object.assign( get(col, 'config.action',{}), get(col, 'attributes', {}) ),
                 options: get(col, 'options', {}),
+                schema: get(col, 'schema', {}),
                 sorter: get(col, 'config.sorter', true),
                 filter: get(col, 'config.filter', true),
                 _classes: get(col, 'config.classes'),

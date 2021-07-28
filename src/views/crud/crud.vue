@@ -120,6 +120,19 @@ export default {
   },
   mounted(){
     console.debug("Iniciado CrudVue", this.schema)
-  }
+  },
+  
+  created() {
+    this.$bus.$on(`${this.schema.domain}:save`, this.formHook);
+    this.$bus.$on(`${this.active.domain}:delete`, function(data) {
+      this.actions('FORM_DELETE', data) 
+    });
+  },
+  beforeDestroy() {
+    this.$bus.$off(`${this.schema.domain}:save`, this.formHook);
+    this.$bus.$off(`${this.active.domain}:delete`, function(data) {
+      this.actions('FORM_DELETE', data) 
+    });
+  },
 }
 </script>

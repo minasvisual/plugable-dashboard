@@ -1,6 +1,6 @@
 import { has, get, } from "lodash";
 import { loadModel, getData, saveData, deleteData } from "./models";
-import { formatOutput, getErrorMessage, schemaColumns } from "./helpers";
+import { formatOutput, getErrorMessage } from "./helpers";
 
 export default {
   data(){

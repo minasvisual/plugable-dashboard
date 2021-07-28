@@ -12,6 +12,10 @@
         "advanced":{
           "resource":"crud_advanced.json",
           "label": "CRUD Advanced Example"
+        },
+        "standalone":{
+          "resource":"form_standalone.json",
+          "label": "Form Standalone Example"
         }
       },
       "widgets":{

@@ -43,6 +43,7 @@ export default {
   methods:{
     toogle(data){
       this.context.model = data
+      this.$emit('blur-context', data)
     }
   }
 }

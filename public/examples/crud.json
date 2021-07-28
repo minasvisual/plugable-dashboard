@@ -53,7 +53,13 @@
           "label": "Gender",
           "type": "select",
           "config": {
-            "grid": true
+            "grid": true,
+            "type": "action",
+            "action": {
+              "handler": "basic:save",
+              "source": "row",
+              "type": "select"
+            }
           },
           "options": [
             {

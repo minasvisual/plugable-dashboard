@@ -32,6 +32,7 @@ Vue.use(VueFormulate, FormulateConfig)
 
 
 Vue.prototype.$log = console.log.bind(console) 
+Vue.prototype.$bus = new Vue(); // Global event bus
 
 new Vue({
   el: '#app',

@@ -97,15 +97,11 @@ export const select = {
   "label": "Dynamic Select",
   "type": "select",
   "options": [],
-  "attributes":{
-      "url": "/examples/advanced_data.json",
+  "attributes": {
       "fieldLabel": "name",
-      "fieldValue": "id",
-      "wrapData": "users",
-      "requestOptions":{
-          "headers": { "app-key": "..." }
-      }
-  }
+      "fieldValue": "id"
+  },
+  "schema": "crud.json"
 }
 
 export const grid =  {

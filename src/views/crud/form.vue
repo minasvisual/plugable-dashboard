@@ -82,6 +82,13 @@ export default {
   },
   async mounted(){
     await this.loadForm()
-  }
+  },
+  
+  created() {
+    this.$bus.$on(`${this.schema.domain}:save`, this.formHook); 
+  },
+  beforeDestroy() {
+    this.$bus.$off(`${this.schema.domain}:save`, this.formHook); 
+  },
 }
 </script>

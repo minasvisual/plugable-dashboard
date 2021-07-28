@@ -1,5 +1,5 @@
 <template>
-    <span v-html="expression"></span >
+    <span v-html="expression" v-on="$listeners"></span >
 </template>
 
 <script>

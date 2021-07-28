@@ -1,7 +1,6 @@
 <template>
-<span>
+<span >
     <img  @click="showModal(data)" :src="data" style="height: 30px; width:auto" @error="replaceByDefault" />
-
 </span>
 </template>
 <script>
@@ -15,6 +14,7 @@ export default {
             e.target.src = '/img/image-error.jpg'
         },
         showModal(item){
+           this.$emit("click", this.data)
            this.$modal(`<img src="${item}" class="img-fluid">`)
         }
     }

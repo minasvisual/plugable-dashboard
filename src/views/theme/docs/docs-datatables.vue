@@ -1,18 +1,25 @@
 <template>
     <div>         
         <p>
-            <h4># Grid provided by Vue Datatables grid: 
-                <a href="https://www.njleonzhang.com/vue-data-tables/#/"  target="_blank">(see docs here)</a>
+            <h4># Grid provided by CoreUI Table: 
+                <a href="https://coreui.io/vue/docs/components/table.html"  target="_blank">(see docs here)</a>
             </h4>
             <p>
                 To show field data on grid, you should add an additional object called config on property schema.
             </p>
             <div class="row">
-                <div class="col-12 col-md-4">
-                    "grid": true,   // Show on grid true|false<br>
-                    "sort": 1       // Sort column order
-                </div>
-                <div class="col-12 col-md-8">
+                <pre class="col-12 col-md-6 p-0 m-0">
+            "grid": true,           &nbsp;&nbsp;// Show on grid true|false
+            "sort": 1               &nbsp;&nbsp;// Sort column order
+            "label": "#id"          &nbsp;&nbsp;// Column label overwrite (def: field label)
+            "type": "html"          &nbsp;&nbsp;// Cell type (see below options)
+            "options": []           &nbsp;&nbsp;// input options (select|autocomplete)
+            "sorter": true          &nbsp;&nbsp;// column sorter table (def: true)
+            "filter": true          &nbsp;&nbsp;// column filter table (def: true)
+            "_classes": "bg-red"    &nbsp;&nbsp;// column classes
+            "_style": "color: red"  &nbsp;&nbsp;// column style
+                </pre>
+                <div class="col-12 col-md-6">
                     <VJsoneditor v-model="gridConfig"
                         :options="{ mode: 'preview', mainMenuBar: false, navigationBar: false, statusBar: false }"
                         height="auto" 
@@ -22,6 +29,28 @@
             <p>
                 By default, the row data will be display in v-text, to use custom types, you should add "type" parameter with desire cell type. See below available types and examples.
             </p>
+        </p>
+        <p>
+            <h4># Column event emmiter  </h4>
+            <p>
+                Emit event when column was clicked
+            </p>
+            <div class="row">
+                <pre class="col-12 col-md-6 p-0 m-0">
+            "action": {            
+                "event": "click"        &nbsp;&nbsp;// required | event handler type
+                "handler": "basic:save" &nbsp;&nbsp;// Action name ( schema domain + action)
+                "type": "button"        &nbsp;&nbsp;// Cell type (data|field|row|cell)
+                "source": "field"       &nbsp;&nbsp;// source type (see below options)
+            }
+                </pre>
+                <div class="col-12 col-md-6">
+                    <VJsoneditor v-model="eventConfig"
+                        :options="{ mode: 'preview', mainMenuBar: false, navigationBar: false, statusBar: false }"
+                        height="auto" 
+                    ></VJsoneditor>
+                </div>
+            </div>  
         </p>
         <p>
             <h4># Pluggable dashboard custom cell types</h4>
@@ -61,10 +90,23 @@ export default {
                     "sort": 1       // Sort column order
                 }
             },
+            eventConfig: {
+                "name": "...",
+                "config":{
+                    "grid": true,   // Show on grid true|false
+                    "sort": 1,       // Sort column order
+                    "action": {
+                        "event": "click",
+                        "handler": "basic:save",
+                        "source": "field",
+                        "type": "button"
+                    }
+                }
+            },
             tableTypes:[
                 {
                     type: "html",
-                    desc: `Show data as HTML (v-html) Careful to use this feature`,
+                    desc: `Show field data as HTML (v-html) Careful to use this feature!`,
                     fields: `n/a`,
                     json: {
                         "name": "html",
@@ -124,9 +166,10 @@ export default {
                 },
                 {
                     type: "expression",
-                    desc: `Interpolate data/cell variables safe with template expression '{data}' or '{cell}'.
-                    {data} property means grid column value
-                    {cell} property means cell schema config, { type, prop, action, ... }`,
+                    desc: `Interpolate data/cell variables safe with template expression '{data}', '{cell}' or '{row}'.<br>
+                    {data} property means grid column value <br>
+                    {cell} property means cell schema config, { type, prop, action, ... }<br>
+                    {row} property means entire table row data { ex: row.id }`,
                     fields: ` <ul>
                         <li>action: object</li>
                         <ul>
@@ -145,10 +188,11 @@ export default {
                     }
                 },
                 {
-                    type: "action",
-                    desc: `Interpolate data/cell variables safe with template expression '{data}' or '{cell}'.
-                    {data} property means grid column value
-                    {cell} property means cell schema config, { type, prop, action, ... }`,
+                    type: "link",
+                    desc: `Interpolate data/cell variables safe with template expression '{data}' or '{cell}'.<br>
+                    {data} property means grid column value<br>
+                    {cell} property means cell schema config, { type, prop, action, ... }<br>
+                    {row} property means entire table row data { ex: row.id }`,
                     fields: `<ul>
                         <li>action: object</li>
                         <ul>
@@ -161,7 +205,7 @@ export default {
                         "name": "id",
                         "config": {
                             "grid": true,
-                            "type": "action",
+                            "type": "link",
                             "action": {
                                 "handler": "https://google.com",
                                 "target": "_blank",
@@ -203,6 +247,37 @@ export default {
                     type: "tags",
                     desc: `Array tags joined by ',' (valid json|array)`,
                     fields: `N/A`,
+                    json: {
+                        "name": "tags",
+                        "type": "tags",
+                        "attributes": {
+                            "output": "json"
+                        },
+                        "config": {
+                            "grid": true,
+                            "type": "tags"
+                        }
+                    }
+                },
+                {
+                    type: "action",
+                    desc: `Create row actions to submit data quickly.`,
+                    fields: `
+                        <ul>
+                            <li>action: object</li>
+                            <ul>
+                                <li>handler: string - action name ( schema domain + event save|delete )</li>
+                                <li>source: string - source data to be submited <br>
+                                    options: <br>
+                                    - data <small>(field value)</small><br>
+                                    - row <small>(entire row values)</small><br>
+                                    - field <small>(object field name and value)</small><br>
+                                    - cell <small>(property cell object)</small><br>
+                                (def: data)</li>
+                                <li>type: field type (button|select|switch)</li>
+                            </ul>
+                        </ul>
+                    `,
                     json: {
                         "name": "tags",
                         "type": "tags",
