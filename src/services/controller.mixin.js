@@ -61,7 +61,7 @@ export default {
     },
     loadModelByUrl(url, opts){
         return loadModel(url, opts).then((data) => {
-          if( !data.title ) throw {message: 'JSON parse fails'}; 
+          if( !data.api ) throw {message: 'JSON parse fails'}; 
           
           return data;
       })

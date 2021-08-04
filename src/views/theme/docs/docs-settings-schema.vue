@@ -8,9 +8,11 @@
 //
 //Optional 
 //
-    "canCreate": "true"                         // DEfault true | if false, remove create (plus) button
-    "canEdit": "true"                           // DEfault true | if false, remove edit row button
-    "canDelete": "true"                         // DEfault true | if false, remove delete row button
+    "canCreate": "true"                         // Default true | if false, remove create (plus) button
+    "canEdit": "true"                           // Default true | if false, remove edit row button
+    "canDelete": "true"                         // Default true | if false, remove delete row button
+    "submit": "true"                            // Default true | if false, remove submit and cancel form buttons
+    "layout": "table",                          // DEfault table | Default grid view - options: table|card
 //
 // END Optional
 //

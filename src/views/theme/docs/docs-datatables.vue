@@ -232,6 +232,22 @@ export default {
                     }
                 },
                 {
+                    type: "belongsTo",
+                    desc: `Get row based getById route, injecting primaryKey on parameter request.<br>
+                     <small>Required primaryKey field on related schema</small>`,
+                    fields: `N/A`,
+                    json: {
+                        "name": "artist",
+                        "type": "select",
+                        "config": {
+                            "grid": true,
+                            "type": "belongsTo"
+                        },
+                        "schema": "artists.json",
+                        "options": []
+                    }
+                },
+                {
                     type: "image",
                     desc: `Thumbnail image preview with zoom by click`,
                     fields: `N/A`,

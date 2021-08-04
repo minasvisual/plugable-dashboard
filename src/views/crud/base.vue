@@ -83,13 +83,13 @@ export default {
     }
   },
   watch: {
-    $route(to, from) {
+    $route: async function(to, from) {
         if( to.params.model != from.params.model )
-          this.loadModel({cache: {ignoreCache: true}})
+          await this.loadModel({cache: {ignoreCache: true}})
     },
-    currentProject(newVal, oldVal){
+    currentProject: async function (newVal, oldVal){
       if( has(this.currentProject, 'code') && !oldVal.code ){
-        this.loadModel()
+        await this.loadModel()
       }else if( has(this.currentProject, 'code') && this.currentProject.code !== newVal.code ){
         let res = Object.keys(newVal.resources)
         this.$router.push(`/api/${newVal.code}/${res[0]}`) 
@@ -98,7 +98,10 @@ export default {
   },
   async mounted(){
     if( has(this.currentProject, 'code') )
-      this.loadModel()
+      await this.loadModel()
+
+    if( this.active.layout )
+      this.layout = this.active.layout
   },
   computed:{ 
     crud(){

@@ -17,7 +17,9 @@
         <span v-else-if="cell.type == 'select' || cell.type == 'autocomplete'">
            <GridSelect :data="data[cell.key]" :cell="cell" :row="data" v-on:click="emitAction"   />
         </span>
-       
+        <span v-else-if="cell.type == 'belongsTo'">
+           <BelongsTo :data="data[cell.key]" :cell="cell" :row="data" v-on:click="emitAction"   />
+        </span>
         <span v-else-if="cell.type == 'link'">
             <HrefLink :data="data[cell.key]" :cell="cell" :row="data" v-on:click="emitAction"  />
         </span>    
@@ -44,6 +46,7 @@ import HrefLink from './link'
 import Expression from './expression'
 import GridSelect from './select'
 import Actions from './action'
+import BelongsTo from './belongsTo'
 
 export default {
     components:{
@@ -52,7 +55,8 @@ export default {
         HrefLink,
         Expression,
         GridSelect,
-        Actions
+        Actions,
+        BelongsTo,
     },
     props:{
         data: {

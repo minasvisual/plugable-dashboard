@@ -24,7 +24,7 @@
             <CButton class="float-right" @click="forceRerender"><CIcon name="cil-reload" /> Update View</CButton>
           
                 <CTabs variant="pills" :active-tab="0"> 
-                  <CTab title="Form" v-if="active">
+                  <CTab title="Form" v-if="active && active.type !== 'form'">
                       <Auth
                           v-if="currentProject && active" 
                           :project="currentProject" 
@@ -43,7 +43,7 @@
                       </Auth>        
                   </CTab>
 
-                  <CTab title="Table" v-if="active"> 
+                  <CTab title="Grid" v-if="active"> 
                      <Auth
                           v-if="currentProject && active" 
                           :project="currentProject" 
@@ -60,6 +60,7 @@
                             ref="tables" 
                             v-else-if="schema.api && render"
                             :schema="schema"
+                            :layout="schema.layout || layout"
                             @actions:create="actionsTable('FORM_CREATE', $event)"
                             @actions:edit="actionsTable('FORM_EDIT', $event)"
                           /> 
@@ -146,6 +147,7 @@ export default {
     addModal: {},
     widget: {},
     widgetSource:null,
+    layout: "table"
   }},
   watch:{
     currentProject(newVal, oldVal){
@@ -252,7 +254,8 @@ export default {
   },
    
   beforeDestroy() {
-    this.destroyActions()
+    if( this.active )
+      this.destroyActions()
   },
 }
 </script>

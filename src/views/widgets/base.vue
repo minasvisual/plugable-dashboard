@@ -1,5 +1,5 @@
 <template> 
-  <section v-if="renderComponent" :class="(schema.wrapperClass || 'col-6')">
+  <section v-if="renderComponent" :class="(schema.wrapperClass || 'col-12')">
     <Auth
         v-if="current && schema" 
         :project="current" 

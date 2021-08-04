@@ -30,7 +30,7 @@ export default {
             if( this.cell?.action?.source == 'cell')
                 return this.cell
             else if( this.cell?.action?.source == 'row')
-                return { ...this.row, [this.cell.name]: this.data }
+                return { ...this.row, [this.cell.key]: this.data }
             else if( this.cell?.action?.source == 'field')
                 return { [this.cell.key]: this.data }
             else    

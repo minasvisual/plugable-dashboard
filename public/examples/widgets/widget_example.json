@@ -1,8 +1,9 @@
 {
-  "type": "object",
+  "type": "widget",
   "title": "Table test",
   "primaryKey": "id",
   "domain": "table",
+  "wrapperClass": "col-6",
   "widgets": {
       "type": "ChartBar",
       "source": "json",

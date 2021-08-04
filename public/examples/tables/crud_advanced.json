@@ -6,16 +6,34 @@
   "properties": [
     {
       "component": "h3",
-      "children": "Example component (crud by datasource json, canoot)"
+      "children": "Example component (crud by datasource json, dont submit)"
     },
     {
       "component": "small",
       "children": "Crud by datasource json, just read"
     },
     {
+      "component": "Tabs",
+      "tabs": [
+        {
+          "name": ".tab1",
+          "label": "Form"
+        },
+        {
+          "name": ".tab2",
+          "label": "Nested grid"
+        },
+        {
+          "name": ".tab3",
+          "label": "Standalone form"
+        }
+      ]
+    },
+    {
       "name": "id",
       "label": "ID",
       "readonly": true,
+      "class": "tab1",
       "config": {
         "grid": true,
         "sort": 1,
@@ -29,7 +47,7 @@
     },
     {
       "component": "div",
-      "class": "d-flex",
+      "class": "d-flex flex-row tab1",
       "children": [
         {
           "name": "autocomplete",
@@ -39,7 +57,7 @@
             "grid": true,
             "sort": 1,
             "type": "action",
-            "action":{
+            "action": {
               "handler": "advanced:save",
               "type": "select",
               "source": "field"
@@ -47,14 +65,15 @@
           },
           "options": [
             {
-              "value": 1,
+              "value": "1",
               "label": "Jon Doe"
             },
             {
-              "value": 2,
+              "value": "2",
               "label": "Jane Roe"
             }
-          ]
+          ],
+          "depth": 2
         },
         {
           "name": "dynamicselect",
@@ -73,9 +92,9 @@
             }
           },
           "config": {
-            "grid": true,
-            "type": "select"
-          }
+            "grid": true
+          },
+          "depth": 2
         },
         {
           "name": "switch",
@@ -84,7 +103,8 @@
           "config": {
             "grid": true,
             "type": "switch"
-          }
+          },
+          "depth": 2
         }
       ]
     },
@@ -92,6 +112,7 @@
       "name": "imageText",
       "label": "ImageText",
       "type": "imageText",
+      "class": "tab1",
       "config": {
         "grid": true,
         "type": "image"
@@ -101,6 +122,7 @@
       "name": "image",
       "label": "Image with upload",
       "type": "image",
+      "class": "tab1",
       "uploadUrl": "/examples/advanced_data.json",
       "validation": "mime:application/pdf",
       "accept": "application/pdf",
@@ -116,6 +138,7 @@
       "name": "code",
       "label": "Code",
       "type": "code",
+      "class": "tab1",
       "config": {
         "grid": true,
         "type": "expression",
@@ -129,6 +152,7 @@
       "label": "Json View",
       "type": "json",
       "parse": true,
+      "class": "tab1",
       "config": {
         "grid": true,
         "type": "expression",
@@ -141,6 +165,7 @@
       "name": "grid",
       "label": "Grid Local",
       "type": "grid",
+      "class": "tab2",
       "schema": {
         "api": {
           "bypassGetData": true
@@ -167,15 +192,17 @@
       "name": "gridserver",
       "label": "Grid HTTP",
       "type": "grid",
+      "class": "tab2",
       "schema": {
         "primaryKey": "id",
         "api": {
           "rootApi": "/examples/advanced_data.json",
           "urlGetById": "?",
           "wrapData": "users",
-          "wrapDataById": "users[0]"
+          "wrapDataById": "users[0]",
+          "resource": {}
         },
-        "properties": [ 
+        "properties": [
           {
             "name": "id",
             "label": "ID",
@@ -202,38 +229,41 @@
     },
     {
       "component": "b",
+      "class": "tab2",
       "children": "Independent Crud"
     },
     {
       "component": "Crud",
-      "context":{
-        "schema": "crud.json",
-        "overwrite":{
-          "api":{
-            "headers":{ "Accept": "application/json" }
+      "class": "tab2",
+      "context": {
+        "schema": "tables/crud.json",
+        "overwrite": {
+          "api": {
+            "headers": {
+              "Accept": "application/json"
+            }
           }
         }
       }
     },
-
     {
       "component": "b",
+      "class": "tab3",
       "children": "Independent Form Crud"
     },
     {
       "component": "Crud",
-      "context":{
-        "schema": "form_standalone.json",
-        "overwrite":{
-          "api":{
-            "urlGetById": "/{data.id}"
-          }
+      "class": "tab3",
+      "context": {
+        "schema": "forms/form_standalone.json",
+        "overwrite": {
         }
       }
     },
     {
       "name": "address",
       "type": "object",
+      "class": "tab1",
       "options": [
         {
           "component": "div",
@@ -244,7 +274,18 @@
               "label": "Street",
               "config": {
                 "grid": true
-              }
+              },
+              "depth": 2
+            },
+            {
+              "name": "number",
+              "label": "number",
+              "depth": 2
+            },
+            {
+              "name": "country",
+              "label": "Country",
+              "depth": 2
             }
           ]
         }
@@ -253,12 +294,14 @@
     {
       "name": "wysiwyg",
       "label": "Wysiwyg",
+      "class": "tab1",
       "type": "wysiwyg"
     },
     {
       "name": "tags",
       "label": "Tags",
       "type": "tags",
+      "class": "tab1",
       "attributes": {
         "output": "json"
       },
@@ -271,6 +314,7 @@
       "name": "created",
       "label": "Created",
       "format": "date",
+      "class": "tab1",
       "disabled": true,
       "config": {
         "grid": true,

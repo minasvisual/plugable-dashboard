@@ -75,12 +75,15 @@ export default {
       else
         return schema
     },
-    async getOptions({ rootApi, fieldLabel, fieldValue, ...data }, model = {}){
+    async getOptions({ rootApi, fieldLabel, fieldValue, ...data }, model = {}, filter={}){
       try{ 
         console.debug("input mixin get options", { rootApi, fieldLabel, fieldValue, ...data })
         if( rootApi ){
           this.loading = true;
           data = mergeDeep(data, this.request)
+          if( typeof filter == 'object' )
+            data = mergeDeep(data, filter)
+
           rootApi = interpolate(rootApi, { data: model })
           let { rows } = await getData({ api: { ...data, rootApi, resource: this.formValues } }, { data: model }) 
 

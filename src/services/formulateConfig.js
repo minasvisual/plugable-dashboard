@@ -19,9 +19,11 @@ import FormulateImageText from '../views/crud/formulate/image-text'
 import FormulateSelect from '../views/crud/formulate/select'
 
 // Global components
+import Widget from '../views/widgets/base'
 import Tabs from '../views/crud/formulate/tabs'
 
 Vue.component('Crud', FormulateGrid)
+Vue.component('Widget', Widget)
 Vue.component('Tabs', Tabs)
 
 Vue.component('MyFormulateAutocomplete', FormulateAutocomplete)

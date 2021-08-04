@@ -12,7 +12,7 @@
 
 
 <script>
-import { mergeDeep } from '../../../services/helpers'
+import { mergeDeep, filterParams } from '../../../services/helpers'
 import InputMixin from '../../../services/input.mixin'
 
 export default {
@@ -20,7 +20,8 @@ export default {
   mixins: [InputMixin],
   data(){return{ 
   }},
-  computed:{ 
+  computed:{
+
   },
   async created(){
     let { action, schema } = this.cell
@@ -32,11 +33,15 @@ export default {
       schema = { api: mergeDeep(this.convertAttributesToSchema(action), (schema.api || {})) }
 
     if( schema && schema.api  )
-      this.cell.options = await this.getOptions({ ...schema.api }, this.data)
+      this.cell.options = await this.getOptions(
+          { ...schema.api }, 
+          this.data, 
+          filterParams(schema.api, { filters:[{prop: action.fieldValue, value: this.data}] }) 
+      )
 
     this.renderComponent = true
   },
-  methods:{
+  methods:{ 
     forceRerender() {
       this.renderComponent = false;
 

@@ -10,7 +10,7 @@
           @submit="submit"
           #default="{ hasErrors }"
     >
-    <div class="action-buttons mt-3">
+    <div class="action-buttons mt-3" v-if="get(schema, 'submit', true)">
       <CButton
           type="button"
           color="danger"
@@ -56,7 +56,7 @@ export default {
     computed:{
       primaryKey(){
         return get(this.schema, 'primaryKey', 'id')
-      },
+      }, 
       isStandalone(){
         return get(this.schema, 'type') == 'form' || get(this.schema, 'api.bypassGetByid', false) || !get(this.schema, 'api.rootApi', false)//|| get(this.schema, 'api.bypassGetData', false)
       }

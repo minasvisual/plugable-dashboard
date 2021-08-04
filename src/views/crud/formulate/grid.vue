@@ -77,7 +77,10 @@ export default {
     async loadSubmodel(modelPath){
        let url = this.currentProject.resources_path + modelPath
       return await this.loadModelByUrl(url)
-        .catch(err => this.$message && this.$message(`Error to load submodel: ${err.message}`))
+        .catch(err => {
+          this.$message && this.$message(`Error to load submodel: ${err.message}`)
+          console.error(err)
+        })
     },
     transformSchema(schema){
       schema.api = mergeDeep( get(schema, 'api', {}), this.request) 

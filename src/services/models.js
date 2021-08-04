@@ -5,7 +5,7 @@ import Store from '../store'
 
 // Create `axios-cache-adapter` instance
 const api = setup({
-  maxAge: 1 * ( 60 * 1000 ), // N x 1 minute
+  maxAge: 1 * ( 60 * 60 ), // N x 1 minute
   ignoreCache: process.env.VUE_APP_ENV === 'local',
   clearOnStale: true,
   exclude: {
@@ -102,6 +102,7 @@ export const request = (query, options={}, config = {}) => {
 
 export const loadModel = async (url, options) => {
    return await request(url, options).then( res => {
+      console.log("loadModel "+url, res)
       if( !res.api ) throw { message: "Model Load error" }
 
       return res

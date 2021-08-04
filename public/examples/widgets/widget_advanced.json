@@ -1,5 +1,5 @@
 {
-  "type": "object",
+  "type": "widget",
   "title": false,
   "primaryKey": "id",
   "domain": "lines",
