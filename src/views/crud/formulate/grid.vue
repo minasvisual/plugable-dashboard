@@ -23,7 +23,7 @@
 
 <script>
 import { get,  merge } from 'lodash'
-import { mergeDeep } from '../../../services/helpers'
+import { mergeDeep, isRegex } from '../../../services/helpers'
 import ControllerMixin from '../../../services/controller.mixin'
 
 // import Table from '../table'
@@ -75,7 +75,12 @@ export default {
   },
   methods: { 
     async loadSubmodel(modelPath){
-       let url = this.currentProject.resources_path + modelPath
+      let url
+      if( isRegex(modelPath, 'url') )
+        url = modelPath
+      else
+        url = this.currentProject.resources_path + modelPath
+
       return await this.loadModelByUrl(url)
         .catch(err => {
           this.$message && this.$message(`Error to load submodel: ${err.message}`)

@@ -80,6 +80,7 @@ export default {
         }) 
         .catch(e => {
           this.$message( getErrorMessage(e) )
+          this.$bus.$emit(`${schema.domain}:error`, e)
           return Promise.reject(e)
         }).finally(() => {
           this.$store.commit('setLoader', ['form', false])

@@ -1,5 +1,5 @@
 <template>
-  <section class="loading-wrap" :class="{ 'active': loading[target] }">
+  <section class="loading-wrap" :class="{ 'active': (loading[target] || show) }">
      <div class="blackdrop"><CSpinner color="info" /></div>
      <slot />
   </section>
@@ -8,13 +8,13 @@
 <script> 
 import { mapState } from 'vuex'
 export default {
-  props:['target'],
+  props:['target', 'show'],
   data(){return{ 
   }},
   computed:{
     ...mapState({
       loading: state => state.loading
-    })
+    }),
   }
 }
 </script>

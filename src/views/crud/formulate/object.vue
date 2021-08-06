@@ -12,7 +12,7 @@ export default {
     context: {
       type: Object,
       required: true,
-      default: { model:{}, options:[] }
+      default: () => ({ model:{}, options:[] })
     },
   },
   computed:{

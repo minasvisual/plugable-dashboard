@@ -48,6 +48,9 @@ export default {
     schema:{
       type: Object,
       default: () => ({})
+    },
+    resources:{
+      type: Array
     }
   },
   data() {
@@ -70,7 +73,7 @@ export default {
     loadWidget: async function (ops){ 
       try{
         this.renderComponent = false
-        if( !get(this.schema, 'api.rootApi', false) ) return false;
+        if( !get(this.schema, 'api.rootApi', false) && !this.resources ) return false;
 
         await this.loadDataset()
 
@@ -86,6 +89,9 @@ export default {
       }
     },
     async loadDataset(ops){
+      if( this.resources )
+        this.dataset = this.resources
+      else
         this.dataset = await getData(this.schema, {}, ops).then( ({rows, total}) => rows )
     },
     loadPivot(widget){

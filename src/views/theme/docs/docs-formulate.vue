@@ -68,26 +68,78 @@
                 
                 <p>
                     <h4>Html Styled Component</h4>
-                    <p>You can add html wrappers and use global components as a formulate property. Example: 
-                    <VJsoneditor v-model="compDemo"
-                        :options="{ mode: 'preview', mainMenuBar: false, navigationBar: false, statusBar: false }"
-                        height="auto" 
-                    ></VJsoneditor>
-                    </p>
-                    <p>
-                        You can define a sub Crud using a schema or loading a new schema, overwriting schema properties, like:
-                        <VJsoneditor v-model="subgrid"
+                    <div class="row p-2">
+                        <div class="col-6"> 
+                            <h6>You can add html wrappers and use global components as a formulate property.</h6>                            
+                            <p>Example:</p>                            
+                            <FormComp :properties="[compDemo]" />
+                        </div>
+                        <div class="col-6">
+                            <VJsoneditor v-model="compDemo"
+                                :options="{ mode: 'preview', mainMenuBar: false, navigationBar: false, statusBar: false }"
+                                height="auto" 
+                            ></VJsoneditor>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row p-2">
+                        <div class="col-6"> 
+                            <h6> You can define a sub Crud using a schema or loading a new schema, overwriting schema properties</h6>                            
+                            <p>Example:</p>                            
+                            <FormComp :properties="[subgrid]" />
+                        </div>
+                        <div class="col-6">
+                          <VJsoneditor v-model="subgrid"
+                            :options="{ mode: 'preview', mainMenuBar: false, navigationBar: false, statusBar: false }"
+                            height="auto" 
+                          ></VJsoneditor>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row p-2">
+                        <div class="col-6"> 
+                            <h6>Create Tabs (with sub CRUDs or not)</h6>                            
+                            <p>Example:</p>                            
+                            <FormComp :properties="tabsExample" />
+                        </div>
+                        <div class="col-6">
+                          <VJsoneditor v-model="tabsExample"
                             :options="{ mode: 'preview', mainMenuBar: false, navigationBar: false, statusBar: false }"
                             height="auto" 
                         ></VJsoneditor>
-                    </p> 
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row p-2">
+                        <div class="col-6"> 
+                            <h6>Create Wizards (with sub CRUDs or not)</h6>                            
+                            <p>Example:</p>                            
+                            <FormComp :properties="wizardExample" />
+                        </div>
+                        <div class="col-6">
+                            <VJsoneditor v-model="wizardExample"
+                                :options="{ mode: 'preview', mainMenuBar: false, navigationBar: false, statusBar: false }"
+                                height="auto" 
+                            ></VJsoneditor>
+                        </div>
+                    </div>
+                    <hr>
                     <p>
-                        Create Tabs (with sub CRUDs or not)
-                        <VJsoneditor v-model="tabsExample"
-                            :options="{ mode: 'preview', mainMenuBar: false, navigationBar: false, statusBar: false }"
-                            height="auto" 
-                        ></VJsoneditor>
+                       
                     </p>
+                     <div class="row p-2">
+                        <div class="col-6"> 
+                            <h6>Create Standalone widgets</h6>                            
+                            <p>Example:</p>                            
+                            <FormComp :properties="[subWidgets]" />
+                        </div>
+                        <div class="col-6"> 
+                            <VJsoneditor v-model="subWidgets"
+                                :options="{ mode: 'preview', mainMenuBar: false, navigationBar: false, statusBar: false }"
+                                height="auto" 
+                            ></VJsoneditor>
+                        </div>
+                    </div>
                 </p>
             </div>
         </p>
@@ -95,20 +147,24 @@
 </template>
 
 <script> 
+import { autocomplete, select, grid, image, objJson, inputDefault, maskDemo, tabsExample, extented, subWidgets, wizardExample } from './mocks'
 import VJsoneditor from 'v-jsoneditor'
-import { autocomplete, select, grid, image, objJson, inputDefault, maskDemo, tabsExample, extented } from './mocks'
 import InputDoc from './views/InputDoc'
+import FormComp from './views/FormComp'
 export default {
     components: {
         VJsoneditor,
-        InputDoc
+        InputDoc,
+        FormComp,
     },
     data() {
         return {  
             inputDefault,
             tabsExample,
+            wizardExample,
             maskDemo,
             extented,
+            subWidgets,
             compDemo:  {
                 "component": "h4",
                 "children": "My big title"
@@ -116,12 +172,13 @@ export default {
             subgrid: {
                 "component": "Crud",
                 "context":{
-                    "schema": "object schema or filename (only in the same project), ex: roles.json",
+                    "schema": document.location.origin + "/examples/tables/crud.json",
                     "overwrite":{
                         "api":{
                             "params": { 
-                                "filter": "'user_id,eq,{data.id}' //Comment: data is active form values" 
-                            }
+                                "filter": "user_id,eq,{data.id}" 
+                            },
+                            "bypassGetData": "true"
                         }
                     }
                 }
@@ -273,6 +330,9 @@ export default {
             ]
         }
     },
+    mounted(){
+        console.log( document.location.origin )
+    }
 }
 </script>
 

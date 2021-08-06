@@ -202,3 +202,55 @@ export const tabsExample = [
     ]
   }
 ]
+
+export const wizardExample = [
+  {
+    "component": "Wizard",
+    "class": "test",
+    "nav-class": "nav nav-pills (optional)",
+    "steps": [
+      { "name": ".step1", "label": "Step 1" },  
+      { "name": ".step2", "label": "Step 2" }
+    ]
+  },
+  {
+    "component": "div",
+    "class": "d-flex step1",
+    "children": [
+      {
+        "name": "outro",
+        "label": "OUtro"
+      },
+      {
+        "name": "outro 2",
+        "label": "OUtro"
+      }
+    ]
+  },
+  {
+    "component": "div",
+    "class": "d-flex step2",
+    "children": [
+      {
+        "name": "title",
+        "label": "Title"
+      },
+      {
+        "name": "artist_name",
+        "label": "Artist"
+      }
+    ]
+  }
+]
+
+export const subWidgets =  {
+  "component": "Widget",
+  "class": "tab4",
+  "context": {
+    
+    "schema": document.location.origin + "/examples/widgets/widget_example.json",
+    "overwrite": {
+      "wrapperClass": "w-100"
+    }
+  }
+}

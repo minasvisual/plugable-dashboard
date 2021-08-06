@@ -26,6 +26,10 @@
         {
           "name": ".tab3",
           "label": "Standalone form"
+        },
+        {
+          "name": ".tab4",
+          "label": "Standalone Widgets"
         }
       ]
     },
@@ -322,6 +326,16 @@
         "action": {
           "format": "D/M/YY \\a\\s hh:mm",
           "utc": true
+        }
+      }
+    },
+    {
+      "component": "Widget",
+      "class": "tab4",
+      "context": {
+        "schema": "widget_tiles.json",
+        "overwrite": {
+          "wrapperClass": "w-100"
         }
       }
     }

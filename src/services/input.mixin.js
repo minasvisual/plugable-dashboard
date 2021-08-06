@@ -102,6 +102,18 @@ export default {
           console.error('Erro select input', e)
           return this.options
       }
+    },
+    transformSchema(schema){
+      schema.api = mergeDeep( get(schema, 'api', {}), this.request) 
+
+      if( get(schema, 'api.bypassGetData', false) )
+          this.resource = this.formValues[this.name]
+      else
+          this.resource = this.formValues
+
+      schema.api.resource = this.resource
+          
+      return schema
     }
   },
 

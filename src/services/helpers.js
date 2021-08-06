@@ -178,3 +178,15 @@ export const saveSettings = (data) => {
         console.log('saveSettings', e)
     }
 }
+
+export const isRegex = (data, reg, custom=false) => {
+    let rgs ={
+        url: "^(http[s]?:\\/\\/(www\\.)?|ftp:\\/\\/(www\\.)?|www\\.)"
+    }
+    if( !rgs[reg] && !custom ) return ;
+
+    var regex = new RegExp( rgs[reg] || reg );
+
+    console.debug('isRegex', rgs[reg], data, regex.test(data))
+    return regex.test(data)
+} 

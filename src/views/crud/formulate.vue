@@ -10,23 +10,29 @@
           @submit="submit"
           #default="{ hasErrors }"
     >
-    <div class="action-buttons mt-3" v-if="get(schema, 'submit', true)">
-      <CButton
-          type="button"
-          color="danger"
-          class="mr-2"
-          @click="$emit('close', { refresh: false })"
-        >
-            Cancel
-      </CButton>
-      <CButton
-          type="submit"
-          color="success"
-          :disabled="hasErrors"
-        >
-            Save
-      </CButton>
-    </div>
+      <div class="alert alert-warning" v-if="error">
+        <code>
+          {{ error }}
+        </code>
+      </div>
+
+      <div class="action-buttons mt-3" v-if="get(schema, 'submit', true)">
+        <CButton
+            type="button"
+            color="danger"
+            class="mr-2"
+            @click="$emit('close', { refresh: false })"
+          >
+              Cancel
+        </CButton>
+        <CButton
+            type="submit"
+            color="success"
+            :disabled="hasErrors"
+          >
+              Save
+        </CButton>
+      </div>
     </FormulateForm>
   </section>
 </template>
@@ -43,7 +49,8 @@ export default {
         form: [],
         model: {},
         columns: [],
-        loader: true
+        loader: true,
+        error:null
       }
     },
     props:{
@@ -63,6 +70,11 @@ export default {
     },
     mounted(){
       this.init()
+
+      this.$bus.$on(`${this.schema.domain}:error`, this.handleError);
+    },
+    beforeDestroy(){
+      this.$bus.$off(`${this.schema.domain}:error`, this.handleError);
     },
     methods: {
       async submit (data) {
@@ -88,6 +100,10 @@ export default {
               
             this.loader = false
           })
+      },
+      handleError(err){
+        console.debug("error hook", err)
+        this.error = err
       }
     },
 }

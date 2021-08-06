@@ -12,18 +12,20 @@ import FormulateImage from '../views/crud/formulate/image'
 import FormulateTags from '../views/crud/formulate/tags'
 import FormulateDynamicSelect from '../views/crud/formulate/dynamic-select'
 import FormulateJson from '../views/crud/formulate/json'
-import FormulateGrid from '../views/crud/formulate/grid'
 import FormulateObject from '../views/crud/formulate/object'
 import FormulateImageText from '../views/crud/formulate/image-text'
+import FormulateGrid from '../views/crud/formulate/grid'
 // Default input replacement
 import FormulateSelect from '../views/crud/formulate/select'
 
 // Global components
-import Widget from '../views/widgets/base'
+import Widget from '../views/crud/layouts/WidgetInput'
+import Wizard from '../views/crud/layouts/WizardInput'
 import Tabs from '../views/crud/formulate/tabs'
 
 Vue.component('Crud', FormulateGrid)
 Vue.component('Widget', Widget)
+Vue.component('Wizard', Wizard)
 Vue.component('Tabs', Tabs)
 
 Vue.component('MyFormulateAutocomplete', FormulateAutocomplete)
