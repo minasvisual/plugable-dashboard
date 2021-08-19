@@ -19,7 +19,7 @@
           <div class='card-body'>  
               <div v-if="widget.prefix" class="prefix" v-html="widget.prefix"></div>
               <component :is="(widget.type || 'Table')" :class="(widget.class || '')" 
-                    v-bind="{ pivot, schema, widget }"  />
+                    v-bind="{ pivot, schema, widget, dataset }"  />
               <div v-if="widget.suffix" class="suffix" v-html="widget.suffix"></div>
           </div>
         </div>
@@ -95,6 +95,9 @@ export default {
         this.dataset = await getData(this.schema, {}, ops).then( ({rows, total}) => rows )
     },
     loadPivot(widget){
+        if( widget.source == 'raw' )
+          return { data: { table: this.dataset }}
+
         let params = widget.params || {};
 
         const rowsToPivot = params.rows || [];

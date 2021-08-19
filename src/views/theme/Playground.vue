@@ -114,12 +114,35 @@
       <NewProject v-if="addModal.type == 'project'" />
       <NewModel v-if="addModal.type == 'model'" @model="(data) => this.active = data"/>
     </CModal>
+
+      
+    <CModal 
+      title="Schema Viewer"
+      v-if="action.show"
+      :show.sync="action.show"
+      size="lg"
+      :closeOnBackdrop="false"
+    >
+        <Crud 
+          v-if="action.type == 'modal:grid'"
+          :context="action"
+        />
+        <Forms 
+          v-else-if="action.type = 'modal:form'"
+          :schema="action.schema"
+          :data="action.row"
+          @model:saved="submitHandler"
+          @close="action = {}"
+        /> 
+        <template slot="footer"><span></span></template>
+    </CModal>
   </div>
 </template>
 
 <script>
 import ControllerMixin from '../../services/controller.mixin'
 import SessionMixin from '../../services/session.mixin'
+import Actions from '../../services/actions.mixin'
 
 import { loadProjects, request } from '../../services/models'
 import { get, debounce, find } from 'lodash'
@@ -134,7 +157,7 @@ import NewProject from './playgrounds/NewProject'
 import NewModel from './playgrounds/NewModel'
 
 export default {
-  mixins:[ControllerMixin, SessionMixin],
+  mixins:[ControllerMixin, SessionMixin, Actions],
   components: { VJsoneditor, Forms, Table, Auth, NewProject, NewModel, Widget, Form },
   data(){return{
     render: true,
@@ -147,7 +170,8 @@ export default {
     addModal: {},
     widget: {},
     widgetSource:null,
-    layout: "table"
+    layout: "table",
+    action: { show: false }
   }},
   watch:{
     currentProject(newVal, oldVal){
@@ -246,10 +270,16 @@ export default {
     loadActions(){
       this.$bus.$on(`${this.active.domain}:save`, this.submitHandler);
       this.$bus.$on(`${this.active.domain}:delete`, this.submitHandler);
+      this.$bus.$on("model:redirect", this.redirect)
+      this.$bus.$on("model:grid", this.openModel)
+      this.$bus.$on("model:form", this.openForm)
     },
     destroyActions(){
       this.$bus.$off(`${this.active.domain}:save`, this.submitHandler);
       this.$bus.$off(`${this.active.domain}:delete`, this.submitHandler);
+      this.$bus.$off("model:redirect", this.redirect)
+      this.$bus.$off("model:grid", this.openModel)
+      this.$bus.$off("model:form", this.openForm)
     }
   },
    

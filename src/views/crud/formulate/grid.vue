@@ -22,8 +22,8 @@
 </template>
 
 <script>
-import { get,  merge } from 'lodash'
-import { mergeDeep, isRegex } from '../../../services/helpers'
+import { get,  has } from 'lodash'
+import { mergeDeep, isRegex, manualMerge } from '../../../services/helpers'
 import ControllerMixin from '../../../services/controller.mixin'
 
 // import Table from '../table'
@@ -63,6 +63,9 @@ export default {
     name(){
       return this.context.name
     },
+    overwrite(){
+      return this.context.overwrite || {}
+    },
     schemaProp(){
       return get(this.context, 'schema', get(this.context, 'attributes.schema', {}))
     },  
@@ -87,11 +90,14 @@ export default {
           console.error(err)
         })
     },
-    transformSchema(schema){
-      schema.api = mergeDeep( get(schema, 'api', {}), this.request) 
+    async transformSchema(schema){
+      schema = mergeDeep( {...schema}, {...this.overwrite} ) 
+      schema = mergeDeep( {...schema}, { api: {...this.request}} ) 
 
       if( get(schema, 'api.bypassGetData', false) )
           this.resource = this.formValues[this.name]
+      else if( has(schema, 'api.resource') )
+          this.resource = get(schema, 'api.resource')
       else
           this.resource = this.formValues
 
@@ -104,12 +110,12 @@ export default {
     this.renderComponent = false
 
     if( typeof this.schemaProp == 'string' ){ 
-      var loadedSchema = await this.loadSubmodel(this.schemaProp)
-      loadedSchema = mergeDeep(loadedSchema, this.context.overwrite)
- 
-      this.schema = this.transformSchema( loadedSchema ) 
+      var loadedSchema = await this.loadSubmodel(this.schemaProp) 
+      //loadedSchema = mergeDeep(loadedSchema, {...this.overwrite})
+
+      this.schema = await this.transformSchema( loadedSchema ) 
     }else{
-      this.schema = mergeDeep(this.transformSchema( this.schemaProp ), this.context.overwrite) 
+      this.schema = mergeDeep(this.transformSchema( this.schemaProp ), {...this.overwrite}) 
     }
 
     // if( this.schema.type == 'form' )

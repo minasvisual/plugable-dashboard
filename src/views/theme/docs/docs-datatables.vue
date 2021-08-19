@@ -295,14 +295,16 @@ export default {
                         </ul>
                     `,
                     json: {
-                        "name": "tags",
-                        "type": "tags",
-                        "attributes": {
-                            "output": "json"
-                        },
+                        "name": "status",
+                        "label": "Status",
                         "config": {
                             "grid": true,
-                            "type": "tags"
+                            "type": "action",
+                            "action": {
+                                "type": "switch",
+                                "handler": "blogs:save",
+                                "source": "field"
+                            }
                         }
                     }
                 },

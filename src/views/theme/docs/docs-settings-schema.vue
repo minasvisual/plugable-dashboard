@@ -69,10 +69,23 @@
         "headers":{                                 // Fixed headers params
             "app-key": "qwertyuiop-asdfghjkls"
         }
+    }
+    "toolbar": [
+        {
+            "icon": "cil-trash",                    // Button icon | OPTIONAL
+            "label": "Options",                     // Label HTML | Required if icon not informed
+            "target": "rowbar",                     // Toolbar target | toolbar=top grid/rowbar=grid row actions)
+            "handler": "model:grid",                // Event Handler | See event docs to configure
+            "source": "context",                    // Event Source data | event source origin sent to schema
+            "id": "artist_id",                      // Row field of form id (To model:form event)
+            "data": {                               // Event Data | event context sent to schema
+                "schema": "artist.json"
+            }
+        }
+    ]
 //
 // END Optional
 //
-    }
 }
     </pre>
   </div>

@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div class="form-loader w-100 text-center" v-if="loader">
+    <div class="form-loader w-100 text-center" v-if="loader || loading">
       <CSpinner color="info"/>
     </div>
     <FormulateForm 
@@ -39,7 +39,7 @@
 
 <script>
 import { get } from 'lodash'
-import { schemaColumns, prepareForm, formatModel, getErrorMessage } from '../../services/helpers'
+import { schemaColumns, formatModel, getErrorMessage } from '../../services/helpers'
 import ControllerMixin from '../../services/controller.mixin'
 
 export default {
@@ -55,12 +55,16 @@ export default {
     },
     props:{
       schema: {
-        type:Object,
-        default: () => ([])
+        type: [Object,String]
       },
-      data: Object
+      data: {
+        type: [Number, Object]
+      }
     },
     computed:{
+      loading(){
+        return this.$store.state.loading.form 
+      }, 
       primaryKey(){
         return get(this.schema, 'primaryKey', 'id')
       }, 
@@ -68,10 +72,16 @@ export default {
         return get(this.schema, 'type') == 'form' || get(this.schema, 'api.bypassGetByid', false) || !get(this.schema, 'api.rootApi', false)//|| get(this.schema, 'api.bypassGetData', false)
       }
     },
-    mounted(){
-      this.init()
+    async mounted(){
+      try{
+        this.schema = await this.loadNestedSchema(this.schema)
 
-      this.$bus.$on(`${this.schema.domain}:error`, this.handleError);
+        this.init()
+
+        this.$bus.$on(`${this.schema.domain}:error`, this.handleError);
+      }catch(e){
+        console.error("formulate mount error", e)
+      }
     },
     beforeDestroy(){
       this.$bus.$off(`${this.schema.domain}:error`, this.handleError);
@@ -82,15 +92,25 @@ export default {
         
         return data
       },
+      async loadNestedSchema(schema){
+        if( schema && typeof schema  == 'string' )
+          return this.loadModelByUrl( this.currentProject.resources_path + schema).then( data =>  { 
+            if( !data || !data.api ) throw { message: "Api fail" } 
+            return data
+          })
+        else
+          return schema
+      },
       getRow(){
-          if( !this.data || Object.keys( this.data ).length == 0 ) return Promise.resolve({})
+          if( !this.data ) return Promise.resolve({})
+          if( typeof this.data !== 'object' ) this.data = { [this.primaryKey]: this.data }
 
           return this.getData(this.schema, this.data)
       },
       init(){
          ( this.isStandalone ? Promise.resolve(this.data) : this.getRow() ).then( (data) => {
-              this.form =  this.schema.properties
-              this.columns = schemaColumns(this.schema.properties)
+              this.form =  get(this.schema, 'properties', [])
+              this.columns = schemaColumns( this.form )
               data = formatModel(this.columns, data)
               console.debug(data)
               this.model = data

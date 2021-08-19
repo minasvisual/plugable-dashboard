@@ -84,6 +84,30 @@
                     <hr>
                     <div class="row p-2">
                         <div class="col-6"> 
+                            <h6>To add html using row data, you can use Place component</h6>                 
+                        </div>
+                        <div class="col-6">
+                            <VJsoneditor v-model="LayoutPlace"
+                                :options="{ mode: 'preview', mainMenuBar: false, navigationBar: false, statusBar: false }"
+                                height="auto" 
+                            ></VJsoneditor>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row p-2">
+                        <div class="col-6"> 
+                            <h6>To show a image based on row data, you can use ImagePreview component</h6>                      
+                        </div>
+                        <div class="col-6">
+                            <VJsoneditor v-model="LayoutImagePreview"
+                                :options="{ mode: 'preview', mainMenuBar: false, navigationBar: false, statusBar: false }"
+                                height="auto" 
+                            ></VJsoneditor>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row p-2">
+                        <div class="col-6"> 
                             <h6> You can define a sub Crud using a schema or loading a new schema, overwriting schema properties</h6>                            
                             <p>Example:</p>                            
                             <FormComp :properties="[subgrid]" />
@@ -123,11 +147,8 @@
                             ></VJsoneditor>
                         </div>
                     </div>
-                    <hr>
-                    <p>
-                       
-                    </p>
-                     <div class="row p-2">
+                    <hr> 
+                    <div class="row p-2">
                         <div class="col-6"> 
                             <h6>Create Standalone widgets</h6>                            
                             <p>Example:</p>                            
@@ -147,7 +168,10 @@
 </template>
 
 <script> 
-import { autocomplete, select, grid, image, objJson, inputDefault, maskDemo, tabsExample, extented, subWidgets, wizardExample } from './mocks'
+import { 
+    autocomplete, select, grid, image, objJson, inputDefault, maskDemo, tabsExample, extented, subWidgets, wizardExample,
+    LayoutPlace, LayoutImagePreview,
+} from './mocks'
 import VJsoneditor from 'v-jsoneditor'
 import InputDoc from './views/InputDoc'
 import FormComp from './views/FormComp'
@@ -165,6 +189,8 @@ export default {
             maskDemo,
             extented,
             subWidgets,
+            LayoutPlace,
+            LayoutImagePreview,
             compDemo:  {
                 "component": "h4",
                 "children": "My big title"
@@ -329,9 +355,6 @@ export default {
                 },
             ]
         }
-    },
-    mounted(){
-        console.log( document.location.origin )
     }
 }
 </script>

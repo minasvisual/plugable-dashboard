@@ -16,20 +16,22 @@
       >
 
         <template #over-table >
-          <section class="row py-2">
+          <section class="row py-2 w-100">
             <div class="col-7 d-flex ">
-              <span v-if="selectedRow.length > 0" class="selectedActions">
-                <label class="m-0">Selected: {{ selectedRow.length }} </label> 
-                <CButton @click="bulkDelete">
-                    <CIcon name="cil-trash" />
+              <Toolbar :schema="schema" class="d-flex ">
+                <span v-if="selectedRow.length > 0" class="selectedActions">
+                  <label class="m-0">Selected: {{ selectedRow.length }} </label> 
+                  <CButton @click="bulkDelete">
+                      <CIcon name="cil-trash" />
+                  </CButton>
+                </span>
+                <CButton @click="fetchQueryInfo('pageChange', {})">
+                  <CIcon name="cil-reload" />
                 </CButton>
-              </span>
-              <CButton @click="fetchQueryInfo('pageChange', {})">
-                <CIcon name="cil-reload" />
-              </CButton>
-              <CButton @click="onCreate" v-if="can(schema, 'canCreate')">
-                <CIcon name="cil-plus" />
-              </CButton>
+                <CButton @click="onCreate" v-if="can(schema, 'canCreate')">
+                  <CIcon name="cil-plus" />
+                </CButton>
+              </Toolbar>
             </div>
             <div class="col-5 d-flex justify-content-end align-items-center">
               <span>Limit: </span>
@@ -57,14 +59,16 @@
 
         <template #actions="{item, index}">
           <td :class="['td-actions']">
-              <section class="d-flex text-right">
-                <CButton  class="card-header-action mr-3"  @click="onEdit(item)" v-if="can(schema, 'canEdit')"> 
-                  <CIcon name="cil-pencil" />
-                </CButton>
-                <CButton   class="card-header-action"  @click="onDelete(item)"  v-if="can(schema, 'canDelete')"> 
-                  <CIcon name="cil-trash" />
-                </CButton>
-              </section>
+              <Toolbar :schema="schema" target="rowbar" class="d-flex text-right" :data="item"> 
+                <template #append> 
+                  <CButton  class="card-header-action mr-3"  @click="onEdit(item)" v-if="can(schema, 'canEdit')"> 
+                    <CIcon name="cil-pencil" />
+                  </CButton>
+                  <CButton   class="card-header-action"  @click="onDelete(item)"  v-if="can(schema, 'canDelete')"> 
+                    <CIcon name="cil-trash" />
+                  </CButton>
+                </template>
+              </Toolbar>
           </td>
         </template>
         
@@ -96,13 +100,14 @@ import { get, has, debounce, isEqual, filter } from 'lodash'
 
 import TableMixin from '../../../services/table.mixin'
 import CellTypes from './index' 
+import Toolbar from './Toolbar.vue'
 
 export default {
   name:"TableServer2",
   mixins:[TableMixin],
   props:['schema','resource'],
   components:{
-    CellTypes,  
+    CellTypes, Toolbar
   },
   data () {
     return {

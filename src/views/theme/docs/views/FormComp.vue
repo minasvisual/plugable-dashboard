@@ -1,6 +1,7 @@
 <template>
      <FormulateForm   
-          :schema="properties" 
+          :schema="properties"
+          :value="source"
     />
 </template>
 
@@ -11,15 +12,9 @@ export default {
             type: Array,
             default: () => []
         },
-        type:{
-            type: String
-        }
-    },
-    computed:{
-        form(){
-            return {
-                type: this.type || 'grid'
-            }
+        source:{
+            type: Object,
+            default: () => ({})
         }
     },
     data() {

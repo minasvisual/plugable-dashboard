@@ -254,3 +254,16 @@ export const subWidgets =  {
     }
   }
 }
+
+export const LayoutImagePreview =   {
+  "component": "ImagePreview",
+  "width": "100",
+  "model": "image"
+}
+
+export const LayoutPlace = {
+  "component": "Place",
+  "tag": "h1",
+  "class": "text-success",
+  "expression": "Welcome <b>{firstName} {lastName}</b>"
+}

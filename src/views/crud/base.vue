@@ -52,13 +52,25 @@
           </CCardBody>
       </CCard> 
   </CCol>
+
+  <CModal 
+    :show.sync="!!action.schema"
+    size="lg"
+    :closeOnBackdrop="false"
+  >
+    <Crud 
+      v-if="action.schema"
+      :context="action"
+    />
+  </CModal>
 </CRow>
 </template>
 
 <script>
-import { has, get, set } from 'lodash'
+import { has, } from 'lodash'
 import ControllerMixin from '../../services/controller.mixin'
 import SessionMixin from '../../services/session.mixin'
+import ActionsMixin from '../../services/actions.mixin'
 
 import Auth from './auth'
 import Grid from './crud' 
@@ -66,9 +78,9 @@ import Form from './form'
 
 export default {
   name: 'Base',
-  mixins:[ControllerMixin, SessionMixin],
+  mixins:[ControllerMixin, SessionMixin, ActionsMixin],
   components:{
-    Auth, Grid, Form, 
+    Auth, Grid, Form
   },
   data(){
     return{
@@ -79,7 +91,8 @@ export default {
       views:{
         'table': 'Table' ,
         'card': 'Card View',
-      }
+      },
+      action:{}
     }
   },
   watch: {
@@ -129,6 +142,14 @@ export default {
         this.forceRerender()
       })
     }
+  },
+  beforeMount(){
+    this.$bus.$on("model:redirect", this.redirect)
+    this.$bus.$on("model:open", this.openModel)
+  },
+  beforeDestroy(){
+    this.$bus.$off("model:redirect", this.redirect)
+    this.$bus.$off("model:open", this.openModel)
   }
 }
 </script>

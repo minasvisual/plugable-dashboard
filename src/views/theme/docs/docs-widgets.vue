@@ -14,7 +14,7 @@
                 <li>widgets: | Widget wrapper</li>
                 <ul>
                     <li>type: "ChartBar",     // Render type: Table|HTML|ChartBar|ChartLine|ChartPie</li>
-                    <li>source: "json",       // Source type</li>
+                    <li>source: "pivot",      // Source type: pivot (pivot table)|raw (raw api result) -  Def: pivot</li>
                     <li>"class": "card-body"  // optional | card body css class </li>
                     <li>"prefix": '<b>chart header</b>' // optional | html slot upper type render</li>
                     <li>"suffix": '<b>chart footer</b>' // optional | html slot below type render</li>
@@ -22,6 +22,7 @@
                         <ul>                     
                             <li>"rows":["country"],     // Array of json field Chart/Table calculated row results</li>
                             <li>"cols":[],              // Array of json Chart/Table calculated column results</li>
+                            <li>"labels":[],            // Array|string of Cols labels of each TIles, Table</li>
                             <li>"group":"country",      // aggregationDimension | String of json field </li>
                             <li>"action":"count"        // aggregator | Calculate action aggregator, count|sum|average|max|min</li>
                             <li>"resultWrap": "data"    // get different part of calculated result, data|totals|all</li>

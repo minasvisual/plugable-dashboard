@@ -9,10 +9,10 @@ import { formatDate } from './services/helpers'
  
 import "../node_modules/@braid/vue-formulate/dist/snow.min.css";
 import VueFormulate from '@braid/vue-formulate'
-import FormulateConfig  from './services/formulateConfig'
+import FormulateConfig  from './plugins'
 import VJsoneditor from 'v-jsoneditor'
 import VueQuill from 'vue-quill'
-import DashPlugin from './services/plugin'
+import DashPlugin from './plugins/DashPlugin'
 import VueCompositionAPI from '@vue/composition-api'
 
 

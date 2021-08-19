@@ -109,5 +109,15 @@
       "access-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZnVsbG5hbWUiOiJBZG1pbiIsImVtYWlsIjoibWFudG92YW5pYXJ0c0Bob3RtYWlsLmNvbSIsInVzZXJfdHlwZSI6ImFkbWluIiwiaWF0IjoxNjI4MDk2OTc2LCJleHAiOjE2MjgxMDc3NzZ9.lqrYmERZxKJQpv3zjxCBDU-T2ZTc4s3rvY4m23yE5Ec"
     },
     "bypassGetDataById": true
-  }
+  },
+  "toolbar": [
+    {
+      "label": "Custom",
+      "handler": "model:grid",
+      "source": "context",
+      "data": {
+        "schema": "tables/crud.json"
+      }
+    }
+  ]
 }

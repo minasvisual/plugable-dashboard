@@ -7,11 +7,11 @@
 </template>
 
 <script>
-import { range, get } from 'lodash'
-import { CChartLineSimple, CChartBarSimple } from '../../charts/index'
+import { get, has } from 'lodash'
+import { CChartLineSimple } from '../../charts/index'
 export default {
   components:{
-    CChartLineSimple, CChartBarSimple
+    CChartLineSimple
   },
   props:{
     schema:{
@@ -26,6 +26,10 @@ export default {
       type: Object,
       default: () => ({})
     },
+    dataset:{
+      type: Object|Array,
+      default: () => ({})
+    },
   },
   data() {
     return {
@@ -37,6 +41,39 @@ export default {
       return this.widget.params || {}
     },
     datasets(){
+      if( this.widget.source == 'raw' )
+        return this.getByDataset()
+      else
+        return this.getByPivot()
+    }
+  },
+  methods:{
+    getColors(){
+      return Math.floor(Math.random()*16777215).toString(16).toUpperCase()
+    },
+    getLabel(row, idx){
+      if( !has(this.params,'label') )
+        return row
+      else
+        return Array.isArray( this.params.label ) ? get(this.params, `label[${idx}]`) : get(this.params,'label', row)
+    },
+    getByDataset(){
+      let datasets = []  
+      var self = this
+      this.labels = get(this.widget, 'labels', this.schema.domain)
+      for( let item of this.dataset ){
+
+        this.params.cols.map(function( row, idx ){
+          datasets.push({
+            data: get(item, row, ''),
+            label: self.getLabel(row, idx),
+            backgroundColor: get(self.params, `color[${datasets.length}]`) || `#${self.getColors()}`
+          })
+        })
+      }
+      return datasets
+    },
+    getByPivot(){
       let datasets = []
       this.pivot.data.table.map( (row, k) => {
         if( row.type == 'colHeader' )
@@ -50,13 +87,7 @@ export default {
           backgroundColor: get(this.params, `color[${datasets.length}]`) || `#${this.getColors()}`
         })
       })
-
       return datasets
-    }
-  },
-  methods:{
-     getColors(){
-      return Math.floor(Math.random()*16777215).toString(16).toUpperCase()
     },
   }
 }

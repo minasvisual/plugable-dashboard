@@ -48,6 +48,13 @@
               </CTab>
               <CTab>
                 <template slot="title">
+                  <CIcon name="cil-chart-pie"/> Hooks/Actions
+                </template>
+                  <hr>
+                <DocsHooks />
+              </CTab>
+              <CTab>
+                <template slot="title">
                   <CIcon name="cil-chart-pie"/> Others
                 </template>
                   <hr>
@@ -76,6 +83,7 @@ import DocsSettings from './docs/docs-settings'
 import DocsFormulate from './docs/docs-formulate'
 import DocsDatatables from './docs/docs-datatables'
 import DocsWidgets from './docs/docs-widgets'
+import DocsHooks from './docs/docs-hooks'
 
 export default {
   components: {
@@ -83,6 +91,7 @@ export default {
     DocsFormulate,
     DocsDatatables,
     DocsWidgets,
+    DocsHooks,
     VJsoneditor
   },
   data () {

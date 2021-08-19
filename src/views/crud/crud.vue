@@ -28,18 +28,40 @@
         /> 
         <template slot="footer"><span></span></template>
     </CModal>
+    
+    <CModal 
+      title="New item"
+      v-if="action.show"
+      :show.sync="action.show"
+      size="lg"
+      :closeOnBackdrop="false"
+    >
+        <Crud 
+          v-if="action.type == 'modal:grid'"
+          :context="action"
+        />
+        <Forms 
+          v-else-if="action.type = 'modal:form'"
+          :schema="action.schema"
+          :data="action.row"
+          @model:saved="formHook"
+          @close="action = {}"
+        /> 
+        <template slot="footer"><span></span></template>
+    </CModal>
   </section>
 </template>
 
 <script>
 import ControllerMixin from '../../services/controller.mixin'
 import SessionMixin from '../../services/session.mixin'
+import ActionsMixin from '../../services/actions.mixin'
 
 import Table from './table'
 import Forms  from './formulate'
 export default {
   name: "GridBase",
-  mixins:[ControllerMixin, SessionMixin],
+  mixins:[ControllerMixin, SessionMixin, ActionsMixin],
   components: { Table, Forms },
   props:{
     schema: {
@@ -116,23 +138,32 @@ export default {
       }catch(err){
         console.debug('Form submit error', err)
       }
+    },
+    loadActions(){
+      this.$bus.$on(`${this.schema.domain}:save`, this.formHook);
+      this.$bus.$on(`${this.schema.domain}:delete`, function(data) {
+        this.actions('FORM_DELETE', data) 
+      });
+      this.$bus.$on("model:redirect", this.redirect)
+      this.$bus.$on("model:grid", this.openModel)
+      this.$bus.$on("model:form", this.openForm)
+    },
+    destroyActions(){
+      this.$bus.$off(`${this.schema.domain}:save`, this.formHook);
+      this.$bus.$off(`${this.schema.domain}:delete`, function(data) {
+        this.actions('FORM_DELETE', data) 
+      });
+      this.$bus.$off("model:redirect", this.redirect)
+      this.$bus.$off("model:grid", this.openModel)
+      this.$bus.$off("model:form", this.openForm)
     }
   },
   mounted(){
     console.debug("Iniciado CrudVue", this.schema)
-  },
-  
-  created() {
-    this.$bus.$on(`${this.schema.domain}:save`, this.formHook);
-    this.$bus.$on(`${this.active.domain}:delete`, function(data) {
-      this.actions('FORM_DELETE', data) 
-    });
-  },
+    this.loadActions()
+  }, 
   beforeDestroy() {
-    this.$bus.$off(`${this.schema.domain}:save`, this.formHook);
-    this.$bus.$off(`${this.active.domain}:delete`, function(data) {
-      this.actions('FORM_DELETE', data) 
-    });
+    this.destroyActions()
   },
 }
 </script>

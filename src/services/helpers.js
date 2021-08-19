@@ -2,6 +2,27 @@ import deepmerge from 'deepmerge'
 import { has, sortBy, get, isNil, isObject, omit } from 'lodash'
 import moment from 'moment'
 
+export const manualMerge = (objA = {}, objB) => {
+    let newObj = { ...objA }
+    Object.keys(objB).map( key => {
+        if( Array.isArray(objB[key]) ){
+        	if( newObj[key] && Array.isArray(newObj[key]) )
+                newObj[key] = [ ...newObj[key], ...objB[key] ]
+            else
+                newObj[key] = objB[key]
+        }else if( typeof objB[key] == 'object' ){
+            newObj[key] = manualMerge(newObj[key], {...objB[key]})
+        }else{
+            newObj[key] = objB[key]
+
+        }
+    })
+    console.log('level', objB, newObj)
+    return newObj
+}
+
+export const mergeAll = (arr) =>  deepmerge.all(arr)
+
 export const mergeDeep  = (a = {}, b = {}) => {
     return deepmerge(a, b, {
         arrayMerge: (d, s) => {

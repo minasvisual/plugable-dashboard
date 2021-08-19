@@ -14,7 +14,7 @@
                 color="info"
             />
         </span>
-        <span v-else-if="cell.type == 'select' || cell.type == 'autocomplete'">
+        <span v-else-if="cell.type == 'select' || cell.type == 'autocomplete'" v-on:click="emitAction" >
            <GridSelect :data="data[cell.key]" :cell="cell" :row="data" v-on:click="emitAction"   />
         </span>
         <span v-else-if="cell.type == 'belongsTo'">
@@ -39,6 +39,7 @@
 </template>
 
 <script>
+import ActionsMixin from '../../../services/actions.mixin'
 import { get } from 'lodash'
 import ImgCell from './image'
 import Tags from './tags'
@@ -49,6 +50,7 @@ import Actions from './action'
 import BelongsTo from './belongsTo'
 
 export default {
+    mixins: [ActionsMixin],
     components:{
         ImgCell,
         Tags,
@@ -71,22 +73,14 @@ export default {
     computed:{
         inputType(){
             return get(this.cell, 'click.type', 'link')
-        },
-        sendType(){
-            if( this.cell?.action?.source == 'cell')
-                return this.cell
-            else if( this.cell?.action?.source == 'row')
-                return { ...this.data }
-            else if( this.cell?.action?.source == 'field')
-                return { [this.cell.key]: this.data[this.cell.key] }
-            else    
-                return this.data[this.cell.key]
-        }
+        }, 
     },
     methods:{
         emitAction(){
-            if( this.cell.type == 'action' || !this.cell.action || !this.cell.action.event || this.cell.action.event != 'click' ) return;
-            this.$bus.$emit(this.cell.action?.handler, this.sendType)
+            if( this.cell.type == 'action' || !this.cell.action || !this.cell.action.event || this.cell.action.event != 'click' ) 
+                return;
+
+            this.$bus.$emit(this.cell.action?.handler, this.sendType(this.cell, this.data, this.data[this.cell.key]) )
             console.log("chamado event", this.cell)
         },
         get: get
