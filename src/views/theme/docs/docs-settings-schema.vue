@@ -79,7 +79,18 @@
             "source": "context",                    // Event Source data | event source origin sent to schema
             "id": "artist_id",                      // Row field of form id (To model:form event)
             "data": {                               // Event Data | event context sent to schema
-                "schema": "artist.json"
+                "schema": "artist.json"             // Schema path or object
+            }
+        }
+    ],
+    "hooks": [
+        {
+            "target": "after:save",                 // Hook target | ex: before:create/after:create (create|update|delete)
+            "handler": "model:grid",                // Event Handler | See event docs to configure
+            "source": "context",                    // Event Source data | event source origin sent to schema
+            "id": "artist_id",                      // Row field of form id (To model:form event)
+            "data": {                               // Event Data | event context sent to schema
+                "schema": "artist.json"             // Schema path or object
             }
         }
     ]

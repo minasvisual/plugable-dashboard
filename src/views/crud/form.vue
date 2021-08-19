@@ -59,6 +59,8 @@ export default {
             this.row = data
             this.formopen = true
         })
+
+        this.loadActions()
       }catch(err){
         this.$alert('Form error', err)
       }
@@ -79,16 +81,21 @@ export default {
         this.loadForm()
         this.$store.commit('set', ['crud', {...this.crud, row: null }] )
     },
+    loadActions(){
+      this.$bus.$on(`${this.schema.domain}:save`, this.formHook); 
+      this.$bus.$on( `${this.schema.domain}:reload`, this.loadForm.bind(this) )
+    },
+    destroyActions(){
+      this.$bus.$off(`${this.schema.domain}:save`, this.formHook); 
+      this.$bus.$off( `${this.schema.domain}:reload`, this.loadForm.bind(this) )
+    }
   },
   async mounted(){
     await this.loadForm()
   },
   
-  created() {
-    this.$bus.$on(`${this.schema.domain}:save`, this.formHook); 
-  },
   beforeDestroy() {
-    this.$bus.$off(`${this.schema.domain}:save`, this.formHook); 
+    this.destroyActions()
   },
 }
 </script>

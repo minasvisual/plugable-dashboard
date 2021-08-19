@@ -1,6 +1,6 @@
 import { has, get, } from "lodash";
 import { loadModel, getData, saveData, deleteData } from "./models";
-import { formatOutput, getErrorMessage } from "./helpers";
+import { formatOutput, getErrorMessage, sendType } from "./helpers";
 
 export default {
   data(){
@@ -67,14 +67,29 @@ export default {
       })
     },
     getData(schema, options){
-      return getData(schema, options)
+      this.hooksRun('before:get', options) 
+      return getData(schema, options).then( data => {
+        this.hooksRun('after:get', data) 
+        return data
+      })
     },
     saveData(schema, data){
       this.$store.commit('setLoader', ['form', true])
       data = formatOutput(schema.properties, data)
+         
+      if( data.id )
+        this.hooksRun('before:update', data)
+      else
+        this.hooksRun('before:create', data)
+
       return saveData(schema, data)
         .then((res) => {
             this.$message('Saved with success') 
+
+            if( data.id )
+              this.hooksRun('after:update', data)
+            else
+              this.hooksRun('after:create', data)
 
             return res
         }) 
@@ -82,15 +97,20 @@ export default {
           this.$message( getErrorMessage(e) )
           this.$bus.$emit(`${schema.domain}:error`, e)
           return Promise.reject(e)
-        }).finally(() => {
+        })
+        .finally(() => {
           this.$store.commit('setLoader', ['form', false])
         })
     },
     deleteData(schema, data){
       //this.active.api = Object.assign(this.active.api, ...this.request); 
       this.$store.commit('setLoader', ['table', true])
+       
+      this.hooksRun('before:delete', data) 
+
       return deleteData(schema, data)
           .then((data) => { 
+              this.hooksRun('after:delete', data) 
               return data;
           })
           .catch(e => { 
@@ -114,6 +134,16 @@ export default {
       
       this.$store.commit('setLoader', ['form', false])
       this.$store.commit('setLoader', ['table', false])
+    },
+    hooksRun(target, data){
+      let hooks = get(this.schema, 'hooks', []).filter(i => target == i.target )
+
+      for(let act of hooks){
+        if( act.handler ){
+          console.debug("hooksRun Called", target, data)
+          this.$bus.$emit(act.handler, sendType({ action: act}, data, data[(act.id || this.primaryKey)]) )
+        }
+      }
     },
     // Standalone grid
     get:get

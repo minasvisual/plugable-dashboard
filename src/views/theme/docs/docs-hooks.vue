@@ -6,7 +6,28 @@
         </h4>
         <small>Works only in resource pages</small>
         <hr>
-        
+        <div class="row">
+            <div class="col h3">Form Actions</div>
+        </div>
+        <div class="row">
+           <div class="col-12 col-md-4">
+                <b>Used to run actions before/after form update data. Params:</b>
+                <li>event target: Form hook flow. ex: 'after:create', available: (before|after):(create|update|delete)</li>
+                <li>event name: form domain name + 'save'. Ex: 'blogs:save'</li>
+                <li>id: To used with model:form for foreign id</li>
+                <li>Modified data: form instance or modified data to be subbmited</li> 
+           </div>
+           <div class="col-12 col-md-8">
+                 <VJsoneditor v-model="hooksArr"
+                    :options="{ mode: 'preview', mainMenuBar: false, navigationBar: false, statusBar: false }"
+                    height="auto" 
+                ></VJsoneditor>
+           </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col h3">Grid Actions</div>
+        </div>
         <div class="row">
            <div class="col-12 col-md-4">
                 <b>Save form event. Params:</b>
@@ -120,7 +141,24 @@ export default {
                     }
                 }
             }
+        },
+        hooksArr: {
+            domain: "blogs",
+            properties: [],
+            api: {},
+            "hooks": [
+                {
+                    "target": "after:create",
+                    "id": "artist_id",
+                    "handler": "model:form",
+                    "source": "context",
+                    "data": {
+                        "schema": "artists.json"
+                    }
+                }
+            ]
         }
+
     }}
 }
 </script>

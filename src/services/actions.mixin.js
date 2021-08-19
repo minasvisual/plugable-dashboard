@@ -1,5 +1,5 @@
  import { get } from 'lodash'
- import { mergeDeep } from '../services/helpers'
+ import { mergeDeep, sendType } from '../services/helpers'
  
  export default {
      data(){
@@ -8,20 +8,7 @@
         }
      },
      methods:{
-        sendType(cell, row, data){
-            if( cell?.action?.source == 'cell')
-                return cell
-            else if( cell?.action?.source == 'row')
-                return { ...row, [cell.key]: data }
-            else if( cell?.action?.source == 'field')
-                return { [cell.key]: data }
-            else if( cell?.action?.source == 'context')
-                return mergeDeep(cell?.action?.data, { overwrite: {api:{ resource:row }}, row: get(row, cell?.action?.id, data) })
-            else if( cell?.action?.source == 'custom')
-                return cell?.action?.data
-            else    
-                return data
-        },
+        sendType,
         redirect(project, domain){
             if( !confirm(`Are you sure to redirect to ${domain}`) ) return;
             

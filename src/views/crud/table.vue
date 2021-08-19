@@ -42,7 +42,7 @@
   </section>
 </template>
 <script>
-import { get, has, debounce, isEqual, filter } from 'lodash'
+import { get } from 'lodash'
 import { filterParams } from '../../services/helpers'
 import { getData } from "../../services/models";
 
@@ -74,6 +74,7 @@ export default {
   },
   methods:{ 
     async fetchData(queryInfo){
+      console.debug('table fetch data', queryInfo)
       //this.$refs.tables.fetchData({ type: "pageChange" });
       try{ 
         
@@ -108,10 +109,21 @@ export default {
         console.log('table cant be rendered: rootApi', get(this.schema, 'api.rootApi', false), ' resource: ', this.resource)
       }
       this.renderComponent = true
+
+      this.loadActions()
     },
+    loadActions(){
+      this.$bus.$on( `${this.schema.domain}:reload`, this.fetchData.bind(this, { type: "init", page: 1 }) )
+    },
+    destroyActions(){
+      this.$bus.$off( `${this.schema.domain}:reload`, this.fetchData.bind(this, { type: "init", page: 1 }) )
+    }
   },
   mounted(){
     this.boot()
+  },
+  beforeDestroy(){
+    this.destroyActions()
   }
 }
 </script>

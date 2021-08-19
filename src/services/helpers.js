@@ -2,6 +2,21 @@ import deepmerge from 'deepmerge'
 import { has, sortBy, get, isNil, isObject, omit } from 'lodash'
 import moment from 'moment'
 
+export const sendType = (cell, row, data) => {
+    if( cell?.action?.source == 'cell')
+        return cell
+    else if( cell?.action?.source == 'row')
+        return { ...row, [cell.key]: data }
+    else if( cell?.action?.source == 'field')
+        return { [cell.key]: data }
+    else if( cell?.action?.source == 'context')
+        return mergeDeep(cell?.action?.data, { overwrite: {api:{ resource:row }}, row: get(row, cell?.action?.id, data) })
+    else if( cell?.action?.source == 'custom')
+        return cell?.action?.data
+    else    
+        return data
+}
+
 export const manualMerge = (objA = {}, objB) => {
     let newObj = { ...objA }
     Object.keys(objB).map( key => {

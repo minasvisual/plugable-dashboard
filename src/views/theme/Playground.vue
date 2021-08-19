@@ -132,7 +132,7 @@
           :schema="action.schema"
           :data="action.row"
           @model:saved="submitHandler"
-          @close="action = {}"
+          @close="() => action = {}"
         /> 
         <template slot="footer"><span></span></template>
     </CModal>
@@ -145,7 +145,7 @@ import SessionMixin from '../../services/session.mixin'
 import Actions from '../../services/actions.mixin'
 
 import { loadProjects, request } from '../../services/models'
-import { get, debounce, find } from 'lodash'
+import { get } from 'lodash'
 import VJsoneditor from 'v-jsoneditor'
 import Auth from '../crud/auth'
 import Table from '../crud/table'
@@ -264,8 +264,28 @@ export default {
         });
     },
     submitHandler(data){
+      if( data.id )
+        this.hooksRun('before:update', data)
+      else
+        this.hooksRun('before:create', data)
+
       this.submit = data
       this.$message('Data saved in result on json viewer')
+
+      if( data.id )
+        this.hooksRun('after:update', data)
+      else
+        this.hooksRun('after:create', data)
+    },
+    hooksRun(target, data){
+      let hooks = get(this.active, 'hooks', []).filter(i => target == i.target )
+
+      for(let act of hooks){
+        if( act.handler ){
+          console.debug("hooksRun Called", target, data)
+          this.$bus.$emit(act.handler, this.sendType({ action: act}, data, data[(act.id || this.primaryKey)]) )
+        }
+      }
     },
     loadActions(){
       this.$bus.$on(`${this.active.domain}:save`, this.submitHandler);

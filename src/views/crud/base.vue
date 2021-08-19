@@ -3,14 +3,16 @@
     <CCol col class="base"> 
         <CCard>
           <CCardHeader>
-            <strong>{{ currentProject.name }} | {{ active.title }}</strong>
+            <strong ><span class="d-none d-md-inline">{{ currentProject.name }} | </span> {{ active.title }}</strong>
             
             <div class="card-header-actions d-flex justify-content-between" v-if="renderComponent" > 
               <CDropdown
                 v-if="logged" 
-                color="white"
-                :toggler-text="get(session, 'user.name', 'anonimous')"  
+                color="white" 
               >
+                <template #toggler-content>
+                  {{ get(session, 'user.name', 'anonimous') }}
+                </template>
                 <CDropdownItem disabled></CDropdownItem>
                 <CDropdownItem @click="logout">Logout</CDropdownItem>
               </CDropdown>  
@@ -18,10 +20,31 @@
                 type="select" 
                 :outer-class="['card-header-action p-0 m-0 mr-2']" input-class="p-1"  
                 :options="views" v-model="layout" 
-              />  
-              <CButton size="sm" class="card-header-action d-flex"  @click="loadModel({ cache:{ ignoreCache: true } })"> 
-                <CIcon name="cil-reload" /> Model
-              </CButton>
+              />    
+              <CDropdown 
+                :color="(timer ? 'info':'white')"
+                :caret="false"
+                size="sm"
+              > 
+                <template #toggler-content>
+                  <CIcon name="cil-av-timer" /> 
+                </template>
+                <div class="dropdown-header p-1 text-center" >Auto reload</div >
+                <div class="dropdown-item align-items-center timerItem"  > 
+                  <Timer :domain="active.domain" :active.sync="timer"/>
+                </div>
+              </CDropdown> 
+              <CDropdown 
+                color="white"  
+              > 
+                <template #toggler-content>
+                  <CIcon name="cil-options" /> 
+                </template>
+                <CDropdownItem @click="loadModel({ cache:{ ignoreCache: true } })" class="align-items-center">
+                  <CIcon size="sm" name="cil-reload" /> <span class="d-none d-md-block"> Model</span> 
+                </CDropdownItem>
+                
+              </CDropdown> 
             </div>
           </CCardHeader>
           <CCardBody >
@@ -75,12 +98,13 @@ import ActionsMixin from '../../services/actions.mixin'
 import Auth from './auth'
 import Grid from './crud' 
 import Form from './form'
+import Timer from './shared/Timer.vue'
 
 export default {
   name: 'Base',
   mixins:[ControllerMixin, SessionMixin, ActionsMixin],
   components:{
-    Auth, Grid, Form
+    Auth, Grid, Form, Timer
   },
   data(){
     return{
@@ -88,6 +112,7 @@ export default {
       formLogin:true, 
       formopen: false,
       layout: 'table',
+      timer: false,
       views:{
         'table': 'Table' ,
         'card': 'Card View',
@@ -162,6 +187,9 @@ export default {
         padding: 0 10px !important;
       }
     }
+  }
+  .timerItem:hover{
+    background: transparent !important;
   }
 }
 @media (max-width: 728px) {

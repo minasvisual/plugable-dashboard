@@ -30,7 +30,7 @@
     </CModal>
     
     <CModal 
-      title="New item"
+      title="Schema Viewer"
       v-if="action.show"
       :show.sync="action.show"
       size="lg"
@@ -44,7 +44,7 @@
           v-else-if="action.type = 'modal:form'"
           :schema="action.schema"
           :data="action.row"
-          @model:saved="formHook"
+          :save="true"
           @close="action = {}"
         /> 
         <template slot="footer"><span></span></template>

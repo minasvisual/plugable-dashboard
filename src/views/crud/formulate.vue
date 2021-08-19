@@ -59,6 +59,9 @@ export default {
       },
       data: {
         type: [Number, Object]
+      },
+      save: {
+        type: Boolean
       }
     },
     computed:{
@@ -88,8 +91,18 @@ export default {
     },
     methods: {
       async submit (data) {
-        this.$emit('model:saved', data)
-        
+        try{       
+          if( this.save === true )
+            await this.saveData(this.schema, data)
+              .then((res) => {
+                  this.$emit('close', { refresh: true })
+                  return res
+              })
+              
+          this.$emit('model:saved', data)
+        }catch(err){
+          this.$alert('Form submit error', err)
+        }
         return data
       },
       async loadNestedSchema(schema){
@@ -106,7 +119,7 @@ export default {
           if( typeof this.data !== 'object' ) this.data = { [this.primaryKey]: this.data }
 
           return this.getData(this.schema, this.data)
-      },
+      }, 
       init(){
          ( this.isStandalone ? Promise.resolve(this.data) : this.getRow() ).then( (data) => {
               this.form =  get(this.schema, 'properties', [])
@@ -124,7 +137,7 @@ export default {
       handleError(err){
         console.debug("error hook", err)
         this.error = err
-      }
+      },
     },
 }
 </script>

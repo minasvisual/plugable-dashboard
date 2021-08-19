@@ -69,6 +69,26 @@
                 
             </div>
         </p>
+        <p>
+            <h4># Custom toolbar/rowbar buttons</h4>
+            <div class="row">
+                <div class="col-12 col-md-4">
+                        <b>Used to run actions/hooks. Params:</b>
+                        <li>label: Html button title (available if haven't button)</li>
+                        <li>icon: CoreUI icon name (disable label field if exists)</li>
+                        <li>event target: toolbar (after reload button), rowbar (after each grid row before edit button)</li>
+                        <li>event name: Action name (see action docs). Ex: 'model:open'</li>
+                        <li>id: To used with model:form for foreign id</li>
+                        <li>Modified data: form instance or modified data to be subbmited</li> 
+                </div>
+                <div class="col-12 col-md-8">
+                        <VJsoneditor v-model="hooksArr"
+                            :options="{ mode: 'preview', mainMenuBar: false, navigationBar: false, statusBar: false }"
+                            height="auto" 
+                        ></VJsoneditor>
+                </div>
+            </div>
+        </p>
     </div>
 </template>
 
@@ -308,7 +328,24 @@ export default {
                         }
                     }
                 },
-            ]
+            ],
+            hooksArr: {
+                domain: "blogs",
+                properties: [],
+                api: {},
+                "toolbar": [
+                    {
+                        "label": "HTML LABEL or use icon field",
+                        "target": "toolbar|rowbar",
+                        "id": "artist_id",
+                        "handler": "model:form",
+                        "source": "context",
+                        "data": {
+                            "schema": "artists.json"
+                        }
+                    }
+                ]
+            }
          }
     }
 }
