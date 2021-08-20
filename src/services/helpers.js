@@ -1,5 +1,5 @@
 import deepmerge from 'deepmerge'
-import { has, sortBy, get, isNil, isObject, omit } from 'lodash'
+import { has, sortBy, get, isNil, isObject, omit, isEqual } from 'lodash'
 import moment from 'moment'
 
 export const sendType = (cell, row, data) => {
@@ -35,6 +35,19 @@ export const manualMerge = (objA = {}, objB) => {
     console.log('level', objB, newObj)
     return newObj
 }
+
+
+export const objectDeepDiff = function(f,s) {
+    if (f === s) return true;
+
+    if (Array.isArray(f)&&Array.isArray(s)) {
+        return isEqual(f.sort(), s.sort());
+    }
+    if (_.isObject(f)) {
+        return isEqual(f, s);
+    }
+    return isEqual(f, s);
+};
 
 export const mergeAll = (arr) =>  deepmerge.all(arr)
 

@@ -67,7 +67,7 @@ export default {
       })
     },
     getData(schema, options){
-      this.hooksRun('before:get', options) 
+      this.hooksRun('before:get', options)
       return getData(schema, options).then( data => {
         this.hooksRun('after:get', data) 
         return data

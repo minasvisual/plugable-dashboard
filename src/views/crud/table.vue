@@ -42,7 +42,7 @@
   </section>
 </template>
 <script>
-import { get } from 'lodash'
+import { get, has } from 'lodash'
 import { filterParams } from '../../services/helpers'
 import { getData } from "../../services/models";
 
@@ -56,7 +56,7 @@ export default {
   mixins:[TableMixin],
   props: {
     schema: { type: Object }, 
-    resource: { type: Array|Object|String }, 
+    resource: { type: [Array,Object,String] }, 
     layout: { type: String, default: 'table' }
   },
   components:{
@@ -72,9 +72,17 @@ export default {
   },
   computed:{ 
   },
+  watch:{
+    data(newVal, oldVal){ 
+      if( has(newVal, 'total') && has(oldVal, 'total') && get(newVal, 'total') != get(oldVal, 'total')){
+        console.debug('new val chnge', newVal.total, 'oldVal', oldVal.total)
+        this.alertDataChange(newVal, oldVal)
+      }
+    }
+  },
   methods:{ 
     async fetchData(queryInfo){
-      console.debug('table fetch data', queryInfo)
+      //console.debug('table fetch data', queryInfo)
       //this.$refs.tables.fetchData({ type: "pageChange" });
       try{ 
         
@@ -91,11 +99,10 @@ export default {
         return true;
       }catch(err){
         console.log(err)
-        //this.$message(err.message, 'danger')
+        this.$message(err.message, 'danger')
         return false;
-      }finally{
-        console.debug('Finally getData tbale') 
-          this.loader = false
+      }finally{ 
+        this.loader = false
       }
     },
     async boot(){   
@@ -111,6 +118,12 @@ export default {
       this.renderComponent = true
 
       this.loadActions()
+    },
+    alertDataChange(newVal, oldVal){ 
+      let message = get(oldVal, 'total', 0) < get(newVal, 'total', 0) 
+          ? `${ get(newVal, 'total', 0) - get(oldVal, 'total', 0) } new register` : `${ get(oldVal, 'total', 0) - get(newVal, 'total', 0) } delection` 
+      
+      this.$bus.$emit( `${this.schema.domain}:grid:changed`, { title: "Pluggable Dashboard Alert", body: `You have a ${ message } on ${this.schema.title}` })
     },
     loadActions(){
       this.$bus.$on( `${this.schema.domain}:reload`, this.fetchData.bind(this, { type: "init", page: 1 }) )

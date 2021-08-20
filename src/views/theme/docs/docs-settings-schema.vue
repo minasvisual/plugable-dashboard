@@ -13,6 +13,7 @@
     "canDelete": "true"                         // Default true | if false, remove delete row button
     "submit": "true"                            // Default true | if false, remove submit and cancel form buttons
     "layout": "table",                          // DEfault table | Default grid view - options: table|card
+    "alerts": "false",                          // Alerts state | If true, send chrome notification to grid/form data update 
 //
 // END Optional
 //

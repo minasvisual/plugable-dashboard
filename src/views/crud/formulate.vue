@@ -125,7 +125,7 @@ export default {
               this.form =  get(this.schema, 'properties', [])
               this.columns = schemaColumns( this.form )
               data = formatModel(this.columns, data)
-              console.debug(data)
+              
               this.model = data
               this.loader = false
           }).catch((err) => {

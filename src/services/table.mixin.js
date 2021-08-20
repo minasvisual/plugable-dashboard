@@ -1,4 +1,4 @@
-import { get, has, debounce, sortBy, round, isEqual } from 'lodash'
+import { get, round, isEqual } from 'lodash'
 import { schemaColumns  } from './helpers'
 
 export default {
@@ -35,29 +35,9 @@ export default {
 
           return true
       },
-      schemaColumns(properties){
-          // let columns = [ { label: '', key: "selected", filter: false, sorter:false, sort: -1 } ]
-          // let extractdata = (col = {}, k) =>  {
-          //     if( col.children && Array.isArray(col.children) )  col.children.map( i => extractdata(i, k))
-          //     if( get(col, 'config.grid', false) )
-          //         columns.push({
-          //             sort: get(col, 'config.sort', k+1),
-          //             key: get(col, 'name', col.id),
-          //             label: get(col, 'label', col.id),
-          //             type: get(col, 'config.type', (col.type || 'text')),
-          //             action: get(col, 'config.action', (col.attributes || {})),
-          //             options: get(col, 'options', {}),
-          //             sorter: get(col, 'config.sorter', true),
-          //             filter: get(col, 'config.filter', true),
-          //         })
-          // }
-          // properties.map((col, k) => {
-          //         extractdata(col, k)
-          // })
+      schemaColumns(properties){ 
 
-          // columns.push({ label: '', key: 'actions', filter: false, sorter: false })
-
-          return schemaColumns(properties) //sortBy(columns, ['sort'])
+          return schemaColumns(properties)
       },
       calcPages(totalRows, perPage){
           let count = (totalRows || 1) / perPage

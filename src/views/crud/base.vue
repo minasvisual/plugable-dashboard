@@ -22,16 +22,16 @@
                 :options="views" v-model="layout" 
               />    
               <CDropdown 
-                :color="(timer ? 'info':'white')"
+                :color="(timer ? 'danger':( active.alerts ? 'info':'white'))"
                 :caret="false"
                 size="sm"
               > 
                 <template #toggler-content>
-                  <CIcon name="cil-av-timer" /> 
+                  <CIcon name="cil-bell" /> 
                 </template>
                 <div class="dropdown-header p-1 text-center" >Auto reload</div >
                 <div class="dropdown-item align-items-center timerItem"  > 
-                  <Timer :domain="active.domain" :active.sync="timer"/>
+                  <Timer :domain="active.domain" :active.sync="timer" :alert.sync="active.alerts" />
                 </div>
               </CDropdown> 
               <CDropdown 
@@ -60,6 +60,7 @@
                     <Form   
                       v-if="schema.type == 'form'"
                       :schema="schema"   
+                      :layout="layout" 
                     />  
                     <Grid  
                       v-else

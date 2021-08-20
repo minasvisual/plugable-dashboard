@@ -2,9 +2,11 @@
   <section v-if="formopen">
     <div class="row">
       <div class="col">
-        <CButton @click="loadForm">
-          <CIcon name="cil-reload" />
-        </CButton>
+        <Toolbar :schema="schema" class="d-flex ">
+          <CButton @click="loadForm">
+            <CIcon name="cil-reload" />
+          </CButton>
+        </Toolbar>
       </div>
     </div>
      <Forms  
@@ -20,6 +22,7 @@
 
 <script>
 import { has, get, set } from 'lodash'
+import { objectDeepDiff } from '../../services/helpers'
 import ControllerMixin from '../../services/controller.mixin'
 import SessionMixin from '../../services/session.mixin'
  
@@ -43,6 +46,20 @@ export default {
       formopen: false,
     }
   },
+  watch:{
+    row(newVal, oldVal){ 
+      if( 
+          typeof newVal == 'object' && 
+          typeof oldVal == 'object' && 
+          Object.keys(newVal).length > 0 &&
+          Object.keys(oldVal).length > 0 &&
+          !objectDeepDiff(newVal, oldVal) 
+      ){
+        console.debug('form row')
+        this.alertDataChange()
+      }
+    }
+  },
   computed:{
     formTitle(){ 
       return this.row && this.row.id ? `Update ${this.schema.title} | ID: ${this.row.id}`: `New ${this.schema.title}`
@@ -53,14 +70,13 @@ export default {
   },
   methods:{
     loadForm(){
-      try{
-        this.schema.api.bypassGetDataById = true
+      try{ 
         this.getData(this.schema, {}).then( (data) => {
-            this.row = data
+            this.row = { ...data }
+            this.$store.commit('set', ['crud', {...this.crud, row: this.row }] )
             this.formopen = true
         })
 
-        this.loadActions()
       }catch(err){
         this.$alert('Form error', err)
       }
@@ -76,10 +92,13 @@ export default {
         this.$alert('Form submit error', err)
       }
     },
-    closeForm({ refresh }){  
+    closeForm({ }){  
         this.formopen = false;
         this.loadForm()
         this.$store.commit('set', ['crud', {...this.crud, row: null }] )
+    },
+    alertDataChange(){ 
+      this.$bus.$emit( `${this.schema.domain}:grid:changed`, { title: "Pluggable Dashboard Alert", body: `You have changes on ${this.schema.title}` })
     },
     loadActions(){
       this.$bus.$on(`${this.schema.domain}:save`, this.formHook); 
@@ -92,6 +111,9 @@ export default {
   },
   async mounted(){
     await this.loadForm()
+    console.log("load form run", this.schema)
+
+    this.loadActions()
   },
   
   beforeDestroy() {
