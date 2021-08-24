@@ -1,5 +1,5 @@
 import deepmerge from 'deepmerge'
-import { has, sortBy, get, isNil, isObject, omit, isEqual } from 'lodash'
+import { has, sortBy, get, isNil, isObject, omit, isEqual, capitalize } from 'lodash'
 import moment from 'moment'
 
 export const sendType = (cell, row, data) => {
@@ -164,7 +164,7 @@ export const schemaColumns = (properties) => {
             columns.push({
                 sort: get(col, 'config.sort', k+1),
                 key: get(col, 'name', col.id),
-                label: get(col, 'config.label', (col.label || col.id)),
+                label: get(col, 'config.label', capitalize((col.label || col.name))),
                 type: get(col, 'config.type', (col.type || 'text')),
                 action: Object.assign( get(col, 'config.action',{}), get(col, 'attributes', {}) ),
                 options: get(col, 'options', {}),

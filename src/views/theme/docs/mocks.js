@@ -169,7 +169,8 @@ export const tabsExample = [
       },
       {
         "name": ".tab2",
-        "label": "Tab 2"
+        "label": "Tab 2",
+        "enabledStyle": "flex: flex;"
       }
     ]
   },

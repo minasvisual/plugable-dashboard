@@ -1,7 +1,7 @@
 <template>
   <div
-    :class="`formulate-input-element formulate-input-element--${context.type}`"
-    :data-type="context.type"
+    :class="`formulate-input-element formulate-input-element--${schema.type}`"
+    :data-type="schema.type"
     v-if="renderComponent"
   >  
       <FormBase
@@ -23,7 +23,7 @@
 
 <script>
 import { get,  has } from 'lodash'
-import { mergeDeep, isRegex, manualMerge } from '../../../services/helpers'
+import { mergeDeep, isRegex } from '../../../services/helpers'
 import ControllerMixin from '../../../services/controller.mixin'
 
 // import Table from '../table'
@@ -106,7 +106,7 @@ export default {
       return schema
     }
   },
-  async beforeMount(){
+  async mounted(){
     this.renderComponent = false
 
     if( typeof this.schemaProp == 'string' ){ 
@@ -115,7 +115,9 @@ export default {
 
       this.schema = await this.transformSchema( loadedSchema ) 
     }else{
-      this.schema = mergeDeep(this.transformSchema( this.schemaProp ), {...this.overwrite}) 
+      let loadedSchema = await this.transformSchema( this.schemaProp) 
+      this.schema = mergeDeep({ ...loadedSchema }, {...this.overwrite}) 
+      console.debug("Carregou mouted", loadedSchema, this.schema)
     }
 
     // if( this.schema.type == 'form' )

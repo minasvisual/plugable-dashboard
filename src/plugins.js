@@ -23,7 +23,7 @@ import Widget from './views/crud/layouts/WidgetInput'
 import Wizard from './views/crud/layouts/WizardInput'
 import ImagePreview from './views/crud/layouts/ImagePreview'
 import Placeholder from './views/crud/layouts/Placeholder'
-import Tabs from './views/crud/formulate/tabs'
+import Tabs from './views/crud/layouts/Tabs'
 
 Vue.component('Crud', FormulateGrid)
 Vue.component('Widget', Widget)
