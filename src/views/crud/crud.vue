@@ -20,7 +20,6 @@
     >
         <Forms 
           v-if="formopen"
-          :formopen="formopen"
           :schema="schema" 
           :data="row"
           @model:saved="formHook"
@@ -104,14 +103,15 @@ export default {
         this.$store.commit('set', ['crud', {...this.crud, row: null }] )
     },
     actions(action, data){
+      console.debug("table actions received", action, data)
       if( action == 'FORM_CREATE'){
-        this.formopen = true;
         this.row = {}
         this.$store.commit('set', ['crud', {...this.crud, row: {} }] )
-      }else if(action == 'FORM_EDIT'){
         this.formopen = true;
+      }else if(action == 'FORM_EDIT'){
         this.row = { ...data }
         this.$store.commit('set', ['crud', {...this.crud, row: this.row }] )
+        this.formopen = true;
       }else if(action == 'FORM_DELETE'){
           this.deleteData(this.schema, data).then(() => {
             this.$message('Successfully deleted!')

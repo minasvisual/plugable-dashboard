@@ -72,11 +72,12 @@ export default {
         return get(this.schema, 'primaryKey', 'id')
       }, 
       isStandalone(){
-        return get(this.schema, 'type') == 'form' || get(this.schema, 'api.bypassGetByid', false) || !get(this.schema, 'api.rootApi', false)//|| get(this.schema, 'api.bypassGetData', false)
+        return ( get(this.schema, 'type') == 'form' || get(this.schema, 'api.bypassGetById', false) ===  true || get(this.schema, 'api.rootApi', false) === false )//|| get(this.schema, 'api.bypassGetData', false)
       }
     },
     async mounted(){
       try{
+        this.loader = true 
         this.schema = await this.loadNestedSchema(this.schema)
 
         this.init()

@@ -18,7 +18,7 @@ export default {
           this.queryInfo.page = data
         }
         if( type == 'pageSize' ){
-          this.queryInfo.pageSize =  data
+          this.queryInfo.pageSize = data
         }
         
         this.fetchData(this.queryInfo)

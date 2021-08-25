@@ -21,6 +21,7 @@
       :data-placeholder-selected="placeholderSelected"
       v-on="$listeners"
       @blur="context.blurHandler"
+      :disabled="loading"
     >
       <option
         v-if="context.placeholder"
@@ -62,6 +63,7 @@
         </optgroup>
       </template>
     </select>
+    
     <FormulateSlot
       name="suffix"
       :context="context"

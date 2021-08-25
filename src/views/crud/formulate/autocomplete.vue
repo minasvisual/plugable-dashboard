@@ -11,7 +11,7 @@
     >
     <input
       type="text"
-      placeholder="enter search.."
+      :placeholder="loading ? 'Loading...':'enter search..'"
       v-model="search"
       v-bind="context.attributes" 
       @keydown.enter.prevent="choose(selection)"
@@ -19,7 +19,8 @@
       @keydown.up.prevent="decrement"
       @blur="context.blurHandler"
       @keydown="findData"
-      autocomplete="off"
+      autocomplete="off" 
+      :readonly="loading"
     >
     <ul
       v-if="filteredOptions.length"

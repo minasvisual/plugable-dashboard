@@ -52,11 +52,11 @@
         "wrapData": "rows",                         // Response object array data field (ex: { rows: [...] } means 'rows')
         "totalData": "count",                       // Count data field | if not exists used data.length by def
         "wrapDataById": "data",                     // Wrap the GetOne Response (ex: { data: {...} } means 'data')  
-        "pagination": {                             // Query string settings | false = disabled pagination and filters
+        "pagination": {                             // Query string settings | false = disabled pagination, page size select and filters
             "pageField": "page",                    // pagination field
             "limitField": "limit",                  // Data count limit field  
             "sortField": "order",                   // Sort field
-            "sortExp": "{prop},{sort}",             // Sort expression data to be interpolated (ex: '{prop},{sort}' means 'sort=id,desc'
+            "sortExp": "{prop},{sort}",             // Sort expression data to be interpolated (ex: '{prop},{sort}' means 'sort=id,desc')
             "sortAscChar": "asc",                   // Ascending sort character (def: 'asc')
             "sortDescChar": "desc",                 // Descending sort character (def: 'desc')
             "filterField": "filter|{prop}",         // Filter field (can use string or prop selected by form)
