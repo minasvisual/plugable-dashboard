@@ -9,12 +9,12 @@
       <CHeaderNavLink>
         <span class="mr-2">{{ user.name }}</span>
         <div class="c-avatar bg-info">
-          {{ (user.name || 'Visitor').toUpperCase().charAt(0) }}
+          {{ (get(user, get(settings, 'user.name')) || 'Visitor').toUpperCase().charAt(0) }}
         </div>
       </CHeaderNavLink>
     </template>
     <CDropdownHeader tag="div" class="text-center" color="light">
-      <strong>Account</strong>
+      <strong>{{ get(user, get(settings, 'user.name')) }}</strong>
     </CDropdownHeader>
     <!-- <CDropdownItem>
       <CIcon name="cil-bell"/> Updates
@@ -39,10 +39,10 @@
     >
       <strong>Settings</strong>
     </CDropdownHeader> -->
-    <CDropdownItem>
+    <CDropdownItem to="profile">
       <CIcon name="cil-user" /> Profile
     </CDropdownItem>
-    <CDropdownItem>
+    <CDropdownItem to="settings">
       <CIcon name="cil-settings" /> Settings
     </CDropdownItem>
     <!-- <CDropdownItem>
@@ -65,11 +65,14 @@
 
 <script>
 import { get } from 'lodash'
+import { getLocalStorage } from '../services/helpers'
+
 export default {
   name: 'TheHeaderDropdownAccnt',
   data () {
     return { 
-      itemsCount: 42
+      itemsCount: 42,
+      settings: getLocalStorage('settings') || {}
     }
   },
   computed:{
@@ -78,7 +81,8 @@ export default {
   methods:{
     logout(){
       this.$store.dispatch('logout')
-    }
+    },
+    get: get
   }
 }
 </script>

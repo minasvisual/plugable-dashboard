@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import VueFormulateExtended from 'vue-formulate-extended'
+import VueFormulateExtended from './libs/extended/src/index'
 import IMask from 'imask'
 
 import { formatDate } from './services/helpers'
@@ -24,6 +24,7 @@ import Wizard from './views/crud/layouts/WizardInput'
 import ImagePreview from './views/crud/layouts/ImagePreview'
 import Placeholder from './views/crud/layouts/Placeholder'
 import Tabs from './views/crud/layouts/Tabs'
+import RawTable from './views/crud/layouts/RawTable'
 
 Vue.component('Crud', FormulateGrid)
 Vue.component('Widget', Widget)
@@ -31,6 +32,7 @@ Vue.component('Wizard', Wizard)
 Vue.component('ImagePreview', ImagePreview)
 Vue.component('Place', Placeholder)
 Vue.component('Tabs', Tabs)
+Vue.component('RawTable', RawTable)
 
 Vue.component('MyFormulateAutocomplete', FormulateAutocomplete)
 Vue.component('FormulateWysiwyg', FormulateWysiwyg)
@@ -150,13 +152,13 @@ export default {
       }
     },
     plugins: [
-      TypesHookPlugin ,
-      // VueFormulateExtended({
-      //   features: {
-      //     formEvents: true, // by-default
-      //     textMask: true, // by-default
-      //     enforceNumber: true, // by-default
-      //   },
-      // }),
+      VueFormulateExtended({
+        features: {
+          formEvents: true, // by-default
+          textMask: true, // by-default
+          enforceNumber: true, // by-default
+        },
+      }),
+      TypesHookPlugin
     ],
 }

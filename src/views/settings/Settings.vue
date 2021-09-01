@@ -15,9 +15,14 @@
                   type="select"
                   label="Default project"
                   :options="optionfyObject(projects, 'name', 'code')"
+                  element-class="d-flex"
                   v-model="settings.current"
                   @change="saveSettings"
-              />
+              >
+                  <template #suffix>
+                      <CButton @click="reloadProjects" ><CIcon name="cil-reload" /></CButton>
+                  </template>
+              </FormulateInput>
 
               <FormulateInput 
                   v-if="projects && settings"
@@ -49,9 +54,10 @@
 <script>
 import { getLocalStorage, saveSettings } from '../../services/helpers'
 import TableMixin from '../../services/table.mixin'
+import SessionMixin from '../../services/session.mixin'
 
 export default {
-  mixins:[TableMixin],
+  mixins:[TableMixin, SessionMixin],
   data(){
     return {
       settings: getLocalStorage('settings') || {}
@@ -67,6 +73,12 @@ export default {
 
         this.$store.commit('set', [name, value])
       }
+    },
+    async reloadProjects(){
+        this.$store.commit('setLoader', ['global', true])
+        await this.loadProjects(true).then(() => {
+            this.$store.commit('setLoader', ['global', false])
+        })
     }
   },
   computed:{

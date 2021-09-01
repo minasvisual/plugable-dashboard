@@ -9,15 +9,15 @@
             </p>
             <div class="row">
                 <pre class="col-12 col-md-6 p-0 m-0">
-            "grid": true,           &nbsp;&nbsp;// Show on grid true|false
-            "sort": 1               &nbsp;&nbsp;// Sort column order
-            "label": "#id"          &nbsp;&nbsp;// Column label overwrite (def: field label)
-            "type": "html"          &nbsp;&nbsp;// Cell type (see below options)
-            "options": []           &nbsp;&nbsp;// input options (select|autocomplete)
-            "sorter": true          &nbsp;&nbsp;// column sorter table (def: true)
-            "filter": true          &nbsp;&nbsp;// column filter table (def: true)
-            "_classes": "bg-red"    &nbsp;&nbsp;// column classes
-            "_style": "color: red"  &nbsp;&nbsp;// column style
+            "grid": true,                   &nbsp;&nbsp;&nbsp;&nbsp;// Show on grid true|false
+            "sort": 1                       &nbsp;&nbsp;&nbsp;&nbsp;// Sort column order
+            "label": "#id"                  &nbsp;&nbsp;&nbsp;&nbsp;// Column label overwrite (def: field label)
+            "type": "html"                  &nbsp;&nbsp;&nbsp;&nbsp;// Cell type (see below options)
+            "options": []                   &nbsp;&nbsp;&nbsp;&nbsp;// input options (select|autocomplete)
+            "sorter": true                  &nbsp;&nbsp;&nbsp;&nbsp;// column sorter table (def: true)
+            "filter": { "type": "number" }  &nbsp;&nbsp;&nbsp;&nbsp;// column filter table (def: true) - object modify input type
+            "_classes": "bg-red"            &nbsp;&nbsp;&nbsp;&nbsp;// column classes
+            "_style": "color: red"          &nbsp;&nbsp;&nbsp;&nbsp;// column style
                 </pre>
                 <div class="col-12 col-md-6">
                     <VJsoneditor v-model="gridConfig"

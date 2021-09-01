@@ -22,6 +22,7 @@ const User = () => import('@/views/users/User')
 
 // Settings
 const Settings = () => import('@/views/settings/Settings')
+const Profile = () => import('@/views/settings/Profile')
 
 // CRUD
 const Base = () => import('@/views/crud/base')
@@ -128,6 +129,11 @@ function configRoutes () {
               path: '',
               name: 'Settings',
               component: Settings
+            },
+            {
+              path: '/profile',
+              name: 'Profile',
+              component: Profile
             },
           ]
         },

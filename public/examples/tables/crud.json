@@ -42,6 +42,7 @@
         {
           "name": "phone",
           "label": "Phone",
+          "masks": "(000) [000] 0000-0000",
           "config": {
             "grid": true,
             "sort": 1
@@ -59,6 +60,19 @@
               "handler": "basic:save",
               "source": "row",
               "type": "select"
+            },
+            "filter": {
+              "type": "select",
+              "options": [
+                {
+                  "value": "male",
+                  "label": "Male"
+                },
+                {
+                  "value": "female",
+                  "label": "Female"
+                }
+              ]
             }
           },
           "options": [

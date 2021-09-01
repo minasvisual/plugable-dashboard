@@ -67,7 +67,7 @@
 
 <script>
 import TheHeaderDropdownAccnt from './TheHeaderDropdownAccnt'
-import { saveSettings } from '../services/helpers'
+import { saveSettings, getLocalStorage } from '../services/helpers'
 import { get } from 'lodash'
 
 export default {

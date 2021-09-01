@@ -143,7 +143,11 @@ export default {
 
 <style lang="scss">
 .table thead tr th {
-  	white-space: nowrap
+	white-space: nowrap;
+  .form-control :is(input,select,textarea){
+    padding: 3px !important;
+    border: none !important;
+  }
 }
 @media (max-width: 728px){ 
 }

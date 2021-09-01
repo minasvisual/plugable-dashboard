@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="`formulate-input-element formulate-input-element--${context.type}`"
+    :class="`formulate-input-element formulate-input-element--${context.type} ${context.classes.element}`"
     :data-type="context.type"
     v-if="renderComponent"
   >
@@ -52,6 +52,7 @@ export default {
   },
   data () {
     return {
+      loading: false,
       selectedIndex: 0,
       search: null,
       renderComponent: true,

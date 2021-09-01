@@ -84,7 +84,10 @@
                     <hr>
                     <div class="row p-2">
                         <div class="col-6"> 
-                            <h6>To add html using row data, you can use Place component</h6>                 
+                            <h6>To add html using row data, you can use Place component</h6>     
+                            <p>Expression field define html template to be interpolate with form data</p>  
+                            <p>Example:</p>  
+                            <FormComp :properties="[LayoutPlace]" />                                
                         </div>
                         <div class="col-6">
                             <VJsoneditor v-model="LayoutPlace"
@@ -96,8 +99,11 @@
                     <hr>
                     <div class="row p-2">
                         <div class="col-6"> 
-                            <h6>To show a image based on row data, you can use ImagePreview component</h6>                      
-                        </div>
+                            <h6>To show a image based on row data, you can use ImagePreview component</h6>    
+                            <p>Model field define form object field to get image url</p>  
+                            <p>Example:</p>  
+                            <FormComp :properties="[LayoutImagePreview]" />                  
+                        </div>           
                         <div class="col-6">
                             <VJsoneditor v-model="LayoutImagePreview"
                                 :options="{ mode: 'preview', mainMenuBar: false, navigationBar: false, statusBar: false }"
@@ -128,6 +134,25 @@
                         </div>
                         <div class="col-6">
                           <VJsoneditor v-model="tabsExample"
+                            :options="{ mode: 'preview', mainMenuBar: false, navigationBar: false, statusBar: false }"
+                            height="auto" 
+                        ></VJsoneditor>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row p-2">
+                        <div class="col-6"> 
+                            <h6>Create Raw Tables</h6>       
+                            <p>
+                                Model field define source object field to get array/object data to be listed</br>                       
+                                Columns field filter object fields allowed to showing (optional)</br>                       
+                                headers field define columns header labels (optional)
+                            </p>                       
+                            <p>Example:</p>                            
+                            <FormComp :properties="[LayoutRawTable]" />
+                        </div>
+                        <div class="col-6">
+                          <VJsoneditor v-model="LayoutRawTable"
                             :options="{ mode: 'preview', mainMenuBar: false, navigationBar: false, statusBar: false }"
                             height="auto" 
                         ></VJsoneditor>
@@ -170,7 +195,7 @@
 <script> 
 import { 
     autocomplete, select, grid, image, objJson, inputDefault, maskDemo, tabsExample, extented, subWidgets, wizardExample,
-    LayoutPlace, LayoutImagePreview,
+    LayoutPlace, LayoutImagePreview, LayoutRawTable
 } from './mocks'
 import VJsoneditor from 'v-jsoneditor'
 import InputDoc from './views/InputDoc'
@@ -191,6 +216,7 @@ export default {
             subWidgets,
             LayoutPlace,
             LayoutImagePreview,
+            LayoutRawTable,
             compDemo:  {
                 "component": "h4",
                 "children": "My big title"
@@ -353,8 +379,20 @@ export default {
                         "type": "wysiwyg"
                     }
                 },
-            ]
+            ],
+            models:{
+                'users':{'name':'John','email':'doe@email.com'},
+                'firstName': "John",
+                'lastName': "Doe",
+                'image': "https://github.com/minasvisual/pluggable-dashboard/raw/master/logo.png",
+            }
         }
+    },
+    mounted(){
+        this.$store.commit('set', ['crud', {...this.crud, row: this.models }] ) 
+    },
+    beforeDestroy(){
+        this.$store.commit('set', ['crud', {...this.crud, row: {} }] ) 
     }
 }
 </script>

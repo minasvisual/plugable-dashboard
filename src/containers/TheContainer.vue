@@ -18,9 +18,9 @@
 </template>
 
 <script>
-import { loadProjects } from '../services/models'
 import { getLocalStorage, saveSettings } from '../services/helpers'
 import { get, find, some } from 'lodash'
+import SessionMixin from '../services/session.mixin'
 
 import TheSidebar from './TheSidebar'
 import TheHeader from './TheHeader'
@@ -28,6 +28,7 @@ import TheFooter from './TheFooter'
 
 export default {
   name: 'TheContainer',
+  mixins: [SessionMixin],
   components: {
     TheSidebar,
     TheHeader,
@@ -41,23 +42,14 @@ export default {
     this.$store.commit('setLoader', ['global', true])
     let { current } = getLocalStorage('settings') || {}
 
-    await loadProjects({ cache:{ ignoreCache: true }}).then( (data) => {
-        if( !Array.isArray(data) )
-          throw "Error to parse JSON"
+    await this.loadProjects().then( (data) => {  
+          if( !current ){
+              saveSettings({current: get(data, '[0].code', null)})
+              current = get(data, '[0].code', {})
+          }
 
-        this.$store.commit('set', ['projects', data])
-
-        if( !current ){
-            saveSettings({current: get(data, '[0].code', null)})
-            current = get(data, '[0].code', {})
-        }
-
-        this.$store.commit('set', ['currentProject', find(data, ['code', current]) ])
-    }).catch( e => {
-      this.$message( e.message || 'Erro to load projects')
-    }).finally(() => {
-      this.$store.commit('setLoader', ['global', false])
-    })
+          this.$store.commit('set', ['currentProject', find(data, ['code', current]) ])
+      })
   }
 }
 </script>

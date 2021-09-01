@@ -1,12 +1,18 @@
-import { get, round, isEqual } from 'lodash'
+import { get, has, round, isEqual } from 'lodash'
 import { schemaColumns  } from './helpers'
 
 export default {
     computed: {
-
+      hasPagination(){
+        return has(this.schema, 'api.pagination.pageField', false)
+      },
+      hasPageSize(){
+        return has(this.schema, 'api.pagination.limitField', false)
+      },
     },
     methods:{
       fetchQueryInfo(type, data){
+        console.debug("fetch query info", type, data)
         this.queryInfo = { type }
         if( type == 'sort' ){
           this.queryInfo.sort = { prop: data.column, order: data.asc === true ? 'ascending':'descending' }

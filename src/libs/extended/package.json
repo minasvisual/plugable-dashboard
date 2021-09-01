@@ -1,0 +1,82 @@
+{
+  "_args": [
+    [
+      "vue-formulate-extended@1.0.5",
+      "C:\\projetos\\pluggable-dashboard"
+    ]
+  ],
+  "_from": "vue-formulate-extended@1.0.5",
+  "_id": "vue-formulate-extended@1.0.5",
+  "_inBundle": false,
+  "_integrity": "sha512-VosrFUdXt5HGxlcA+aopgIs7RXwZ+3X2QwRpAjZtE8/PhfdgRkMO9pewvVN/M9tCX0Gi/6rXngAf3l8Us70poQ==",
+  "_location": "/vue-formulate-extended",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "vue-formulate-extended@1.0.5",
+    "name": "vue-formulate-extended",
+    "escapedName": "vue-formulate-extended",
+    "rawSpec": "1.0.5",
+    "saveSpec": null,
+    "fetchSpec": "1.0.5"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/vue-formulate-extended/-/vue-formulate-extended-1.0.5.tgz",
+  "_spec": "1.0.5",
+  "_where": "C:\\projetos\\pluggable-dashboard",
+  "author": {
+    "name": "Gabin Desserprit",
+    "email": "desserprit.gabin@gmail.com"
+  },
+  "dependencies": {
+    "@vue/composition-api": "0.6.7"
+  },
+  "description": "<h1 align=\"center\">Vue Formulate - <b>Extended</b> Plugin </h1>",
+  "devDependencies": {
+    "@braid/vue-formulate": "2.4.3",
+    "@rollup/plugin-buble": "^0.21.3",
+    "@rollup/plugin-commonjs": "^13.0.0",
+    "@rollup/plugin-node-resolve": "^8.1.0",
+    "@vue/cli-plugin-babel": "~4.4.0",
+    "@vue/cli-plugin-unit-jest": "~4.4.0",
+    "@vue/cli-service": "^4.4.6",
+    "@vue/test-utils": "^1.0.3",
+    "flush-promises": "^1.0.2",
+    "imask": "^6.0.5",
+    "node-sass": "^4.14.1",
+    "rollup": "^2.18.1",
+    "rollup-plugin-auto-external": "^2.0.0",
+    "rollup-plugin-internal": "^1.0.4",
+    "rollup-plugin-terser": "^6.1.0",
+    "rollup-plugin-vue": "^5.1.9",
+    "sass-loader": "^8.0.2",
+    "vue": "^2.6.11",
+    "vue-template-compiler": "^2.6.11"
+  },
+  "license": "MIT",
+  "main": "lib/vue-formulate-extended.umd.js",
+  "module": "lib/vue-formulate-extended.esm.js",
+  "name": "vue-formulate-extended",
+  "peerDependencies": {
+    "@braid/vue-formulate": "2.4.3",
+    "imask": "^6.0.5",
+    "vue": "^2.6.11"
+  },
+  "scripts": {
+    "build": "npm run build:esm & npm run build:umd & npm run build:iife",
+    "build:esm": "rollup --config build/rollup.config.js --format es --file lib/vue-formulate-extended.esm.js",
+    "build:iife": "rollup --config build/rollup.iife.config.js --format iife --file lib/vue-formulate-extended.min.js",
+    "build:umd": "rollup --config build/rollup.config.js --format umd --file lib/vue-formulate-extended.umd.js",
+    "dev": "rollup -c --watch",
+    "example": "vue-cli-service serve --port=7872 example/main.js",
+    "example:build": "vue-cli-service build example/main.js",
+    "prepublish": "npm run build",
+    "test:unit": "vue-cli-service test:unit --coverage",
+    "test:unit:watch": "vue-cli-service test:unit --coverage --watch"
+  },
+  "unpkg": "lib/vue-formulate-extended.min.js",
+  "version": "1.0.5"
+}

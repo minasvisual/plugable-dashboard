@@ -13,7 +13,9 @@
     "canDelete": "true"                         // Default true | if false, remove delete row button
     "submit": "true"                            // Default true | if false, remove submit and cancel form buttons
     "layout": "table",                          // DEfault table | Default grid view - options: table|card
-    "alerts": "false",                          // Alerts state | If true, send chrome notification to grid/form data update 
+    "alerts": "false",                          // Alerts state | If true, send chrome notification to grid/form data update
+    "tableClasses": "p-5",                      // Define table tag additional classes
+    "formClasses": "p-5",                       // Define form tag additional classes
 //
 // END Optional
 //
@@ -27,7 +29,7 @@
                 "grid": true,                   // Visible in grid
                 "sort": 0                       // Sort order in grid
                 "sorter": false                 // Disable column Sorter grid
-                "filter": false                 // Disable filter search in grid
+                "filter": false                 // Disable filter search in grid  Boolean/Object (change input config) - Def true
                 "actions": {}                   // cell type options |  see on each cell type schema
             }                                   // Docs link: https://vueformulate.com/guide/inputs/
         } 
@@ -53,8 +55,8 @@
         "totalData": "count",                       // Count data field | if not exists used data.length by def
         "wrapDataById": "data",                     // Wrap the GetOne Response (ex: { data: {...} } means 'data')  
         "pagination": {                             // Query string settings | false = disabled pagination, page size select and filters
-            "pageField": "page",                    // pagination field
-            "limitField": "limit",                  // Data count limit field  
+            "pageField": "page",                    // pagination field | show/hide pagination numbers
+            "limitField": "limit",                  // Data count limit field | show/hide page size select toogle  
             "sortField": "order",                   // Sort field
             "sortExp": "{prop},{sort}",             // Sort expression data to be interpolated (ex: '{prop},{sort}' means 'sort=id,desc')
             "sortAscChar": "asc",                   // Ascending sort character (def: 'asc')

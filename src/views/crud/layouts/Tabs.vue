@@ -49,7 +49,7 @@ export default {
 					display: none !important;
 				} 
 			    ${tb.name}{
-				  ${ tb.enabledStyle ? tb.enabledStyle : 'display: flex !important; flex-direction: column;' }
+				  ${ tb.enabledStyle ? `${ tb.enabledStyle } ${ tb.enabledStyle.includes('important') ?'':'!important' }` : 'display: flex !important; flex-direction: column;' }
 				}
 			`;
 			this.styleTag = document.createElement('style');

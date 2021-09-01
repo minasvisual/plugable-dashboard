@@ -9,6 +9,7 @@
           :schema="form"
           @submit="submit"
           #default="{ hasErrors }"
+          :class="get(schema, 'formClasses')"
     >
       <div class="alert alert-warning" v-if="error">
         <code>

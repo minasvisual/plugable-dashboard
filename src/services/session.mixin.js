@@ -1,6 +1,6 @@
 import { has, get } from 'lodash'
 import { interpolate, getErrorMessage } from './helpers'
-import { request } from './models'
+import { request, loadProjects } from './models' 
 
 export default {
   computed: {
@@ -24,6 +24,21 @@ export default {
     }
   },
   methods: {
+    async loadProjects(refresh = false){
+      return loadProjects({ cache:{ ignoreCache: refresh }})
+          .then( (data) => {
+              if( !Array.isArray(data) )
+                throw "Error to parse JSON"
+
+              this.$store.commit('set', ['projects', data]) 
+              return data
+          })
+          .catch( e => {
+            this.$message( e.message || 'Erro to load projects')
+          }).finally(() => {
+            this.$store.commit('setLoader', ['global', false])
+          })
+    },
     authenticate({username, secret, remember}){
       try{
         if( !has(this.config, 'url_login') ) return new Error('url login doest exist');

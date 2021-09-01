@@ -170,13 +170,13 @@ export const tabsExample = [
       {
         "name": ".tab2",
         "label": "Tab 2",
-        "enabledStyle": "flex: flex;"
+        "enabledStyle": "display: flex"
       }
     ]
   },
   {
     "component": "div",
-    "class": "d-flex tab1",
+    "class": "tab1",
     "children": [
       {
         "name": "outro",
@@ -190,7 +190,7 @@ export const tabsExample = [
   },
   {
     "component": "div",
-    "class": "d-flex tab2",
+    "class": "tab2",
     "children": [
       {
         "name": "title",
@@ -267,4 +267,17 @@ export const LayoutPlace = {
   "tag": "h1",
   "class": "text-success",
   "expression": "Welcome <b>{firstName} {lastName}</b>"
+}
+
+export const LayoutRawTable =  {
+  "component": "RawTable",
+  "model": "users",
+  "headers": [
+    "Name",
+    "Email"
+  ],
+  "columns": [
+    "name",
+    "email"
+  ]
 }

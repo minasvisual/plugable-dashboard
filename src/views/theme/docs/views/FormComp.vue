@@ -1,7 +1,7 @@
 <template>
      <FormulateForm   
           :schema="properties"
-          :value="source"
+          v-model="source"
     />
 </template>
 
@@ -16,11 +16,6 @@ export default {
             type: Object,
             default: () => ({})
         }
-    },
-    data() {
-        return {
-
-        }
-    },
+    }
 }
 </script>

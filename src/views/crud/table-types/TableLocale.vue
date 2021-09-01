@@ -5,9 +5,10 @@
       :fields="titles"
       column-filter
       :items-per-page="perPage"
+      :addTableClasses="gete(schema, 'tableClasses', undefined)"
+      :pagination="paginationData"
       hover
       sorter
-      :pagination="paginationData"
       size="sm"
     >
 
@@ -115,7 +116,7 @@ export default {
     },
     data(){
       return { rows: (this.resource || []), total: (  Array.isArray(this.resource) ? this.resource.length : 0 ) }
-    }
+    },
   },
   methods: {
     resetGrid(){
@@ -151,7 +152,8 @@ export default {
     },
     logger(v){
       console.log('change ', v)
-    }
+    },
+    gete: get
   },
   mounted(){
       if( !this.schema.pagination ) this.paginationData = false

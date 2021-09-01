@@ -8,9 +8,10 @@
         :sorter='{ external: true, resetable: true }'
         :items-per-page="perPage"
         :clickableRows="true"
-        hover
         :loading="loading"
+        :addTableClasses="gete(schema, 'tableClasses', undefined)"
         size="sm"
+        hover
         @update:sorter-value="(qr) => fetchQueryInfo('sort', qr)" 
         @update:column-filter-value="(qr) => fetchQueryInfo('filter', qr)" 
       >
@@ -21,7 +22,7 @@
               <Toolbar :schema="schema" class="d-flex ">
                 <span v-if="selectedRow.length > 0" class="selectedActions">
                   <label class="m-0">Selected: {{ selectedRow.length }} </label> 
-                  <CButton @click="bulkDelete">
+                  <CButton @click="bulkDelete" v-if="can(schema, 'canDelete')">
                       <CIcon name="cil-trash" />
                   </CButton>
                 </span>
@@ -33,7 +34,7 @@
                 </CButton>
               </Toolbar>
             </div>
-            <div class="col-5 d-flex justify-content-end align-items-center">
+            <div class="col-5 d-flex justify-content-end align-items-center p-0" v-if="hasPageSize">
               <span>Limit: </span>
               <CSelect :options="showPerPage" :value="perPage" class="m-0 ml-2"
                   @update:value="(num) => fetchQueryInfo('pageSize', num)" />
@@ -44,7 +45,14 @@
         <template #selected-header="{item}"> 
             <CInputCheckbox type="checkbox" inline @update:checked="selectionAll()" style="padding:0; margin:0;" /> 
         </template>
-        
+
+        <template v-for="cell of getCustomFilters(titles)" #[`${cell.key}-filter`]="item" >
+            <FormulateInput v-bind="cell.filter" :key="cell.key" 
+                :element-class="'form-control form-control-sm'"
+                @blur-context="({model}) => fetchQueryInfo('filter', {...item, [cell.key]: model})" 
+            />
+        </template>
+
         <template v-for="cell of titles" #[cell.key]="{item, index}" >
           <td :class="['td-'+cell.key]" :key="cell.key">
             <CellTypes :cell="cell" :data="item" />
@@ -80,7 +88,7 @@
           <div class="text-center"><CSpinner color="info"/></div>
         </template>
 
-        <template #under-table>
+        <template #under-table v-if="hasPagination">
             <CPagination
               v-if="schema.api.pagination !== false && totals > 0"
               :activePage.sync="currentPage"
@@ -174,6 +182,12 @@ export default {
       this.collapseDuration = 300
       this.$nextTick(() => { this.collapseDuration = 0})
     },
+    getCustomFilters(arr){
+      return arr.filter( f => {
+        return typeof f.filter == 'object'
+      })
+    },
+    gete:get
   },
   async mounted(){
       this.data = { rows: get(this.resource, 'rows', []), total: get(this.resource, 'totals', 0) }
