@@ -26,10 +26,10 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="96x96" href="/img/favicon-96x96.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
-  <link rel="manifest" href="/img/manifest.json">
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#ffffff">
   <meta name="msapplication-TileColor" content="#ffffff">
   <meta name="msapplication-TileImage" content="/img/ms-icon-144x144.png">
-  <meta name="theme-color" content="#ffffff">
   <!-- geotagging -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-118965717-3"></script>
   <script>
@@ -43,6 +43,18 @@
     // gtag('config', 'UA-118965717-3');
     // // Vue.js ID
     // gtag('config', 'UA-118965717-7');
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js').then(function(registration) {
+          // Registration was successful
+          console.log('ServiceWorker registration successful with scope: ', registration.scope);
+        }, function(err) {
+          // registration failed :(
+          console.log('ServiceWorker registration failed: ', err);
+        });
+      });
+    }
   </script>
 </head>
 
