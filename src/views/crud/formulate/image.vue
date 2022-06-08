@@ -1,9 +1,21 @@
 <template>
-   <div class="upload-area">
+   <div class="upload-area"> 
         <p v-if="uploading"  style="text-align:center">Sending...</p>
         <p v-else-if="error"  style="text-align:center">{{ error }} <a @click.prevent="() => error = null" class="text-center">retry</a> </p>
         <div v-else class="img-bar">
+          <div class="custom-control custom-checkbox flex-column" title="See as text">
+            <input type="checkbox" class="custom-control-input" id="customCheck1" v-model="inputText" title="See as text">
+            <label class="custom-control-label small" for="customCheck1"></label>
+          </div> 
           <input 
+            v-if="inputText"
+            type="text" 
+            ref="file" 
+            v-bind="context.attributes"
+            v-model="context.model"
+          >
+          <input 
+            v-else
             type="file" 
             ref="file" 
             v-bind="context.attributes"
@@ -33,7 +45,8 @@ export default {
     return{
       error: null,
       uploading: false,
-      files: []
+      files: [],
+      inputText: false
     }
   }, 
   computed: { 

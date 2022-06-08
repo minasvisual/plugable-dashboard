@@ -1,6 +1,5 @@
 <template>
-  <CModal :show.sync="isShow" 
-      :closeOnBackdrop="false" 
+  <CModal :show.sync="isShow"  
       size="lg" 
       addContentClasses="global-modal" 
       :centered="true"

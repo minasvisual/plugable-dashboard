@@ -1,9 +1,13 @@
 <template>
   <div
-    :class="`formulate-input-element formulate-input-element--${context.type} ${context.classes.element}`"
+    :class="`input-autocomplete formulate-input-element formulate-input-element--${context.type} ${context.classes.element}`"
     :data-type="context.type"
     v-if="renderComponent"
   >
+    <small class="current">
+      {{ context.model }} 
+      <a href="#" class="" @click.prevent="clearInput">&times;</a>
+    </small>
     <input
       type="hidden"
       v-model="context.model"
@@ -18,7 +22,7 @@
       @keydown.down.prevent="increment"
       @keydown.up.prevent="decrement"
       @blur="context.blurHandler"
-      @keydown="findData"
+      @keydown="findData" 
       autocomplete="off" 
       :readonly="loading"
     >
@@ -91,7 +95,12 @@ export default {
       return this.$store.state.crud.row || {}
     }
   },
+
   methods: {
+    clearInput(){
+      this.$set(this.context, 'model', "")
+      this.search = ''
+    },
     choose(selected){ 
       this.context.model = selected.value
       this.search = selected.label
@@ -209,4 +218,9 @@ export default {
 .formulate-input-dropdown li{
   	cursor: pointer;
  }
+ .input-autocomplete .current{
+  position: absolute;
+  right: 15px;
+  top: 8px;
+}
 </style>

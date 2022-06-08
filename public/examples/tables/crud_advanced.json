@@ -333,7 +333,7 @@
       "component": "Widget",
       "class": "tab4",
       "context": {
-        "schema": "widget_tiles.json",
+        "schema": "widgets/widget_tiles.json",
         "overwrite": {
           "wrapperClass": "w-100"
         }
@@ -345,9 +345,9 @@
     "wrapData": "rows",
     "totalData": "count",
     "wrapDataById": null,
-    "bypassGetByid": true,
+    "bypassGetById": true,
     "urlGet": "",
-    "urlGetById": "/{id}",
+    "urlGetById": " ",
     "urlPost": "/",
     "urlPatch": "/{id}",
     "urlDelete": "/{id}",

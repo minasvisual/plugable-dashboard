@@ -27,10 +27,11 @@ import ControllerMixin from '../../services/controller.mixin'
 import SessionMixin from '../../services/session.mixin'
  
 import Forms  from './formulate'
+import Toolbar  from './table-types/Toolbar.vue'
 export default {
   name: "FormBase",
   mixins:[ControllerMixin, SessionMixin],
-  components: { Forms },
+  components: { Forms, Toolbar },
   props:{
     schema: {
       type: Object,

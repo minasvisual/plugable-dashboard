@@ -50,7 +50,7 @@
         "methodPatch": "PUT",                       // Update method (def: PUT)
         "methodDelete": "DELETE",                   // Delete method (def: DELETE)
         "bypassGetData": false                      // Use data from props intead api http request
-        "bypassGetByid": true,                      // Use table row click instead GetById request (def: false)
+        "bypassGetById": true,                      // Use table row click instead GetById request (def: false)
         "wrapData": "rows",                         // Response object array data field (ex: { rows: [...] } means 'rows')
         "totalData": "count",                       // Count data field | if not exists used data.length by def
         "wrapDataById": "data",                     // Wrap the GetOne Response (ex: { data: {...} } means 'data')  
