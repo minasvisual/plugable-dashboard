@@ -123,6 +123,20 @@
       }
     },
     {
+      "name": "imageTextPath",
+      "label": "ImageTextPath",
+      "type": "image",
+      "class": "tab1",
+      "baseUrl": "https://imagens-clubedoingresso.s3.amazonaws.com/",
+      "config": {
+        "grid": true,
+        "type": "expression",
+        "action":{
+          "template": "<img src='https://imagens-clubedoingresso.s3.amazonaws.com/{data}' height=30 width=auto />"
+        }
+      }
+    },
+    {
       "name": "image",
       "label": "Image with upload",
       "type": "image",

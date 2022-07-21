@@ -21,7 +21,7 @@
             v-bind="context.attributes"
             v-on:change="uploadFile()"
           >
-          <img v-if="context.model" :src="context.model" style="height:50px; width: auto">
+          <img v-if="model" :src="model" style="height:50px; width: auto">
         </div>
     </div>
 </template>
@@ -55,7 +55,18 @@ export default {
     }, 
     request(){
       return get(this.$store, `state.auth.${this.currentProject.code}.request`, {})
-    }
+    },
+    attributes(){
+      return this.context.attributes
+    },
+    model () {
+      if( this.context.model && this.attributes.baseUrl )
+        return this.attributes.baseUrl + this.context.model
+      else  if( this.context.model && this.context.model.includes('http') )
+        return this.context.model
+      else
+        return null 
+    },
   },
   methods: {
     async uploadFile () {

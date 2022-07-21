@@ -71,7 +71,8 @@
         },
         "headers":{                                 // Fixed headers params
             "app-key": "qwertyuiop-asdfghjkls"
-        }
+        },
+        "body": { query:"" }                        // Default body on get requests (Used on graphql)
     }
     "toolbar": [
         {

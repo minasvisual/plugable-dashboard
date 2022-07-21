@@ -13,6 +13,10 @@
           "resource":"tables/crud_advanced.json",
           "label": "CRUD Advanced Example"
         },
+        "graphql":{
+          "resource":"tables/graphql.json",
+          "label": "Graphql Example"
+        },
         "standalone":{
           "resource":"forms/form_standalone.json",
           "label": "Form Standalone Example"

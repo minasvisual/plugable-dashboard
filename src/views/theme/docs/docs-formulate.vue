@@ -306,7 +306,9 @@ export default {
                 {
                     type: "imageText",
                     desc: "Simple url text field with image preview (when filled)",
-                    fields: "",
+                    fields: `<ul>
+                                <li>baseUrl: string - Url to append on model path</li>
+                            </ul>`,
                     json: this.imageText
                 },
                 {
@@ -316,9 +318,19 @@ export default {
                                 <li>uploadUrl: string - Url to make a binary upload</li>
                                 <li>validation: string - validation mime types</li>
                                 <li>accept: string - file prompt accept mime types</li>,
+                                <li>schema: object
+                                    <ul>
+                                        <li>api: object
+                                          <ul>
+                                              <li>rootApi: string - Upload endpoint url</li>
+                                              <li>...see schema page to get all options</li>
+                                          </ul>
+                                        </li>
+                                    </ul>
+                                </li>,
                                 <li>options: object
                                     <ul>
-                                        <li>fieldValue: string - response data url wrap</li>
+                                        <li>fieldValue: string - response data url to show preview</li>
                                     </ul>
                                 </li>
                            </ul>`,

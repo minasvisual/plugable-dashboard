@@ -1,4 +1,4 @@
-import { get, set, has, isNil, isEmpty } from 'lodash'
+import { get, set, has, isNil, isEmpty, capitalize } from 'lodash'
 import { setup } from 'axios-cache-adapter'
 import { interpolate, queryString } from './helpers'
 import Store from '../store'
@@ -126,7 +126,7 @@ export const getData = async (model, data={}, config={}) => {
     ...config
   } 
   let sessionConfig = {
-    session: model.auth
+    session: model.auth 
   }
 
   let query = queryString(api.params, ( api.rootApi.includes('?') ? '&':'?'), data)
@@ -138,6 +138,9 @@ export const getData = async (model, data={}, config={}) => {
 
   if( api.headers )
     options['headers'] = api.headers
+
+  if( api.body )
+    options['data'] = api.body
   
   url = interpolate(url, {...data, query })
   
@@ -180,6 +183,9 @@ export const getDataObject = async (model, data={}, config={}) => {
 
   if( api.headers )
     options['headers'] = api.headers
+
+  if( api.body )
+    options['data'] = api.body
   
   url = interpolate(url, {...data, query })
   
@@ -253,3 +259,4 @@ export const deleteData = async (model, data, config={}) => {
   
   return request(url, options, sessionConfig)
 }
+

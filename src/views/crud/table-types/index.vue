@@ -32,7 +32,7 @@
         <span v-else-if="cell.type == 'action'"  >
             <Actions :data.sync="data[cell.key]" :cell.sync="cell" :row.sync="data" />
         </span>
-        <span v-else-if="cell.type == 'object'" v-text="get(data, `row.${cell.action.name}`, data[cell.key])" v-on:click="emitAction" ></span>
+        <span v-else-if="cell.type == 'object'" v-text="get(data, `${cell.action.name}`, data[cell.key])" v-on:click="emitAction" ></span>
         <span v-else-if="cell.type == 'html'" v-html="data[cell.key]" v-on:click="emitAction" ></span>
         <span v-else v-text="data[cell.key]" v-on:click="emitAction" ></span>
     </span>

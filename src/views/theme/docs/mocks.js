@@ -126,11 +126,15 @@ export const image = {
   "name": "image",
   "label": "Image with upload",
   "type": "image",
-  "uploadUrl": "/examples/advanced_data.json",
   "validation":"mime:application/pdf",
   "accept": "application/pdf",
   "options":{
-      "fieldValue": "upload"
+    "fieldValue": "data.src"
+  },
+  "schema":{
+    "api": {
+      "rootApi": "/examples/advanced_data.json"
+    }
   }
 }
 
