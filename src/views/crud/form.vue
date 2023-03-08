@@ -7,7 +7,7 @@
             <CIcon name="cil-reload" />
           </CButton>
         </Toolbar>
-      </div>
+      </div> 
     </div>
      <Forms  
         :formopen="formopen"
@@ -72,8 +72,10 @@ export default {
   methods:{
     loadForm(){
       try{ 
+            console.debug("load form result init", this.row)
         this.getData(this.schema, {}).then( (data) => {
-            this.row = { ...data }
+            console.debug("load form result", data)
+            this.row = { ...(data.rows || data) }
             this.$store.commit('set', ['crud', {...this.crud, row: this.row }] )
             this.formopen = true
         })
