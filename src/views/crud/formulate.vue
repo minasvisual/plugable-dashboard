@@ -117,10 +117,11 @@ export default {
           return schema
       },
       getRow(){
-          if( !this.data ) return Promise.resolve({})
-          if( typeof this.data !== 'object' ) this.data = { [this.primaryKey]: this.data }
+        console.debug('formulate get row', this.data)
+        if( !this.data || Object.keys(this.data).length == 0 || !this.data[this.primaryKey] ) return Promise.resolve({})
+        if( typeof this.data !== 'object' ) this.data = { [this.primaryKey]: this.data }
 
-          return this.getData(this.schema, this.data)
+        return this.getData(this.schema, this.data)
       }, 
       init(){
          ( this.isStandalone ? Promise.resolve(this.data) : this.getRow() ).then( (data) => {

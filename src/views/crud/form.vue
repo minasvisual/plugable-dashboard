@@ -62,6 +62,9 @@ export default {
     }
   },
   computed:{
+    action(){ 
+      return this.row && this.row.id ? 'update': 'create'
+    },
     formTitle(){ 
       return this.row && this.row.id ? `Update ${this.schema.title} | ID: ${this.row.id}`: `New ${this.schema.title}`
     },
@@ -95,7 +98,7 @@ export default {
         this.$alert('Form submit error', err)
       }
     },
-    closeForm({ }){  
+    closeForm(){  
         this.formopen = false;
         this.loadForm()
         this.$store.commit('set', ['crud', {...this.crud, row: null }] )
