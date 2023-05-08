@@ -91,7 +91,7 @@ export default {
         )
         .then((data) => {
           if( data )
-            this.context.model = get(data, (this.context?.options?.fieldValue || '[0].src'), data)
+            this.context.model = get(data, (schema.api?.wrapData || '[0].src'), data)
           else
             this.error = data
           this.uploading = false
