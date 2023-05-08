@@ -127,13 +127,11 @@ export const image = {
   "label": "Image with upload",
   "type": "image",
   "validation":"mime:application/pdf",
-  "accept": "application/pdf",
-  "options":{
-    "fieldValue": "data.src"
-  },
+  "accept": "application/pdf", 
   "schema":{
     "api": {
-      "rootApi": "/examples/advanced_data.json"
+      "rootApi": "/examples/advanced_data.json",
+      "wrapData": "src"
     }
   }
 }
