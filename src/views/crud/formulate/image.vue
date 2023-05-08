@@ -4,8 +4,8 @@
         <p v-else-if="error"  style="text-align:center">{{ error }} <a @click.prevent="() => error = null" class="text-center">retry</a> </p>
         <div v-else class="img-bar">
           <div class="custom-control custom-checkbox flex-column" title="See as text">
-            <input type="checkbox" class="custom-control-input" id="customCheck1" v-model="inputText" title="See as text">
-            <label class="custom-control-label small" for="customCheck1"></label>
+            <input type="checkbox" class="custom-control-input" :id="context.attributes.id" v-model="inputText" title="See as text">
+            <label class="custom-control-label small" :for="context.attributes.id"></label>
           </div> 
           <input 
             v-if="inputText"
