@@ -62,7 +62,7 @@ export default {
     model () {
       if( this.context.model && this.attributes.baseUrl )
         return this.attributes.baseUrl + this.context.model
-      else  if( this.context.model && this.context.model.includes('http') )
+      else  if( this.context.model && this.context.model.includes && this.context.model.includes('http') )
         return this.context.model
       else
         return null 
