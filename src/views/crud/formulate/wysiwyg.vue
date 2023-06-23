@@ -43,7 +43,8 @@ export default {
               [{ 'font': [] }],
               [{ 'align': [] }],
 
-              ['clean','code-block'],
+              ['clean','code-block',],
+              ['link', 'image', 'video'],
             ],
           },
           placeholder: 'Compose an epic...',
