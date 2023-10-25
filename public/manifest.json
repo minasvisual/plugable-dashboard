@@ -6,7 +6,7 @@
     "theme_color": "#FFFFFF",
     "background_color": "#ebedef",
     "display": "standalone",
-    "orientation": "landscape",
+    "orientation": "natural",
     "lang": "English",
     "icons": [{
             "src": "\/img\/android-icon-36x36.png",
